@@ -1,0 +1,33 @@
+{
+  "id": "id-1",
+  "command": "scheduleAuctions",
+  "context": {
+    "cpid": "cpid-1",
+    "operationId": "c15501a1-8be0-4734-bd5c-000000000000",
+    "startDate": "2018-09-13T08:48:17Z",
+    "pmd": "",
+    "country": "MD"
+  },
+  "data": {
+    "tenderPeriod": {
+      "endDate": "2018-09-14T08:48:17Z"
+    },
+    "electronicAuctions": {
+      "details": [
+        {
+          "id": "",
+          "relatedLot": "",
+          "electronicAuctionModalities": [
+            {
+              "eligibleMinimumDifference": {
+                "amount": 150.00,
+                "currency": "MDL"
+              }
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "version": "0.0.1"
+}

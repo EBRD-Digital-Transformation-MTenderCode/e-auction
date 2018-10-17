@@ -1,0 +1,26 @@
+#*****************************#
+# Create Network if not exist #
+#*****************************#
+
+docker network create \
+  --driver bridge \
+  --subnet 192.168.100.0/24 \
+  --gateway 192.168.100.1 \
+  ocds-network
+
+
+#****************************************#
+# Run E-Auction                          #
+# Need assign uri, username and password #
+#****************************************#
+
+docker run -d --name=e-auction-1 \
+  --env __PROP_spring_cloud_config_uri=http://config-server:8080 \
+  --env __PROP_spring_profiles_active=default \
+  --env __PROP_spring_cloud_config_label= \
+  --env __PROP_cassandra_username= \
+  --env __PROP_cassandra_password= \
+  --publish 9191:8080 \
+  --network ocds-network \
+  --dns 10.0.20.115 \
+  dev.docker-registry.eprocurement.systems/e-auction:1.1.1

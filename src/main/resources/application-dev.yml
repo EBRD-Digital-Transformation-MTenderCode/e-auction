@@ -1,0 +1,67 @@
+spring:
+  cloud:
+    inetutils:
+      preferredNetworks:
+        - 192.168
+
+cassandra:
+  contact-points: localhost
+  keyspace-name: ocds
+  port: 9042
+  username:
+  password:
+
+auctions:
+  qty-rounds: 3
+  qty-participants: 4
+  duration-one-step: 180s
+  duration-pause-after-step: 30s
+  duration-pause-after-auction: 30s
+
+scheduler:
+  begin-time-of-slots:
+  - start-time: "06:00Z"
+#    end-time: "15:00Z"
+    max-lines: 10
+  - start-time: "07:00Z"
+  - start-time: "08:00Z"
+  - start-time: "09:00Z"
+  - start-time: "10:00Z"
+  - start-time: "11:00Z"
+  - start-time: "12:00Z"
+  end-time-all-slots: "13:00Z"
+  qty-lines-per-slot: 70
+
+management:
+  endpoint:
+    loggers:
+      enabled: true
+
+  endpoints:
+    jmx:
+      domain: com.procurement.auction
+      exposure:
+        exclude: "*"
+    web:
+      exposure:
+        include: "prometheus, metrics, loggers, info"
+  metrics:
+    distribution:
+      percentiles-histogram:
+        http:
+          server:
+            requests: true
+      sla:
+        http:
+          server:
+            requests: 1ms,5ms
+  #    export:
+  #      jvm:
+  #        enabled: true
+  #    enable:
+  #      jvm: true
+  server:
+    port: 8888
+  info:
+    git:
+      mode: full
