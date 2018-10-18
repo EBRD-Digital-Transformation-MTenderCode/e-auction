@@ -3,6 +3,7 @@ package com.procurement.auction.service
 import com.procurement.auction.configuration.properties.AuctionProperties
 import com.procurement.auction.configuration.properties.GlobalProperties
 import com.procurement.auction.domain.LotsInfo
+import com.procurement.auction.domain.RelatedLot
 import com.procurement.auction.domain.SlotDefinition
 import com.procurement.auction.domain.request.schedule.ScheduleRQ
 import com.procurement.auction.domain.schedule.PlannedAuction
@@ -61,7 +62,7 @@ class ScheduleServiceImpl(private val auctionProperties: AuctionProperties,
 
                 val cpid = request.context.cpid
                 slotsService.saveSlots(cpid = cpid,
-                    bookedSlots = booked.keys.map { it.keyOfSlot }.toSet(),
+                    bookedSlots = booked.keys.asSequence().map { it.keyOfSlot }.toSet(),
                     slots = slots)
                 return newPlannedAuctions
             }
@@ -98,7 +99,6 @@ class ScheduleServiceImpl(private val auctionProperties: AuctionProperties,
                         )
                     )
                 }
-                this.sortWith(LotsInfo.Detail.comparator)
             }
         )
     }
@@ -122,7 +122,7 @@ class ScheduleServiceImpl(private val auctionProperties: AuctionProperties,
     private fun genPlannedAuctions(startDate: LocalDate,
                                    lotsInfo: LotsInfo,
                                    booked: Map<SlotDefinition, List<LotsInfo.Detail>>): PlannedAuction {
-        val result = LinkedHashMap<String, PlannedAuction.Lot>()
+        val result = LinkedHashMap<RelatedLot, PlannedAuction.Lot>()
         var minTime: LocalTime? = null
         for ((slotDetail, lotsDetails) in booked) {
             var startDateTimeSlot = LocalDateTime.of(startDate, slotDetail.startTime)
@@ -132,7 +132,7 @@ class ScheduleServiceImpl(private val auctionProperties: AuctionProperties,
 
             for (lotDetail in lotsDetails) {
                 result[lotDetail.relatedLot] = PlannedAuction.Lot(
-                    id = UUID.randomUUID().toString(),
+                    id = UUID.randomUUID(),
                     startDateTime = startDateTimeSlot,
                     url = genUrl(lotsInfo.cpid, lotDetail.relatedLot),
                     amount = lotDetail.amount,
@@ -151,7 +151,7 @@ class ScheduleServiceImpl(private val auctionProperties: AuctionProperties,
         )
     }
 
-    private fun genUrl(cpid: String, relatedLot: String) = "https://eauction.mtender.md/$cpid/$relatedLot"
+    private fun genUrl(cpid: String, relatedLot: RelatedLot) = "https://eauction.mtender.md/$cpid/$relatedLot"
 
     private fun savePlannedAuctions(request: ScheduleRQ,
                                     plannedAuction: PlannedAuction): PlannedAuction {

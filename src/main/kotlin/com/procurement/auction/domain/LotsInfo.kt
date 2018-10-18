@@ -23,14 +23,5 @@ data class LotsInfo(val cpid: String,
         override fun hashCode(): Int {
             return relatedLot.hashCode()
         }
-
-        companion object {
-            val comparator = Comparator<Detail> { left, right ->
-                if (left == null) return@Comparator 1
-                if (right == null) return@Comparator -1
-                if (left.relatedLot == right.relatedLot) return@Comparator 0
-                left.relatedLot.compareTo(right.relatedLot)
-            }
-        }
     }
 }

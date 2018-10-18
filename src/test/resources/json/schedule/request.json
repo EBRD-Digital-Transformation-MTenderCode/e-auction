@@ -1,9 +1,9 @@
 {
-  "id": "id-1",
+  "id": "96977fc8-9ef1-444c-9e3c-90b1db361173",
   "command": "scheduleAuctions",
   "context": {
     "cpid": "cpid-1",
-    "operationId": "c15501a1-8be0-4734-bd5c-000000000000",
+    "operationId": "96977fc8-9ef1-444c-9e3c-90b1db361173",
     "startDate": "2018-09-13T08:48:17Z",
     "pmd": "",
     "country": "MD"
@@ -16,7 +16,7 @@
       "details": [
         {
           "id": "",
-          "relatedLot": "",
+          "relatedLot": "e485447a-7ab3-4089-8740-ff6e690df0d8",
           "electronicAuctionModalities": [
             {
               "eligibleMinimumDifference": {

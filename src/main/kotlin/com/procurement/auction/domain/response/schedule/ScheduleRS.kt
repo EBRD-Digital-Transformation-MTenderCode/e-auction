@@ -5,6 +5,8 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize
 import com.fasterxml.jackson.databind.annotation.JsonSerialize
 import com.procurement.auction.domain.ApiVersion
+import com.procurement.auction.domain.LotId
+import com.procurement.auction.domain.RelatedLot
 import com.procurement.auction.domain.binding.ApiVersionDeserializer
 import com.procurement.auction.domain.binding.ApiVersionSerializer
 import com.procurement.auction.domain.binding.JsonDateTimeDeserializer
@@ -32,8 +34,8 @@ data class ScheduleRS(@field:JsonProperty("id") @param:JsonProperty("id") val id
     )
 
     @JsonPropertyOrder("id", "relatedLot", "auctionPeriod", "electronicAuctionModalities")
-    data class Detail(@field:JsonProperty("id") @param:JsonProperty("id") val id: String,
-                      @field:JsonProperty("relatedLot") @param:JsonProperty("relatedLot") val relatedLot: String,
+    data class Detail(@field:JsonProperty("id") @param:JsonProperty("id") val id: LotId,
+                      @field:JsonProperty("relatedLot") @param:JsonProperty("relatedLot") val relatedLot: RelatedLot,
                       @field:JsonProperty("auctionPeriod") @param:JsonProperty("auctionPeriod") val auctionPeriod: AuctionPeriodLot,
                       @field:JsonProperty("electronicAuctionModalities") @param:JsonProperty("electronicAuctionModalities") val electronicAuctionModalities: List<ElectronicAuctionModality>
     )

@@ -6,6 +6,7 @@ import com.nhaarman.mockito_kotlin.mock
 import com.nhaarman.mockito_kotlin.whenever
 import com.procurement.auction.AbstractBase
 import com.procurement.auction.domain.ApiVersion
+import com.procurement.auction.domain.LotId
 import com.procurement.auction.domain.binding.JsonDateTimeDeserializer
 import com.procurement.auction.domain.schedule.PlannedAuction
 import com.procurement.auction.exception.JsonParseToObjectException
@@ -20,6 +21,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.content
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import org.springframework.test.web.servlet.setup.MockMvcBuilders
+import java.util.*
 
 class ScheduleControllerTest : AbstractBase() {
     companion object {
@@ -28,13 +30,13 @@ class ScheduleControllerTest : AbstractBase() {
 
         private const val requestId = "id-1"
         private const val cpid = "cpid-1"
-        private const val lotid = "lot-id-1"
-        private const val relatedLot = "relatedLot-1"
+        private val lotid: UUID = UUID.fromString("b405fe10-f954-400e-bc39-49a03948991a")
+        private val relatedLot: UUID = UUID.fromString("358404aa-93b9-41b0-be7d-ab5f8db01123")
         private const val auctionsStartDateText = "2018-09-14T08:48:17Z"
         private val auctionsStartDate = JsonDateTimeDeserializer.deserialize(auctionsStartDateText)
         private const val lotStartDateText = "2018-09-15T08:48:17Z"
         private val lotStartDate = JsonDateTimeDeserializer.deserialize(lotStartDateText)
-        private const val auctionUrl = "https://eauction.mtender.md/$cpid/$relatedLot"
+        private val auctionUrl = "https://eauction.mtender.md/$cpid/$relatedLot"
         private const val amount = 150.0
         private const val currency = "MDL"
         private val apiVersion = ApiVersion(1, 0, 0)
@@ -42,7 +44,7 @@ class ScheduleControllerTest : AbstractBase() {
         private val auctionPlanningInfo = PlannedAuction(
             version = apiVersion,
             startDateTime = auctionsStartDate,
-            lots = LinkedHashMap<String, PlannedAuction.Lot>().apply {
+            lots = LinkedHashMap<LotId, PlannedAuction.Lot>().apply {
                 this[relatedLot] = PlannedAuction.Lot(
                     id = lotid,
                     startDateTime = lotStartDate,
@@ -86,8 +88,8 @@ class ScheduleControllerTest : AbstractBase() {
             .andExpect(jsonPath("$.id", equalTo(requestId)))
             .andExpect(jsonPath("$.data.auctionPeriod.startDate", equalTo(auctionsStartDateText)))
             .andExpect(jsonPath("$.data.electronicAuctions.details.length()", equalTo(1)))
-            .andExpect(jsonPath("$.data.electronicAuctions.details[0].id", equalTo(lotid)))
-            .andExpect(jsonPath("$.data.electronicAuctions.details[0].relatedLot", equalTo(relatedLot)))
+            .andExpect(jsonPath("$.data.electronicAuctions.details[0].id", equalTo("$lotid")))
+            .andExpect(jsonPath("$.data.electronicAuctions.details[0].relatedLot", equalTo("$relatedLot")))
             .andExpect(
                 jsonPath(
                     "$.data.electronicAuctions.details[0].auctionPeriod.startDate",
