@@ -33,6 +33,10 @@ scheduler:
   qty-lines-per-slot: 70
 
 management:
+  actuator-security:
+    username: actuator
+    password-hash: "{bcrypt}$2a$10$MSaYg2SejDhqgxY6DcomQeYwQRxrFXJHgdH.UOkDqBDNzHNIUSQr."
+
   endpoint:
     loggers:
       enabled: true
@@ -61,7 +65,7 @@ management:
   #    enable:
   #      jvm: true
   server:
-    port: 8888
+    port: 8080
   info:
     git:
       mode: full
