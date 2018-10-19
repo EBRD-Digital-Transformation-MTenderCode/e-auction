@@ -28,7 +28,7 @@ class ScheduleControllerTest : AbstractBase() {
         private const val URL = "/command"
         private const val INVALID_PAYLOAD = "{}"
 
-        private const val requestId = "id-1"
+        private val requestId: UUID = UUID.fromString("96977fc8-9ef1-444c-9e3c-90b1db361173")
         private const val cpid = "cpid-1"
         private val lotid: UUID = UUID.fromString("b405fe10-f954-400e-bc39-49a03948991a")
         private val relatedLot: UUID = UUID.fromString("358404aa-93b9-41b0-be7d-ab5f8db01123")
@@ -85,7 +85,7 @@ class ScheduleControllerTest : AbstractBase() {
                 .content(content))
             .andExpect(status().isOk)
             .andExpect(content().contentType("application/json;charset=UTF-8"))
-            .andExpect(jsonPath("$.id", equalTo(requestId)))
+            .andExpect(jsonPath("$.id", equalTo("$requestId")))
             .andExpect(jsonPath("$.data.auctionPeriod.startDate", equalTo(auctionsStartDateText)))
             .andExpect(jsonPath("$.data.electronicAuctions.details.length()", equalTo(1)))
             .andExpect(jsonPath("$.data.electronicAuctions.details[0].id", equalTo("$lotid")))
