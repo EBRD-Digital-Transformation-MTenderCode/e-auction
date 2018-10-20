@@ -10,8 +10,7 @@ data class LotsInfo(val cpid: String,
 
     class Detail(val relatedLot: RelatedLot,
                  val duration: Duration,
-                 val amount: Double,
-                 val currency: String) {
+                 val electronicAuctionModalities: List<ElectronicAuctionModality>) {
 
         override fun equals(other: Any?): Boolean {
             if (this === other) return true
@@ -22,6 +21,15 @@ data class LotsInfo(val cpid: String,
 
         override fun hashCode(): Int {
             return relatedLot.hashCode()
+        }
+
+        data class ElectronicAuctionModality(
+            val eligibleMinimumDifference: EligibleMinimumDifference
+        ) {
+            data class EligibleMinimumDifference(
+                val amount: Double,
+                val currency: String
+            )
         }
     }
 }

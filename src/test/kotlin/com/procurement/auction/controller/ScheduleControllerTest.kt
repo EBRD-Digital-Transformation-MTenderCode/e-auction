@@ -48,9 +48,15 @@ class ScheduleControllerTest : AbstractBase() {
                 this[relatedLot] = PlannedAuction.Lot(
                     id = lotid,
                     startDateTime = lotStartDate,
-                    url = auctionUrl,
-                    amount = amount,
-                    currency = currency
+                    electronicAuctionModalities = listOf(
+                        PlannedAuction.Lot.ElectronicAuctionModality(
+                            url = auctionUrl,
+                            eligibleMinimumDifference = PlannedAuction.Lot.ElectronicAuctionModality.EligibleMinimumDifference(
+                                amount = amount,
+                                currency = currency
+                            )
+                        )
+                    )
                 )
             },
             usedSlots = setOf(1)

@@ -94,8 +94,15 @@ class ScheduleServiceImpl(private val auctionProperties: AuctionProperties,
                         LotsInfo.Detail(
                             relatedLot = detail.relatedLot,
                             duration = auctionProperties.durationOneAuction,
-                            amount = eligibleMinimumDifference.amount,
-                            currency = eligibleMinimumDifference.currency
+                            electronicAuctionModalities = detail.electronicAuctionModalities.map {
+                                LotsInfo.Detail.ElectronicAuctionModality(
+                                    eligibleMinimumDifference = LotsInfo.Detail.ElectronicAuctionModality.EligibleMinimumDifference(
+                                        amount = eligibleMinimumDifference.amount,
+                                        currency = eligibleMinimumDifference.currency
+                                    )
+                                )
+                            }
+
                         )
                     )
                 }
@@ -134,9 +141,16 @@ class ScheduleServiceImpl(private val auctionProperties: AuctionProperties,
                 result[lotDetail.relatedLot] = PlannedAuction.Lot(
                     id = UUID.randomUUID(),
                     startDateTime = startDateTimeSlot,
-                    url = genUrl(lotsInfo.cpid, lotDetail.relatedLot),
-                    amount = lotDetail.amount,
-                    currency = lotDetail.currency
+                    electronicAuctionModalities = lotDetail.electronicAuctionModalities
+                        .map {
+                            PlannedAuction.Lot.ElectronicAuctionModality(
+                                url = genUrl(lotsInfo.cpid, lotDetail.relatedLot),
+                                eligibleMinimumDifference = PlannedAuction.Lot.ElectronicAuctionModality.EligibleMinimumDifference(
+                                    amount = it.eligibleMinimumDifference.amount,
+                                    currency = it.eligibleMinimumDifference.currency
+                                )
+                            )
+                        }
                 )
 
                 startDateTimeSlot = startDateTimeSlot.plus(lotDetail.duration)

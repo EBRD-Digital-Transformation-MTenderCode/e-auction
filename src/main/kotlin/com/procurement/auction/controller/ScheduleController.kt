@@ -52,16 +52,16 @@ class ScheduleController(private val objectMapper: ObjectMapper,
                             auctionPeriod = ScheduleRS.AuctionPeriodLot(
                                 startDate = lot.startDateTime
                             ),
-                            electronicAuctionModalities = listOf(
-                                ScheduleRS.ElectronicAuctionModality(
-                                    url = lot.url,
-                                    eligibleMinimumDifference = ScheduleRS.EligibleMinimumDifference(
-                                        amount = lot.amount,
-                                        currency = lot.currency
+                            electronicAuctionModalities = lot.electronicAuctionModalities
+                                .map {
+                                    ScheduleRS.ElectronicAuctionModality(
+                                        url = it.url,
+                                        eligibleMinimumDifference = ScheduleRS.EligibleMinimumDifference(
+                                            amount = it.eligibleMinimumDifference.amount,
+                                            currency = it.eligibleMinimumDifference.currency
+                                        )
                                     )
-
-                                )
-                            )
+                                }
                         )
                     }
                 )
