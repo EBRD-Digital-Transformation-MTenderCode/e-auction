@@ -5,8 +5,13 @@ import com.nhaarman.mockito_kotlin.any
 import com.nhaarman.mockito_kotlin.mock
 import com.nhaarman.mockito_kotlin.whenever
 import com.procurement.auction.AbstractBase
+import com.procurement.auction.domain.Amount
 import com.procurement.auction.domain.ApiVersion
+import com.procurement.auction.domain.CPID
+import com.procurement.auction.domain.CommandId
+import com.procurement.auction.domain.Currency
 import com.procurement.auction.domain.LotId
+import com.procurement.auction.domain.RelatedLot
 import com.procurement.auction.domain.binding.JsonDateTimeDeserializer
 import com.procurement.auction.domain.schedule.PlannedAuction
 import com.procurement.auction.exception.JsonParseToObjectException
@@ -28,17 +33,17 @@ class ScheduleControllerTest : AbstractBase() {
         private const val URL = "/command"
         private const val INVALID_PAYLOAD = "{}"
 
-        private val requestId: UUID = UUID.fromString("96977fc8-9ef1-444c-9e3c-90b1db361173")
-        private const val cpid = "cpid-1"
-        private val lotid: UUID = UUID.fromString("b405fe10-f954-400e-bc39-49a03948991a")
-        private val relatedLot: UUID = UUID.fromString("358404aa-93b9-41b0-be7d-ab5f8db01123")
+        private val commandId: CommandId = UUID.fromString("96977fc8-9ef1-444c-9e3c-90b1db361173")
+        private const val cpid: CPID = "cpid-1"
+        private val lotid: LotId = UUID.fromString("b405fe10-f954-400e-bc39-49a03948991a")
+        private val relatedLot: RelatedLot = UUID.fromString("358404aa-93b9-41b0-be7d-ab5f8db01123")
         private const val auctionsStartDateText = "2018-09-14T08:48:17Z"
         private val auctionsStartDate = JsonDateTimeDeserializer.deserialize(auctionsStartDateText)
         private const val lotStartDateText = "2018-09-15T08:48:17Z"
         private val lotStartDate = JsonDateTimeDeserializer.deserialize(lotStartDateText)
         private val auctionUrl = "https://eauction.mtender.md/$cpid/$relatedLot"
-        private const val amount = 150.0
-        private const val currency = "MDL"
+        private const val amount: Amount = 150.0
+        private const val currency: Currency = "MDL"
         private val apiVersion = ApiVersion(1, 0, 0)
 
         private val auctionPlanningInfo = PlannedAuction(
@@ -91,7 +96,7 @@ class ScheduleControllerTest : AbstractBase() {
                 .content(content))
             .andExpect(status().isOk)
             .andExpect(content().contentType("application/json;charset=UTF-8"))
-            .andExpect(jsonPath("$.id", equalTo("$requestId")))
+            .andExpect(jsonPath("$.id", equalTo("$commandId")))
             .andExpect(jsonPath("$.data.auctionPeriod.startDate", equalTo(auctionsStartDateText)))
             .andExpect(jsonPath("$.data.electronicAuctions.details.length()", equalTo(1)))
             .andExpect(jsonPath("$.data.electronicAuctions.details[0].id", equalTo("$lotid")))

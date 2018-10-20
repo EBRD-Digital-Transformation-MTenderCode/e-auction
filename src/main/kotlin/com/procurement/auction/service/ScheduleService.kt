@@ -2,8 +2,10 @@ package com.procurement.auction.service
 
 import com.procurement.auction.configuration.properties.AuctionProperties
 import com.procurement.auction.configuration.properties.GlobalProperties
+import com.procurement.auction.domain.CPID
 import com.procurement.auction.domain.Country
 import com.procurement.auction.domain.LotsInfo
+import com.procurement.auction.domain.OperationId
 import com.procurement.auction.domain.RelatedLot
 import com.procurement.auction.domain.SlotDefinition
 import com.procurement.auction.domain.request.schedule.ScheduleRQ
@@ -72,7 +74,7 @@ class ScheduleServiceImpl(private val auctionProperties: AuctionProperties,
         }
     }
 
-    private fun loadPlannedAuctions(cpid: String, operationId: UUID): PlannedAuction? {
+    private fun loadPlannedAuctions(cpid: CPID, operationId: OperationId): PlannedAuction? {
         return plannedAuctionRepository.load(cpid, operationId)
     }
 
@@ -159,7 +161,7 @@ class ScheduleServiceImpl(private val auctionProperties: AuctionProperties,
         )
     }
 
-    private fun genUrl(cpid: String, relatedLot: RelatedLot) = "https://eauction.mtender.md/$cpid/$relatedLot"
+    private fun genUrl(cpid: CPID, relatedLot: RelatedLot) = "https://eauction.mtender.md/$cpid/$relatedLot"
 
     private fun savePlannedAuctions(request: ScheduleRQ,
                                     plannedAuction: PlannedAuction): PlannedAuction {

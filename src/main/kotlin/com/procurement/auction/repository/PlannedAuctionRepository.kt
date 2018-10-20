@@ -3,6 +3,8 @@ package com.procurement.auction.repository
 import com.datastax.driver.core.BoundStatement
 import com.datastax.driver.core.Session
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.procurement.auction.domain.CPID
+import com.procurement.auction.domain.OperationId
 import com.procurement.auction.domain.schedule.PlannedAuction
 import com.procurement.auction.exception.database.ReadOperationException
 import com.procurement.auction.exception.database.SaveOperationException
@@ -15,12 +17,12 @@ import java.time.LocalDateTime
 import java.time.ZoneOffset
 import java.util.*
 
-data class PlannedAuctionKey(val cpid: String,
-                             val operationId: UUID,
+data class PlannedAuctionKey(val cpid: CPID,
+                             val operationId: OperationId,
                              val operationDate: LocalDateTime)
 
 interface PlannedAuctionRepository {
-    fun load(cpid: String, operationId: UUID): PlannedAuction?
+    fun load(cpid: CPID, operationId: OperationId): PlannedAuction?
     fun insert(key: PlannedAuctionKey, plannedAuction: PlannedAuction): PlannedAuction
 }
 
@@ -47,7 +49,7 @@ class PlannedAuctionRepositoryImpl(private val objectMapper: ObjectMapper,
     private val preparedLoadJsonOperationHistoryCQL = session.prepare(loadJsonOperationHistoryCQL)
     private val preparedInsertOperationHistoryCQL = session.prepare(insertOperationHistoryCQL)
 
-    override fun load(cpid: String, operationId: UUID): PlannedAuction? {
+    override fun load(cpid: CPID, operationId: OperationId): PlannedAuction? {
         val query = preparedLoadJsonOperationHistoryCQL.bind().also {
             it.setString(Tables.AuctionPlanning.columnCpid, cpid)
             it.setUUID(Tables.AuctionPlanning.columnOperationId, operationId)

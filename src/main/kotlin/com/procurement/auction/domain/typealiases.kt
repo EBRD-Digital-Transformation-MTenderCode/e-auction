@@ -2,7 +2,7 @@ package com.procurement.auction.domain
 
 import java.util.*
 
-typealias CommandId = String
+typealias CommandId = UUID
 typealias CPID = String
 typealias Country = String
 typealias OperationId = UUID

@@ -38,27 +38,27 @@ class ScheduleController(private val objectMapper: ObjectMapper,
             id = request.id,
             version = GlobalProperties.App.apiVersion,
             data = ScheduleRS.Data(
-                auctionPeriod = ScheduleRS.AuctionPeriod(
+                auctionPeriod = ScheduleRS.Data.AuctionPeriod(
                     startDate = plannedAuction.startDateTime
                 ),
-                electronicAuctions = ScheduleRS.ElectronicAuctions(
+                electronicAuctions = ScheduleRS.Data.ElectronicAuctions(
                     details = plannedAuction.lots.map {
                         val relatedLot = it.key
                         val lot = it.value
 
-                        ScheduleRS.Detail(
+                        ScheduleRS.Data.ElectronicAuctions.Detail(
                             id = lot.id,
                             relatedLot = relatedLot,
-                            auctionPeriod = ScheduleRS.AuctionPeriodLot(
+                            auctionPeriod = ScheduleRS.Data.ElectronicAuctions.Detail.AuctionPeriod(
                                 startDate = lot.startDateTime
                             ),
                             electronicAuctionModalities = lot.electronicAuctionModalities
-                                .map {
-                                    ScheduleRS.ElectronicAuctionModality(
-                                        url = it.url,
-                                        eligibleMinimumDifference = ScheduleRS.EligibleMinimumDifference(
-                                            amount = it.eligibleMinimumDifference.amount,
-                                            currency = it.eligibleMinimumDifference.currency
+                                .map { electronicAuctionModality ->
+                                    ScheduleRS.Data.ElectronicAuctions.Detail.ElectronicAuctionModality(
+                                        url = electronicAuctionModality.url,
+                                        eligibleMinimumDifference = ScheduleRS.Data.ElectronicAuctions.Detail.ElectronicAuctionModality.EligibleMinimumDifference(
+                                            amount = electronicAuctionModality.eligibleMinimumDifference.amount,
+                                            currency = electronicAuctionModality.eligibleMinimumDifference.currency
                                         )
                                     )
                                 }
