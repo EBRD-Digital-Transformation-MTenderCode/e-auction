@@ -3,8 +3,8 @@ package com.procurement.auction.domain
 import java.time.Duration
 import java.time.LocalDate
 
-data class LotsInfo(val cpid: String,
-                    val country: String,
+data class LotsInfo(val cpid: CPID,
+                    val country: Country,
                     val tenderPeriodEnd: LocalDate,
                     val details: List<Detail>) {
 
@@ -27,8 +27,8 @@ data class LotsInfo(val cpid: String,
             val eligibleMinimumDifference: EligibleMinimumDifference
         ) {
             data class EligibleMinimumDifference(
-                val amount: Double,
-                val currency: String
+                val amount: Amount,
+                val currency: Currency
             )
         }
     }

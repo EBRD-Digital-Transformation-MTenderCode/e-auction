@@ -16,7 +16,7 @@ interface SlotDefinition {
 
 data class Slots(val isNew: Boolean,
                  val date: LocalDate,
-                 val country: String,
+                 val country: Country,
                  val definitions: TreeSet<Definition>) {
 
     class Definition(override val keyOfSlot: KeyOfSlot,

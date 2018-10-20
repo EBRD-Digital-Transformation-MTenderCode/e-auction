@@ -2,11 +2,12 @@ package com.procurement.auction.repository
 
 import com.datastax.driver.core.BoundStatement
 import com.datastax.driver.core.Session
+import com.procurement.auction.domain.Country
 import com.procurement.auction.exception.database.ReadOperationException
 import org.springframework.stereotype.Repository
 
 interface CalendarRepository {
-    fun loadWorkDays(country: String, year: Int, month: Int): Set<Int>
+    fun loadWorkDays(country: Country, year: Int, month: Int): Set<Int>
 }
 
 @Repository
@@ -22,7 +23,7 @@ class CalendarRepositoryImpl(private val session: Session) : CalendarRepository 
 
     private val preparedLoadCalendarCQL = session.prepare(loadCalendarCQL)
 
-    override fun loadWorkDays(country: String, year: Int, month: Int): Set<Int> {
+    override fun loadWorkDays(country: Country, year: Int, month: Int): Set<Int> {
         val query = preparedLoadCalendarCQL.bind().also {
             it.setString(RepositoryProperties.Tables.Calendar.columnCountry, country)
             it.setInt(RepositoryProperties.Tables.Calendar.columnYear, year)

@@ -5,6 +5,7 @@ import com.datastax.driver.core.BoundStatement
 import com.datastax.driver.core.Session
 import com.procurement.auction.cassandra.toCassandraLocalDate
 import com.procurement.auction.domain.CPID
+import com.procurement.auction.domain.Country
 import com.procurement.auction.domain.KeyOfSlot
 import com.procurement.auction.domain.Slots
 import com.procurement.auction.exception.database.ReadOperationException
@@ -21,7 +22,7 @@ enum class SlotsSaveResult {
 }
 
 interface SlotsRepository {
-    fun load(date: LocalDate, country: String): Slots?
+    fun load(date: LocalDate, country: Country): Slots?
     fun save(cpid: CPID, bookedSlots: Set<KeyOfSlot>, slots: Slots): SlotsSaveResult
 }
 
@@ -68,7 +69,7 @@ class SlotsRepositoryImpl(private val session: Session) : SlotsRepository {
     private val preparedInsertSlotsCQL = session.prepare(insertSlotsCQL)
     private val preparedUpdateSlotsCQL = session.prepare(updateSlotsCQL)
 
-    override fun load(date: LocalDate, country: String): Slots? {
+    override fun load(date: LocalDate, country: Country): Slots? {
         val query = preparedLoadSlotsCQL.bind().also {
             it.setDate(RepositoryProperties.Tables.Slots.columnDate, date.toCassandraLocalDate())
             it.setString(RepositoryProperties.Tables.Slots.columnCountry, country)

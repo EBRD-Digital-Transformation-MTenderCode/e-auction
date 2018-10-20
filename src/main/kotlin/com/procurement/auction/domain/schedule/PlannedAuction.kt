@@ -4,7 +4,10 @@ import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.annotation.JsonPropertyOrder
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize
 import com.fasterxml.jackson.databind.annotation.JsonSerialize
+import com.procurement.auction.domain.Amount
 import com.procurement.auction.domain.ApiVersion
+import com.procurement.auction.domain.Currency
+import com.procurement.auction.domain.KeyOfSlot
 import com.procurement.auction.domain.LotId
 import com.procurement.auction.domain.RelatedLot
 import com.procurement.auction.domain.binding.ApiVersionDeserializer
@@ -12,7 +15,6 @@ import com.procurement.auction.domain.binding.ApiVersionSerializer
 import com.procurement.auction.domain.binding.JsonDateTimeDeserializer
 import com.procurement.auction.domain.binding.JsonDateTimeSerializer
 import java.time.LocalDateTime
-import java.util.*
 
 @JsonPropertyOrder("version", "startDate", "usedSlots", "lots")
 data class PlannedAuction(
@@ -22,7 +24,7 @@ data class PlannedAuction(
     @JsonSerialize(using = JsonDateTimeSerializer::class)
     @JsonDeserialize(using = JsonDateTimeDeserializer::class)
     @field:JsonProperty("startDate") @param:JsonProperty("startDate") val startDateTime: LocalDateTime,
-    @field:JsonProperty("usedSlots") @param:JsonProperty("usedSlots") val usedSlots: Set<Int>,
+    @field:JsonProperty("usedSlots") @param:JsonProperty("usedSlots") val usedSlots: Set<KeyOfSlot>,
     @field:JsonProperty("lots") @param:JsonProperty("lots") val lots: LinkedHashMap<RelatedLot, Lot>) {
 
     @JsonPropertyOrder("id", "startDate", "electronicAuctionModalities")
@@ -40,8 +42,8 @@ data class PlannedAuction(
         ) {
             @JsonPropertyOrder("amount", "currency")
             data class EligibleMinimumDifference(
-                @field:JsonProperty("amount") @param:JsonProperty("amount") val amount: Double,
-                @field:JsonProperty("currency") @param:JsonProperty("currency") val currency: String
+                @field:JsonProperty("amount") @param:JsonProperty("amount") val amount: Amount,
+                @field:JsonProperty("currency") @param:JsonProperty("currency") val currency: Currency
             )
         }
     }

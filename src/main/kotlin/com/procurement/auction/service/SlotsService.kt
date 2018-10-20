@@ -3,6 +3,7 @@ package com.procurement.auction.service
 import com.procurement.auction.configuration.properties.DefaultSchedulerProperties
 import com.procurement.auction.configuration.properties.SchedulerProperties
 import com.procurement.auction.domain.CPID
+import com.procurement.auction.domain.Country
 import com.procurement.auction.domain.KeyOfSlot
 import com.procurement.auction.domain.LotsInfo
 import com.procurement.auction.domain.SlotDefinition
@@ -27,10 +28,10 @@ class DefaultSlotDefinition(override val keyOfSlot: KeyOfSlot,
 }
 
 interface SlotsService {
-    fun create(date: LocalDate, country: String): Slots
+    fun create(date: LocalDate, country: Country): Slots
     fun booking(lotsDetails: List<LotsInfo.Detail>, slots: Slots): Map<SlotDefinition, List<LotsInfo.Detail>>
 
-    fun loadSlots(selectedDate: LocalDate, country: String): Slots
+    fun loadSlots(selectedDate: LocalDate, country: Country): Slots
     fun saveSlots(cpid: CPID, bookedSlots: Set<KeyOfSlot>, slots: Slots): SlotsSaveResult
 
     fun validateCountLots(lotsInfo: LotsInfo)
@@ -47,7 +48,7 @@ class SlotsServiceImpl(schedulerProperties: SchedulerProperties,
             throw OutOfAuctionException()
     }
 
-    override fun create(date: LocalDate, country: String): Slots {
+    override fun create(date: LocalDate, country: Country): Slots {
         return Slots(
             isNew = true,
             date = date,
@@ -93,11 +94,11 @@ class SlotsServiceImpl(schedulerProperties: SchedulerProperties,
     }
 
     private fun bookingInSeveralSlots(lotsDetails: List<LotsInfo.Detail>,
-                                      slots: Slots): Map<SlotDefinition, List<LotsInfo.Detail>> /*Map<KeyOfSlot, Set<RelatedLot>>*/ =
+                                      slots: Slots): Map<SlotDefinition, List<LotsInfo.Detail>> =
         allocation(lotsDetails, slotsDefinitions = slots.definitions)
 
     private fun allocation(lotsDetails: List<LotsInfo.Detail>,
-                           slotsDefinitions: Set<SlotDefinition>): Map<SlotDefinition, List<LotsInfo.Detail>> /*Map<KeyOfSlot, Set<RelatedLot>>*/ {
+                           slotsDefinitions: Set<SlotDefinition>): Map<SlotDefinition, List<LotsInfo.Detail>> {
         var indexLot = 0
 
         val result = LinkedHashMap<SlotDefinition, List<LotsInfo.Detail>>()
@@ -129,7 +130,7 @@ class SlotsServiceImpl(schedulerProperties: SchedulerProperties,
         return emptyMap()
     }
 
-    override fun loadSlots(selectedDate: LocalDate, country: String): Slots =
+    override fun loadSlots(selectedDate: LocalDate, country: Country): Slots =
         slotsRepository.load(selectedDate, country) ?: create(selectedDate, country)
 
     override fun saveSlots(cpid: CPID, bookedSlots: Set<KeyOfSlot>, slots: Slots): SlotsSaveResult =
