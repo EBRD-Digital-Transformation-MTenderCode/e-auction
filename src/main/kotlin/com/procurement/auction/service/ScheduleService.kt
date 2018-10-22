@@ -2,108 +2,86 @@ package com.procurement.auction.service
 
 import com.procurement.auction.configuration.properties.AuctionProperties
 import com.procurement.auction.configuration.properties.GlobalProperties
+import com.procurement.auction.converter.AuctionConversionService
+import com.procurement.auction.converter.convert
 import com.procurement.auction.domain.CPID
 import com.procurement.auction.domain.Country
-import com.procurement.auction.domain.LotsInfo
 import com.procurement.auction.domain.OperationId
 import com.procurement.auction.domain.RelatedLot
-import com.procurement.auction.domain.SlotDefinition
 import com.procurement.auction.domain.request.schedule.ScheduleRQ
-import com.procurement.auction.domain.schedule.PlannedAuction
+import com.procurement.auction.domain.schedule.AuctionsDefinition
+import com.procurement.auction.domain.schedule.SlotDefinition
+import com.procurement.auction.entity.schedule.ScheduledAuctions
 import com.procurement.auction.exception.CalendarNoDataException
-import com.procurement.auction.exception.NoLotsForAuctionPlanningException
+import com.procurement.auction.exception.NoLotsToScheduleAuctionsException
 import com.procurement.auction.repository.CalendarRepository
-import com.procurement.auction.repository.PlannedAuctionKey
-import com.procurement.auction.repository.PlannedAuctionRepository
+import com.procurement.auction.repository.ScheduledAuctionKey
+import com.procurement.auction.repository.ScheduledAuctionsRepository
 import org.springframework.stereotype.Service
+import java.net.URL
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
 import java.util.*
 
 interface ScheduleService {
-    fun schedule(request: ScheduleRQ): PlannedAuction
+    fun schedule(request: ScheduleRQ): ScheduledAuctions
 }
 
 @Service
 class ScheduleServiceImpl(private val auctionProperties: AuctionProperties,
-                          private val plannedAuctionRepository: PlannedAuctionRepository,
+                          private val scheduledAuctionsRepository: ScheduledAuctionsRepository,
                           private val calendarRepository: CalendarRepository,
-                          private val slotsService: SlotsService) :
-    ScheduleService {
+                          private val slotsService: SlotsService,
+                          private val auctionConversionService: AuctionConversionService
+) : ScheduleService {
 
     companion object {
         private const val dateOffsetDays = 1L
     }
 
-    override fun schedule(request: ScheduleRQ): PlannedAuction {
-        if (request.data.electronicAuctions.details.isEmpty())
-            throw NoLotsForAuctionPlanningException()
+    private val urlAuction: String = genUrlAuctions()
 
-        val plannedAuctions = loadPlannedAuctions(request.context.cpid, request.context.operationId)
-        if (plannedAuctions != null) {
-            return plannedAuctions
+    override fun schedule(request: ScheduleRQ): ScheduledAuctions {
+        if (request.data.electronicAuctions.details.isEmpty())
+            throw NoLotsToScheduleAuctionsException()
+
+        val scheduledAuctions = loadScheduledAuctions(request.context.cpid, request.context.operationId)
+        if (scheduledAuctions != null) {
+            return scheduledAuctions
         }
 
-        val lotsInfo: LotsInfo = genLotsInfo(request)
-        slotsService.validateCountLots(lotsInfo)
+        val auctionsDefinition: AuctionsDefinition = auctionConversionService.convert(request)
+        slotsService.validateCountLots(auctionsDefinition)
 
-        val country = lotsInfo.country
+        val country = auctionsDefinition.country
 
-        var dateStartAuction = minDateOfStartAuction(lotsInfo.tenderPeriodEnd)
+        var dateStartAuction = minDateOfStartAuction(auctionsDefinition.tenderPeriodEnd)
         while (true) {
             val selectedDate = getWorkDayByCalendar(country, dateStartAuction)
             val slots = slotsService.loadSlots(selectedDate, country)
-            val booked = slotsService.booking(lotsInfo.details, slots)
+            val booked = slotsService.booking(auctionsDefinition.details, slots)
             if (booked.isNotEmpty()) {
-                val newPlannedAuctions =
-                    genPlannedAuctions(startDate = selectedDate, lotsInfo = lotsInfo, booked = booked)
-                val actualPlannedAuctions = savePlannedAuctions(request, newPlannedAuctions)
-                if (newPlannedAuctions != actualPlannedAuctions) {
-                    return actualPlannedAuctions
+                val newScheduledAuctions =
+                    genScheduledAuctions(startDate = selectedDate, auctionsDefinition = auctionsDefinition, booked = booked)
+                val actualScheduledAuctions = saveScheduledAuctions(request, newScheduledAuctions)
+                if (newScheduledAuctions != actualScheduledAuctions) {
+                    return actualScheduledAuctions
                 }
 
                 val cpid = request.context.cpid
                 slotsService.saveSlots(cpid = cpid,
                     bookedSlots = booked.keys.asSequence().map { it.keyOfSlot }.toSet(),
                     slots = slots)
-                return newPlannedAuctions
+                return newScheduledAuctions
             }
 
             dateStartAuction = dateStartAuction.plusDays(1)
         }
     }
 
-    private fun loadPlannedAuctions(cpid: CPID, operationId: OperationId): PlannedAuction? {
-        return plannedAuctionRepository.load(cpid, operationId)
-    }
-
-    private fun genLotsInfo(request: ScheduleRQ) = request.let {
-        val context = it.context
-        val cpid = context.cpid
-        val country = context.country
-        val data = it.data
-
-        LotsInfo(
-            cpid = cpid,
-            country = country,
-            tenderPeriodEnd = data.tenderPeriod.endDate.toLocalDate(),
-            details = data.electronicAuctions.details.map { detail ->
-                LotsInfo.Detail(
-                    relatedLot = detail.relatedLot,
-                    duration = auctionProperties.durationOneAuction,
-                    electronicAuctionModalities = detail.electronicAuctionModalities
-                        .map { electronicAuctionModality ->
-                            LotsInfo.Detail.ElectronicAuctionModality(
-                                eligibleMinimumDifference = LotsInfo.Detail.ElectronicAuctionModality.EligibleMinimumDifference(
-                                    amount = electronicAuctionModality.eligibleMinimumDifference.amount,
-                                    currency = electronicAuctionModality.eligibleMinimumDifference.currency
-                                )
-                            )
-                        }
-                )
-            }
-        )
+    private fun loadScheduledAuctions(cpid: CPID, operationId: OperationId): ScheduledAuctions? {
+        return scheduledAuctionsRepository.load(cpid, operationId)
     }
 
     fun minDateOfStartAuction(endDate: LocalDate): LocalDate = endDate.plusDays(dateOffsetDays)
@@ -122,55 +100,80 @@ class ScheduleServiceImpl(private val auctionProperties: AuctionProperties,
             getWorkDayByCalendar(country, dateStartAuction.plusDays(1))
     }
 
-    private fun genPlannedAuctions(startDate: LocalDate,
-                                   lotsInfo: LotsInfo,
-                                   booked: Map<SlotDefinition, List<LotsInfo.Detail>>): PlannedAuction {
-        val result = LinkedHashMap<RelatedLot, PlannedAuction.Lot>()
+    private fun genScheduledAuctions(startDate: LocalDate,
+                                     auctionsDefinition: AuctionsDefinition,
+                                     booked: Map<SlotDefinition, List<AuctionsDefinition.Detail>>): ScheduledAuctions {
+        val result = mutableListOf<ScheduledAuctions.ElectronicAuctions.Detail>()
         var minTime: LocalTime? = null
-        for ((slotDetail, lotsDetails) in booked) {
-            var startDateTimeSlot = LocalDateTime.of(startDate, slotDetail.startTime)
+        for ((slotDefinition, auctionsDetails) in booked) {
+            var startDateTimeSlot = LocalDateTime.of(startDate, slotDefinition.startTime)
 
-            if (minTime == null || minTime.isAfter(slotDetail.startTime))
-                minTime = slotDetail.startTime
+            if (minTime == null || minTime.isAfter(slotDefinition.startTime))
+                minTime = slotDefinition.startTime
 
-            for (lotDetail in lotsDetails) {
-                result[lotDetail.relatedLot] = PlannedAuction.Lot(
-                    id = UUID.randomUUID(),
-                    startDateTime = startDateTimeSlot,
-                    electronicAuctionModalities = lotDetail.electronicAuctionModalities
-                        .map {
-                            PlannedAuction.Lot.ElectronicAuctionModality(
-                                url = genUrl(lotsInfo.cpid, lotDetail.relatedLot),
-                                eligibleMinimumDifference = PlannedAuction.Lot.ElectronicAuctionModality.EligibleMinimumDifference(
-                                    amount = it.eligibleMinimumDifference.amount,
-                                    currency = it.eligibleMinimumDifference.currency
+            for (auctionDetail in auctionsDetails) {
+                result.add(
+                    ScheduledAuctions.ElectronicAuctions.Detail(
+                        id = UUID.randomUUID(),
+                        relatedLot = auctionDetail.relatedLot,
+                        auctionPeriod = ScheduledAuctions.ElectronicAuctions.Detail.AuctionPeriod(
+                            startDateTime = startDateTimeSlot
+                        ),
+                        electronicAuctionModalities = auctionDetail.electronicAuctionModalities
+                            .map {
+                                ScheduledAuctions.ElectronicAuctions.Detail.ElectronicAuctionModality(
+                                    url = genUrl(auctionsDefinition.cpid, auctionDetail.relatedLot),
+                                    eligibleMinimumDifference = ScheduledAuctions.ElectronicAuctions.Detail.ElectronicAuctionModality.EligibleMinimumDifference(
+                                        amount = it.eligibleMinimumDifference.amount,
+                                        currency = it.eligibleMinimumDifference.currency
+                                    )
                                 )
-                            )
-                        }
+                            }
+                    )
                 )
 
-                startDateTimeSlot = startDateTimeSlot.plus(lotDetail.duration)
+                startDateTimeSlot = startDateTimeSlot.plus(auctionDetail.duration)
             }
         }
 
-        return PlannedAuction(
-            version = GlobalProperties.Auction.apiVersion,
-            startDateTime = LocalDateTime.of(startDate, minTime),
-            lots = result,
-            usedSlots = booked.keys.asSequence().map { it.keyOfSlot }.toSet()
+        return ScheduledAuctions(
+            version = GlobalProperties.AuctionSchedule.apiVersion,
+            usedSlots = booked.keys.asSequence().map { it.keyOfSlot }.toSet(),
+            auctionPeriod = ScheduledAuctions.AuctionPeriod(
+                startDateTime = LocalDateTime.of(startDate, minTime)
+            ),
+            electronicAuctions = ScheduledAuctions.ElectronicAuctions(
+                details = result
+            )
         )
     }
 
-    private fun genUrl(cpid: CPID, relatedLot: RelatedLot) = "https://eauction.mtender.md/$cpid/$relatedLot"
+    private fun genUrl(cpid: CPID, relatedLot: RelatedLot): String = "$urlAuction/auctions/$cpid/$relatedLot"
 
-    private fun savePlannedAuctions(request: ScheduleRQ,
-                                    plannedAuction: PlannedAuction): PlannedAuction {
-        val operationHistory = PlannedAuctionKey(
+    private fun saveScheduledAuctions(request: ScheduleRQ,
+                                      scheduledAuctions: ScheduledAuctions): ScheduledAuctions {
+        val operationHistory = ScheduledAuctionKey(
             cpid = request.context.cpid,
             operationId = request.context.operationId,
             operationDate = request.context.operationDate
         )
-        return plannedAuctionRepository.insert(operationHistory, plannedAuction)
+        return scheduledAuctionsRepository.insert(operationHistory, scheduledAuctions)
+    }
+
+    private fun genUrlAuctions(): String {
+        val url = auctionProperties.url
+            ?: throw IllegalStateException("Not set the url of an auction.")
+        val protocol = url.protocol
+            ?: throw IllegalStateException("Not set the scheme of the url.")
+        val host = url.host
+            ?: throw IllegalStateException("Not set the domain name of the url.")
+        return getUrlASCII("$protocol://$host")
+    }
+
+    private fun getUrlASCII(uri: String) = try {
+        URL(uri).toURI().toASCIIString()
+    } catch (exception: Exception) {
+        throw IllegalStateException("Invalid the auction url: '$uri'.")
     }
 }
 

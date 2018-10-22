@@ -1,0 +1,27 @@
+{
+
+  "details": [
+    {
+      "id": "UUID", //ScheduledAuctions
+      "title": "", //tender.auctions[].title
+      "description": "", //tender.auctions[].description
+      "relatedLot": "39614de2-c348-11e8-987b-a7ad59777db6", //tender.auctions[].id
+      "value": {
+        "amount": 100.00, //tender.auctions[].value.amount
+        "currency": "MDL" //tender.auctions[].value.currency
+      },
+      "auctionPeriod": {
+        "startDate": "2018-09-28T18:02:25Z" //ScheduledAuctions
+      },
+      "electronicAuctionModalities": [//ScheduledAuctions
+        {
+          "url": "http://eauction.mtender.md/cpid/lot-id", //ScheduledAuctions
+          "eligibleMinimumDifference": {
+            "amount": 5.00,
+            "currency": "MDL"
+          }
+        }
+      ]
+    }
+  ]
+}

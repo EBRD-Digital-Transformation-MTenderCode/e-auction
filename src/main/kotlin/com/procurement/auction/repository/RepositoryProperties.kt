@@ -12,14 +12,6 @@ object RepositoryProperties {
             const val columnWorkDays = "work_days"
         }
 
-        object AuctionPlanning {
-            const val tableName = "auction_planning"
-            const val columnCpid = "cpid"
-            const val columnOperationId = "operation_id"
-            const val columnOperationDate = "operation_date"
-            const val columnData = "data"
-        }
-
         object Slots {
             const val tableName = "auction_slots"
             const val columnDate = "date"
@@ -30,6 +22,33 @@ object RepositoryProperties {
             const val columnMaxLine = "max_lines"
             const val columnCpids = "cpids"
             const val paramCpid = "newCpid"
+        }
+
+        object ScheduledAuctions {
+            const val tableName = "auction_schedule"
+            const val columnCpid = "cpid"
+            const val columnOperationId = "operation_id"
+            const val columnOperationDate = "operation_date"
+            const val columnAuctions = "auctions"
+        }
+
+        object StartedAuctions {
+            const val tableName = "auction_start"
+            const val columnCpid = "cpid"
+            const val columnOperationId = "operation_id"
+            const val columnOperationDate = "operation_date"
+            const val columnTender = "tender"
+            const val columnAuctions = "auctions"
+            const val columnBidders = "bidders"
+        }
+
+        object EndedAuctions {
+            const val tableName = "auction_end"
+            const val columnCpid = "cpid"
+            const val columnOperationId = "operation_id"
+            const val columnOperationDate = "operation_date"
+            const val columnTender = "tender"
+            const val columnAuctions = "auctions"
         }
     }
 }

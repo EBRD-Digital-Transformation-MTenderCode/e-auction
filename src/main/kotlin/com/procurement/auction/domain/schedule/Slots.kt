@@ -1,5 +1,8 @@
-package com.procurement.auction.domain
+package com.procurement.auction.domain.schedule
 
+import com.procurement.auction.domain.CPID
+import com.procurement.auction.domain.Country
+import com.procurement.auction.domain.KeyOfSlot
 import java.time.Duration
 import java.time.LocalDate
 import java.time.LocalTime

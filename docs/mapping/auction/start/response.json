@@ -1,0 +1,69 @@
+{
+  "id": "id-1",
+  "data": {
+    "isAuctionStarted": true,
+    "auctionsLinks": [
+      {
+        "owner": "445f6851-c908-407d-9b45-14b92f3e964b",//bidsData[].owner -> bidders[].platformId
+        "links": [
+          {
+            "relatedBid": "a80b61e0-c348-11e8-b9a8-dd319bd9bbdf",//bidsData[].bids[].id -> bidders[].bids[].id
+            "url": "http://eauction.mtender.md/cpid/lot-id?bid_id={bid_id}&amp;sign={sign}" //ScheduledAuctions -> bidders
+          }
+        ]
+      }
+    ],
+    "electronicAuctions": {
+      "details": [
+        {
+          "id": "c15501a1-8be0-4734-bd5c-000000000888", //Generated -> auctions[].id
+          "relatedLot": "39614de2-c348-11e8-987b-a7ad59777db6", //tender.auctions[].id -> auctions[].relatedLot
+          "auctionPeriod": {
+            "startDate": "2018-09-28T18:02:25Z" //ScheduledAuctions -> auctions[].auctionPeriod.startDate
+          },
+          "electronicAuctionModalities": [
+          {
+            "url": "http://eauction.mtender.md/cpid/lot-id", //ScheduledAuctions -> auctions[].electronicAuctionModalities[].url
+            "eligibleMinimumDifference": {
+              "amount": 5.00, //ScheduledAuctions -> auctions[].electronicAuctionModalities[].eligibleMinimumDifference.amount
+              "currency": "MDL" //ScheduledAuctions -> auctions[].electronicAuctionModalities[].eligibleMinimumDifference.currency
+            }
+          }
+        ]
+        }
+      ]
+    },
+    "auctionsData": {
+      "tender": {
+        "id": "ocds-t1s2t3-MD-1538221557422", //tender.id -> tender.cpid
+        "title": "", //tender.title -> tender.title
+        "description": "", //tender.description -> tender.description
+        "lots": [
+          {
+            "id": "39614de2-c348-11e8-987b-a7ad59777db6", //tender.auctions[].id -> auctions[].relatedLot
+            "title": "", //tender.auctions[].title -> auctions[].title
+            "description": "",//tender.auctions[].description -> auctions[].description
+            "eligibleMinimumDifference": 5.00, //ScheduledAuctions -> auctions[].electronicAuctionModalities.eligibleMinimumDifference
+            "value": {
+              "amount": 100.00, //tender.auctions[].value.amount -> auctions[].value.amount
+              "currency": "MDL" //tender.auctions[].value.currency -> auctions[].value.currency
+            },
+            "auctionPeriod": {
+              "startDate": "2018-09-28T18:02:25Z" //ScheduledAuctions -> auctions[].auctionPeriod.startDate
+            }
+          }
+        ]
+      },
+      "bids": [
+        {
+          "id": "a80b61e0-c348-11e8-b9a8-dd319bd9bbdf",//bidsData.bids[].id -> bidders[].bids[].id
+          "value": 150.00, //bidsData.bids[].value.amounr -> bids[].value.amount
+          "relatedLot": "39614de2-c348-11e8-987b-a7ad59777db6", //bidsData.bids[].relatedLots[0] -> bidders[].bids[].relatedLot
+          "pendingDate": "2018-09-28T18:02:25Z", //bidsData.bids[].pendingDate  -> bidders[].bids[].pendingDate
+          "sign": "fcecd630-c63b-11e8-a76b-31c7a0ba1585" //Generate -> bidders[].bids[].sign
+        }
+      ]
+    }
+  },
+  "version": "0.0.1"
+}

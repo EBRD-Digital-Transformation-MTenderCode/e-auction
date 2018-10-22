@@ -1,0 +1,69 @@
+{
+  "id": "b3457943-758d-4771-b814-95168c1f1e48",
+  "data": {
+    "isAuctionStarted": true,
+    "auctionsLinks": [
+      {
+        "owner": "445f6851-c908-407d-9b45-14b92f3e964b",
+        "links": [
+          {
+            "relatedBid": "a80b61e0-c348-11e8-b9a8-dd319bd9bbdf",
+            "url": "http://eauction.mtender.md/cpid/lot-id?bid_id={bid_id}&amp;sign={sign}"
+          }
+        ]
+      }
+    ],
+    "electronicAuctions": {
+      "details": [
+        {
+          "id": "c15501a1-8be0-4734-bd5c-000000000888",
+          "relatedLot": "39614de2-c348-11e8-987b-a7ad59777db6",
+          "auctionPeriod": {
+            "startDate": "2018-09-28T18:02:25Z"
+          },
+          "electronicAuctionModalities": [
+            {
+              "url": "http://eauction.mtender.md/cpid/lot-id",
+              "eligibleMinimumDifference": {
+                "amount": 5.00,
+                "currency": "MDL"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    "auctionsData": {
+      "tender": {
+        "id": "ocds-t1s2t3-MD-1538221557422",
+        "title": "",
+        "description": "",
+        "lots": [
+          {
+            "id": "39614de2-c348-11e8-987b-a7ad59777db6",
+            "title": "",
+            "description": "",
+            "eligibleMinimumDifference": 5.00,
+            "value": {
+              "amount": 100.00,
+              "currency": ""
+            },
+            "auctionPeriod": {
+              "startDate": "2018-09-28T18:02:25Z"
+            }
+          }
+        ]
+      },
+      "bids": [
+        {
+          "id": "a80b61e0-c348-11e8-b9a8-dd319bd9bbdf",
+          "value": 150.00,
+          "relatedLot": "39614de2-c348-11e8-987b-a7ad59777db6",
+          "pendingDate": "2018-09-28T18:02:25Z",
+          "sign": "fcecd630-c63b-11e8-a76b-31c7a0ba1585"
+        }
+      ]
+    }
+  },
+  "version": "0.0.1"
+}

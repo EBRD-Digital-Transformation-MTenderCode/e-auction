@@ -1,5 +1,6 @@
 package com.procurement.auction.domain.request.schedule
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.annotation.JsonPropertyOrder
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize
@@ -19,6 +20,7 @@ import com.procurement.auction.domain.binding.JsonDateTimeSerializer
 import com.procurement.auction.domain.request.Command
 import java.time.LocalDateTime
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 @JsonPropertyOrder("id", "command", "context", "data", "version")
 data class ScheduleRQ(
     @field:JsonProperty("id") @param:JsonProperty("id") val id: CommandId,
@@ -54,9 +56,8 @@ data class ScheduleRQ(
         data class ElectronicAuctions(
             @field:JsonProperty("details") @param:JsonProperty("details") val details: List<Detail>
         ) {
-            @JsonPropertyOrder("id", "relatedLot", "electronicAuctionModalities")
+            @JsonPropertyOrder("relatedLot", "electronicAuctionModalities")
             data class Detail(
-                @field:JsonProperty("id") @param:JsonProperty("id") val id: String,
                 @field:JsonProperty("relatedLot") @param:JsonProperty("relatedLot") val relatedLot: RelatedLot,
                 @field:JsonProperty("electronicAuctionModalities") @param:JsonProperty("electronicAuctionModalities") val electronicAuctionModalities: List<ElectronicAuctionModalities>
             ) {

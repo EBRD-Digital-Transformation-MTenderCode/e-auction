@@ -4,13 +4,11 @@ import com.datastax.driver.core.BoundStatement
 import com.datastax.driver.core.Session
 import com.procurement.auction.domain.Country
 import com.procurement.auction.exception.database.ReadOperationException
-import org.springframework.stereotype.Repository
 
 interface CalendarRepository {
     fun loadWorkDays(country: Country, year: Int, month: Int): Set<Int>
 }
 
-@Repository
 class CalendarRepositoryImpl(private val session: Session) : CalendarRepository {
     companion object {
         private const val loadCalendarCQL = """

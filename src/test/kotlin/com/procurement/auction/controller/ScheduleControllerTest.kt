@@ -7,14 +7,16 @@ import com.nhaarman.mockito_kotlin.whenever
 import com.procurement.auction.AbstractBase
 import com.procurement.auction.domain.Amount
 import com.procurement.auction.domain.ApiVersion
+import com.procurement.auction.domain.AuctionId
 import com.procurement.auction.domain.CPID
 import com.procurement.auction.domain.CommandId
 import com.procurement.auction.domain.Currency
-import com.procurement.auction.domain.LotId
 import com.procurement.auction.domain.RelatedLot
 import com.procurement.auction.domain.binding.JsonDateTimeDeserializer
-import com.procurement.auction.domain.schedule.PlannedAuction
+import com.procurement.auction.entity.schedule.ScheduledAuctions
 import com.procurement.auction.exception.JsonParseToObjectException
+import com.procurement.auction.service.AuctionEndService
+import com.procurement.auction.service.AuctionStartService
 import com.procurement.auction.service.ScheduleService
 import org.hamcrest.core.IsEqual.equalTo
 import org.junit.jupiter.api.BeforeEach
@@ -35,7 +37,7 @@ class ScheduleControllerTest : AbstractBase() {
 
         private val commandId: CommandId = UUID.fromString("96977fc8-9ef1-444c-9e3c-90b1db361173")
         private const val cpid: CPID = "cpid-1"
-        private val lotid: LotId = UUID.fromString("b405fe10-f954-400e-bc39-49a03948991a")
+        private val auctionId: AuctionId = UUID.fromString("b405fe10-f954-400e-bc39-49a03948991a")
         private val relatedLot: RelatedLot = UUID.fromString("358404aa-93b9-41b0-be7d-ab5f8db01123")
         private const val auctionsStartDateText = "2018-09-14T08:48:17Z"
         private val auctionsStartDate = JsonDateTimeDeserializer.deserialize(auctionsStartDateText)
@@ -46,36 +48,49 @@ class ScheduleControllerTest : AbstractBase() {
         private const val currency: Currency = "MDL"
         private val apiVersion = ApiVersion(1, 0, 0)
 
-        private val auctionPlanningInfo = PlannedAuction(
+        private val scheduledAuctions = ScheduledAuctions(
             version = apiVersion,
-            startDateTime = auctionsStartDate,
-            lots = LinkedHashMap<LotId, PlannedAuction.Lot>().apply {
-                this[relatedLot] = PlannedAuction.Lot(
-                    id = lotid,
-                    startDateTime = lotStartDate,
-                    electronicAuctionModalities = listOf(
-                        PlannedAuction.Lot.ElectronicAuctionModality(
-                            url = auctionUrl,
-                            eligibleMinimumDifference = PlannedAuction.Lot.ElectronicAuctionModality.EligibleMinimumDifference(
-                                amount = amount,
-                                currency = currency
+            usedSlots = setOf(1),
+            auctionPeriod = ScheduledAuctions.AuctionPeriod(
+                startDateTime = auctionsStartDate
+            ),
+            electronicAuctions = ScheduledAuctions.ElectronicAuctions(
+                details = mutableListOf<ScheduledAuctions.ElectronicAuctions.Detail>().apply {
+                    add(
+                        ScheduledAuctions.ElectronicAuctions.Detail(
+                            id = auctionId,
+                            relatedLot = relatedLot,
+                            auctionPeriod = ScheduledAuctions.ElectronicAuctions.Detail.AuctionPeriod(
+                                startDateTime = lotStartDate
+                            ),
+                            electronicAuctionModalities = listOf(
+                                ScheduledAuctions.ElectronicAuctions.Detail.ElectronicAuctionModality(
+                                    url = auctionUrl,
+                                    eligibleMinimumDifference = ScheduledAuctions.ElectronicAuctions.Detail.ElectronicAuctionModality.EligibleMinimumDifference(
+                                        amount = amount,
+                                        currency = currency
+                                    )
+                                )
                             )
                         )
                     )
-                )
-            },
-            usedSlots = setOf(1)
+                }
+            )
         )
     }
 
     private val objectMapper = ObjectMapper()
     private lateinit var scheduleService: ScheduleService
+    private lateinit var auctionStartService: AuctionStartService
+    private lateinit var auctionEndService: AuctionEndService
     private lateinit var mockMvc: MockMvc
 
     @BeforeEach
     fun init() {
         scheduleService = mock()
-        val controller = ScheduleController(objectMapper, scheduleService)
+        auctionStartService = mock()
+        auctionEndService = mock()
+        val controller = ScheduleController(objectMapper, scheduleService, auctionStartService, auctionEndService)
         val exceptionHandler = WebExceptionHandler()
         mockMvc = MockMvcBuilders.standaloneSetup(controller)
             .setControllerAdvice(exceptionHandler)
@@ -84,11 +99,11 @@ class ScheduleControllerTest : AbstractBase() {
 
     @Test
     @DisplayName("Success")
-    fun success() {
+    fun schedule() {
         val content = RESOURCES.load("json/schedule/request.json")
 
         whenever(scheduleService.schedule(any()))
-            .thenReturn(auctionPlanningInfo)
+            .thenReturn(scheduledAuctions)
 
         mockMvc.perform(
             post(URL)
@@ -99,7 +114,7 @@ class ScheduleControllerTest : AbstractBase() {
             .andExpect(jsonPath("$.id", equalTo("$commandId")))
             .andExpect(jsonPath("$.data.auctionPeriod.startDate", equalTo(auctionsStartDateText)))
             .andExpect(jsonPath("$.data.electronicAuctions.details.length()", equalTo(1)))
-            .andExpect(jsonPath("$.data.electronicAuctions.details[0].id", equalTo("$lotid")))
+            .andExpect(jsonPath("$.data.electronicAuctions.details[0].id", equalTo("$auctionId")))
             .andExpect(jsonPath("$.data.electronicAuctions.details[0].relatedLot", equalTo("$relatedLot")))
             .andExpect(
                 jsonPath(
@@ -132,7 +147,7 @@ class ScheduleControllerTest : AbstractBase() {
 
     @Test
     @DisplayName("Invalid a payload of a request")
-    fun bedRequest() {
+    fun scheduleBedRequest() {
         whenever(scheduleService.schedule(any()))
             .thenThrow(JsonParseToObjectException(INVALID_PAYLOAD, RuntimeException()))
 

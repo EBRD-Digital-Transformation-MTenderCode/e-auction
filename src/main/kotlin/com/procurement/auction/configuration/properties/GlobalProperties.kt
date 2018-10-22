@@ -9,7 +9,16 @@ object GlobalProperties {
         val apiVersion = ApiVersion(1, 0, 0)
     }
 
-    object Auction {
+    object AuctionSchedule {
+        val apiVersion = ApiVersion(1, 0, 0)
+    }
+
+    object AuctionStart {
+        val apiVersion = ApiVersion(1, 0, 0)
+    }
+
+
+    object AuctionEnd {
         val apiVersion = ApiVersion(1, 0, 0)
     }
 

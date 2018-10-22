@@ -3,7 +3,9 @@ package com.procurement.auction.domain.request
 import com.fasterxml.jackson.annotation.JsonValue
 
 enum class Command(val code: String, val id: Int) {
-    SCHEDULE("scheduleAuctions", 1);
+    SCHEDULE("scheduleAuctions", 1),
+    AUCTIONS_START("auctionsStart", 2),
+    AUCTIONS_END("auctionsEnd", 3);
 
     companion object {
         val map: Map<Int, Command> = mutableMapOf<Int, Command>().apply {

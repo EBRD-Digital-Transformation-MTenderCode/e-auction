@@ -1,0 +1,85 @@
+{
+  "id": "b3457943-758d-4771-b814-95168c1f1e48",
+  "data": {
+    "tender": {
+      "auctionPeriod": {
+        "startDate": "2011-06-01T17:59:00Z",
+        "endDate": "2011-06-01T17:59:00Z"
+      },
+      "electronicAuctions": {
+        "details": [
+          {
+            "id": "8efcb482-1555-4aef-a899-c5212b88fcf1",
+            "relatedLot": "39614de2-c348-11e8-987b-a7ad59777db6",
+            "auctionPeriod": {
+              "startDate": "2011-06-01T17:59:00Z",
+              "endDate": "2011-06-01T17:59:00Z"
+            },
+            "electronicAuctionProgress": [
+              {
+                "id": "1",
+                "period": {
+                  "startDate": "2011-06-01T17:59:00Z",
+                  "endDate": "2011-06-01T17:59:00Z"
+                },
+                "breakdown": [
+                  {
+                    "relatedBid": "a80b61e0-c348-11e8-b9a8-dd319bd9bbdf",
+                    "status": "met",
+                    "dateMet": "2011-06-01T17:59:00Z",
+                    "value": {
+                      "amount": 1001.00,
+                      "currency": ""
+                    }
+                  },
+                  {
+                    "relatedBid": "fcecd630-c63b-11e8-a76b-31c7a0ba1585",
+                    "status": "met",
+                    "dateMet": "2011-06-01T17:59:00Z",
+                    "value": {
+                      "amount": 1002.00,
+                      "currency": ""
+                    }
+                  },
+                  {
+                    "relatedBid": "d80449c0-cc80-11e8-bfb9-f9c4db0b58fc",
+                    "status": "met",
+                    "dateMet": "2011-06-01T17:59:00Z",
+                    "value": {
+                      "amount": 1000.00,
+                      "currency": ""
+                    }
+                  }
+                ]
+              }
+            ],
+            "electronicAuctionResult": [
+              {
+                "relatedBid": "a80b61e0-c348-11e8-b9a8-dd319bd9bbdf",
+                "value": {
+                  "amount": 981.00,
+                  "currency": ""
+                }
+              },
+              {
+                "relatedBid": "fcecd630-c63b-11e8-a76b-31c7a0ba1585",
+                "value": {
+                  "amount": 980.00,
+                  "currency": ""
+                }
+              },
+              {
+                "relatedBid": "d80449c0-cc80-11e8-bfb9-f9c4db0b58fc",
+                "value": {
+                  "amount": 990.00,
+                  "currency": ""
+                }
+              }
+            ]
+          }
+        ]
+      }
+    }
+  },
+  "version": "0.0.1"
+}

@@ -1,5 +1,6 @@
 package com.procurement.auction.domain
 
+import com.procurement.auction.domain.schedule.Slots
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotEquals
 import org.junit.jupiter.api.Test

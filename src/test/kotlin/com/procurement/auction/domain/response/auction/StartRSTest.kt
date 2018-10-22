@@ -1,4 +1,4 @@
-package com.procurement.auction.domain.schedule
+package com.procurement.auction.domain.response.auction
 
 import com.procurement.auction.AbstractBase
 import com.procurement.auction.service.toJson
@@ -7,11 +7,11 @@ import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.Test
 
-class PlannedAuctionTest : AbstractBase() {
+class StartRSTest : AbstractBase() {
     @Test
     fun test() {
-        val json = RESOURCES.load("json/schedule/auction_info.json")
-        val obj = mapper.toObject<PlannedAuction>(json)
+        val json = RESOURCES.load("json/auction/start/response.json")
+        val obj = mapper.toObject<StartRS>(json)
         assertNotNull(obj)
 
         val jsonFromObj = mapper.toJson(obj)

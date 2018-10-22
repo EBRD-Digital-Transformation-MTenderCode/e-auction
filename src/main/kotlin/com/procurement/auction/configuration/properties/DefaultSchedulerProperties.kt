@@ -1,8 +1,8 @@
 package com.procurement.auction.configuration.properties
 
 import com.procurement.auction.domain.KeyOfSlot
-import com.procurement.auction.domain.SlotDefinition
 import com.procurement.auction.domain.binding.JsonTimeDeserializer
+import com.procurement.auction.domain.schedule.SlotDefinition
 import com.procurement.auction.service.DefaultSlotDefinition
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -30,17 +30,17 @@ class DefaultSchedulerProperties(schedulerProperties: SchedulerProperties) {
 
     init {
         val setSlotTimes = TreeSet<LocalTime>()
-        val defaultsSlotsDetails = TreeSet<SlotDefinition>()
+        val defaultsSlotsDefinitions = TreeSet<SlotDefinition>()
         var key: KeyOfSlot = GlobalProperties.Scheduler.keyOfFirstSlot
-        val slotsInfo = getSlotsInfo(schedulerProperties)
-        for (slotInfo in slotsInfo) {
-            val startTime = startTime(slotInfo)
+        val slotsDefinitions = getSlotsDefinitions(schedulerProperties)
+        for (slotDefinition in slotsDefinitions) {
+            val startTime = startTime(slotDefinition)
             if (!setSlotTimes.add(startTime))
                 throw IllegalStateException("Times [$startTime] of the start slots is duplicate.")
 
-            val endTime = endTime(slotInfo) ?: endTimeAllSlots
-            val maxLines = slotInfo.maxLines ?: qtyLinesPerSlot
-            defaultsSlotsDetails.add(
+            val endTime = endTime(slotDefinition) ?: endTimeAllSlots
+            val maxLines = slotDefinition.maxLines ?: qtyLinesPerSlot
+            defaultsSlotsDefinitions.add(
                 DefaultSlotDefinition(
                     keyOfSlot = key,
                     startTime = startTime,
@@ -50,15 +50,15 @@ class DefaultSchedulerProperties(schedulerProperties: SchedulerProperties) {
             )
             key++
         }
-        slotsDefinitions = defaultsSlotsDetails
+        this.slotsDefinitions = defaultsSlotsDefinitions
 
-        log.info("Info of slots: ${slotsDefinitionInfo(slotsDefinitions)}")
+        log.info("Info of slots: ${slotsDefinitionsInfo(this.slotsDefinitions)}")
     }
 
-    private fun getSlotsInfo(schedulerProperties: SchedulerProperties): List<SchedulerProperties.SlotDefinition> {
-        val slotsInfo = schedulerProperties.beginTimeOfSlots!!
-        if (slotsInfo.isEmpty()) throw IllegalStateException("No slot definition.")
-        return slotsInfo
+    private fun getSlotsDefinitions(schedulerProperties: SchedulerProperties): List<SchedulerProperties.SlotDefinition> {
+        val slotsDefinitions = schedulerProperties.slots!!
+        if (slotsDefinitions.isEmpty()) throw IllegalStateException("No slot definition.")
+        return slotsDefinitions
     }
 
     private fun startTime(slotDefinition: SchedulerProperties.SlotDefinition): LocalTime {
@@ -72,7 +72,7 @@ class DefaultSchedulerProperties(schedulerProperties: SchedulerProperties) {
             JsonTimeDeserializer.deserialize(it)
         }
 
-    private fun slotsDefinitionInfo(set: TreeSet<SlotDefinition>): String {
+    private fun slotsDefinitionsInfo(set: TreeSet<SlotDefinition>): String {
         val sb = StringBuilder()
         sb.appendln("")
         for (detail in set) {

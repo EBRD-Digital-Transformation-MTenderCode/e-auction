@@ -12,6 +12,9 @@ cassandra:
   password:
 
 auctions:
+  url:
+    protocol: http
+    host: auction.eprocurement.systems
   qty-rounds: 3
   qty-participants: 4
   duration-one-step: 180s
@@ -19,7 +22,7 @@ auctions:
   duration-pause-after-auction: 30s
 
 scheduler:
-  begin-time-of-slots:
+  slots:
   - start-time: "06:00Z"
 #    end-time: "15:00Z"
     max-lines: 10

@@ -1,12 +1,17 @@
-package com.procurement.auction.domain
+package com.procurement.auction.domain.schedule
 
+import com.procurement.auction.domain.Amount
+import com.procurement.auction.domain.CPID
+import com.procurement.auction.domain.Country
+import com.procurement.auction.domain.Currency
+import com.procurement.auction.domain.RelatedLot
 import java.time.Duration
 import java.time.LocalDate
 
-data class LotsInfo(val cpid: CPID,
-                    val country: Country,
-                    val tenderPeriodEnd: LocalDate,
-                    val details: List<Detail>) {
+data class AuctionsDefinition(val cpid: CPID,
+                              val country: Country,
+                              val tenderPeriodEnd: LocalDate,
+                              val details: List<Detail>) {
 
     class Detail(val relatedLot: RelatedLot,
                  val duration: Duration,

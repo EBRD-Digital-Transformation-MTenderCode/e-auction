@@ -6,7 +6,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties
 class SchedulerProperties {
     var endTimeAllSlots: String? = null
     var qtyLinesPerSlot: Int? = null
-    var beginTimeOfSlots: MutableList<SlotDefinition>? = mutableListOf()
+    var slots: MutableList<SlotDefinition>? = mutableListOf()
 
     class SlotDefinition(var startTime: String? = null,
                          var endTime: String? = null,

@@ -5,9 +5,9 @@ import com.procurement.auction.configuration.properties.SchedulerProperties
 import com.procurement.auction.domain.CPID
 import com.procurement.auction.domain.Country
 import com.procurement.auction.domain.KeyOfSlot
-import com.procurement.auction.domain.LotsInfo
-import com.procurement.auction.domain.SlotDefinition
-import com.procurement.auction.domain.Slots
+import com.procurement.auction.domain.schedule.AuctionsDefinition
+import com.procurement.auction.domain.schedule.SlotDefinition
+import com.procurement.auction.domain.schedule.Slots
 import com.procurement.auction.exception.OutOfAuctionException
 import com.procurement.auction.repository.SlotsRepository
 import com.procurement.auction.repository.SlotsSaveResult
@@ -29,12 +29,12 @@ class DefaultSlotDefinition(override val keyOfSlot: KeyOfSlot,
 
 interface SlotsService {
     fun create(date: LocalDate, country: Country): Slots
-    fun booking(lotsDetails: List<LotsInfo.Detail>, slots: Slots): Map<SlotDefinition, List<LotsInfo.Detail>>
+    fun booking(auctionsDetails: List<AuctionsDefinition.Detail>, slots: Slots): Map<SlotDefinition, List<AuctionsDefinition.Detail>>
 
     fun loadSlots(selectedDate: LocalDate, country: Country): Slots
     fun saveSlots(cpid: CPID, bookedSlots: Set<KeyOfSlot>, slots: Slots): SlotsSaveResult
 
-    fun validateCountLots(lotsInfo: LotsInfo)
+    fun validateCountLots(auctionsDefinition: AuctionsDefinition)
 }
 
 @Service
@@ -43,8 +43,8 @@ class SlotsServiceImpl(schedulerProperties: SchedulerProperties,
 
     private val defaultSchedulerProperties = DefaultSchedulerProperties(schedulerProperties)
 
-    override fun validateCountLots(lotsInfo: LotsInfo) {
-        if (allocation(lotsInfo.details, defaultSchedulerProperties.slotsDefinitions).isEmpty())
+    override fun validateCountLots(auctionsDefinition: AuctionsDefinition) {
+        if (allocation(auctionsDefinition.details, defaultSchedulerProperties.slotsDefinitions).isEmpty())
             throw OutOfAuctionException()
     }
 
@@ -54,13 +54,13 @@ class SlotsServiceImpl(schedulerProperties: SchedulerProperties,
             date = date,
             country = country,
             definitions = TreeSet<Slots.Definition>().apply {
-                for (slotDetail in defaultSchedulerProperties.slotsDefinitions) {
+                for (slotDefinition in defaultSchedulerProperties.slotsDefinitions) {
                     this.add(
                         Slots.Definition(
-                            keyOfSlot = slotDetail.keyOfSlot,
-                            startTime = slotDetail.startTime,
-                            endTime = slotDetail.endTime,
-                            maxLines = slotDetail.maxLines,
+                            keyOfSlot = slotDefinition.keyOfSlot,
+                            startTime = slotDefinition.startTime,
+                            endTime = slotDefinition.endTime,
+                            maxLines = slotDefinition.maxLines,
                             cpids = emptySet()
                         )
                     )
@@ -69,62 +69,63 @@ class SlotsServiceImpl(schedulerProperties: SchedulerProperties,
         )
     }
 
-    override fun booking(lotsDetails: List<LotsInfo.Detail>, slots: Slots): Map<SlotDefinition, List<LotsInfo.Detail>> {
-        val result = bookingInOneSlot(lotsDetails, slots)
-        return if (result.isNotEmpty()) result else bookingInSeveralSlots(lotsDetails, slots)
+    override fun booking(auctionsDetails: List<AuctionsDefinition.Detail>,
+                         slots: Slots): Map<SlotDefinition, List<AuctionsDefinition.Detail>> {
+        val result = bookingInOneSlot(auctionsDetails, slots)
+        return if (result.isNotEmpty()) result else bookingInSeveralSlots(auctionsDetails, slots)
     }
 
-    private fun bookingInOneSlot(lotsDetails: List<LotsInfo.Detail>,
-                                 slots: Slots): Map<SlotDefinition, List<LotsInfo.Detail>> {
-        for (slotDetail in (slots.definitions).reversed()) {
-            if (slotDetail.hasAvailableLines()) {
-                val durationAllAuctions = durationAllAuctions(lotsDetails)
-                if (slotDetail.duration >= durationAllAuctions) return mapOf(slotDetail to lotsDetails)
+    private fun bookingInOneSlot(auctionsDetails: List<AuctionsDefinition.Detail>,
+                                 slots: Slots): Map<SlotDefinition, List<AuctionsDefinition.Detail>> {
+        for (slotDefinition in (slots.definitions).reversed()) {
+            if (slotDefinition.hasAvailableLines()) {
+                val durationAllAuctions = durationAllAuctions(auctionsDetails)
+                if (slotDefinition.duration >= durationAllAuctions) return mapOf(slotDefinition to auctionsDetails)
             }
         }
         return emptyMap()
     }
 
-    private fun durationAllAuctions(lotsDetails: List<LotsInfo.Detail>): Duration {
+    private fun durationAllAuctions(auctionsDetails: List<AuctionsDefinition.Detail>): Duration {
         var sum = Duration.ZERO
-        for (lot in lotsDetails) {
-            sum += lot.duration
+        for (auctionDetail in auctionsDetails) {
+            sum += auctionDetail.duration
         }
         return sum
     }
 
-    private fun bookingInSeveralSlots(lotsDetails: List<LotsInfo.Detail>,
-                                      slots: Slots): Map<SlotDefinition, List<LotsInfo.Detail>> =
-        allocation(lotsDetails, slotsDefinitions = slots.definitions)
+    private fun bookingInSeveralSlots(auctionsDetails: List<AuctionsDefinition.Detail>,
+                                      slots: Slots): Map<SlotDefinition, List<AuctionsDefinition.Detail>> =
+        allocation(auctionsDetails, slotsDefinitions = slots.definitions)
 
-    private fun allocation(lotsDetails: List<LotsInfo.Detail>,
-                           slotsDefinitions: Set<SlotDefinition>): Map<SlotDefinition, List<LotsInfo.Detail>> {
-        var indexLot = 0
+    private fun allocation(auctionsDetails: List<AuctionsDefinition.Detail>,
+                           slotsDefinitions: Set<SlotDefinition>): Map<SlotDefinition, List<AuctionsDefinition.Detail>> {
+        var indexAuctionDetail = 0
 
-        val result = LinkedHashMap<SlotDefinition, List<LotsInfo.Detail>>()
-        for (slotDetail in slotsDefinitions) {
-            if (!slotDetail.hasAvailableLines()) continue
+        val auctionsBySlots = LinkedHashMap<SlotDefinition, List<AuctionsDefinition.Detail>>()
+        for (slotDefinition in slotsDefinitions) {
+            if (!slotDefinition.hasAvailableLines()) continue
 
-            val setRelatedLots = mutableListOf<LotsInfo.Detail>()
-            var slotDuration = slotDetail.duration.seconds
+            val auctionsDetailsInSlot = mutableListOf<AuctionsDefinition.Detail>()
+            var slotDuration = slotDefinition.duration.seconds
 
             lotsLoop@
             while (true) {
-                if (indexLot < lotsDetails.size) {
-                    val lot = lotsDetails[indexLot]
-                    val auctionDuration = lot.duration.seconds
+                if (indexAuctionDetail < auctionsDetails.size) {
+                    val auctionDetail = auctionsDetails[indexAuctionDetail]
+                    val auctionDuration = auctionDetail.duration.seconds
                     if (auctionDuration <= slotDuration) {
-                        setRelatedLots.add(lot)
+                        auctionsDetailsInSlot.add(auctionDetail)
                         slotDuration -= auctionDuration
-                        indexLot++
+                        indexAuctionDetail++
                     } else
                         break@lotsLoop
                 } else
                     break@lotsLoop
             }
 
-            result[slotDetail] = setRelatedLots
-            if (indexLot == lotsDetails.size) return result
+            auctionsBySlots[slotDefinition] = auctionsDetailsInSlot
+            if (indexAuctionDetail == auctionsDetails.size) return auctionsBySlots
         }
 
         return emptyMap()
