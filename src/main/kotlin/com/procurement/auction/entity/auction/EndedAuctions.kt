@@ -43,12 +43,14 @@ data class EndedAuctions(
         @JsonPropertyOrder("id",
             "relatedLot",
             "auctionPeriod",
+            "electronicAuctionModalities",
             "electronicAuctionProgress",
             "electronicAuctionResult")
         data class Detail(
             @field:JsonProperty("id") @param:JsonProperty("id") val id: AuctionId,
             @field:JsonProperty("relatedLot") @param:JsonProperty("relatedLot") val relatedLot: RelatedLot,
             @field:JsonProperty("auctionPeriod") @param:JsonProperty("auctionPeriod") val auctionPeriod: AuctionPeriod,
+            @field:JsonProperty("electronicAuctionModalities") @param:JsonProperty("electronicAuctionModalities") val electronicAuctionModalities: List<ElectronicAuctionModality>,
             @field:JsonProperty("electronicAuctionProgress") @param:JsonProperty("electronicAuctionProgress") val electronicAuctionProgress: List<ElectronicAuctionProgress>,
             @field:JsonProperty("electronicAuctionResult") @param:JsonProperty("electronicAuctionResult") val electronicAuctionResult: List<ElectronicAuctionResult>
         ) {
@@ -61,6 +63,18 @@ data class EndedAuctions(
                 @JsonSerialize(using = JsonDateTimeSerializer::class)
                 @field:JsonProperty("endDate") @param:JsonProperty("endDate") val endDate: LocalDateTime
             )
+
+            @JsonPropertyOrder("url", "eligibleMinimumDifference")
+            data class ElectronicAuctionModality(
+                @field:JsonProperty("url") @param:JsonProperty("url") val url: String,
+                @field:JsonProperty("eligibleMinimumDifference") @param:JsonProperty("eligibleMinimumDifference") val eligibleMinimumDifference: EligibleMinimumDifference
+            ) {
+                @JsonPropertyOrder("amount", "currency")
+                data class EligibleMinimumDifference(
+                    @field:JsonProperty("amount") @param:JsonProperty("amount") val amount: Amount,
+                    @field:JsonProperty("currency") @param:JsonProperty("currency") val currency: Currency
+                )
+            }
 
             @JsonPropertyOrder("id", "period", "breakdown")
             data class ElectronicAuctionProgress(

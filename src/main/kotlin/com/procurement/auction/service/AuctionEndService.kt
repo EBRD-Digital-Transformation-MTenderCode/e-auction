@@ -62,11 +62,23 @@ class AuctionEndServiceImpl(
                         startDate = detail.auctionPeriod.startDate,
                         endDate = detail.auctionPeriod.endDate
                     ),
+                    electronicAuctionModalities = electronicAuctionModalities(detail.electronicAuctionModalities),
                     electronicAuctionProgress = electronicAuctionProgress(detail.electronicAuctionProgress),
                     electronicAuctionResult = electronicAuctionResult(detail.electronicAuctionResult)
                 )
             }
         )
+
+    private fun electronicAuctionModalities(modalities: List<EndedAuctions.Auctions.Detail.ElectronicAuctionModality>): List<EndRS.Data.Tender.ElectronicAuctions.Detail.ElectronicAuctionModality> =
+        modalities.map { modality ->
+            EndRS.Data.Tender.ElectronicAuctions.Detail.ElectronicAuctionModality(
+                url = modality.url,
+                eligibleMinimumDifference = EndRS.Data.Tender.ElectronicAuctions.Detail.ElectronicAuctionModality.EligibleMinimumDifference(
+                    amount = modality.eligibleMinimumDifference.amount,
+                    currency = modality.eligibleMinimumDifference.currency
+                )
+            )
+        }
 
     private fun electronicAuctionProgress(processes: List<EndedAuctions.Auctions.Detail.ElectronicAuctionProgress>): List<EndRS.Data.Tender.ElectronicAuctions.Detail.ElectronicAuctionProgress> =
         processes.map { process ->

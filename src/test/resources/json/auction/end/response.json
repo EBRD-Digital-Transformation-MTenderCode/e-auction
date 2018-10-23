@@ -15,6 +15,15 @@
               "startDate": "2011-06-01T17:59:00Z",
               "endDate": "2011-06-01T17:59:00Z"
             },
+            "electronicAuctionModalities": [
+              {
+                "url":"https://eauction.mtender.md/cpid/ocid",
+                "eligibleMinimumDifference": {
+                  "amount": 150.00,
+                  "currency": "MDL"
+                }
+              }
+            ],
             "electronicAuctionProgress": [
               {
                 "id": "1",

@@ -49,6 +49,15 @@ class EndedAuctionsConverterImpl(private val startedAuctionsRepository: StartedA
                     startDate = auction.auctionPeriod.startDate,
                     endDate = auction.auctionPeriod.endDate
                 ),
+                electronicAuctionModalities = startedAuction.electronicAuctionModalities.map { electronicAuctionModality ->
+                    EndedAuctions.Auctions.Detail.ElectronicAuctionModality(
+                        url = electronicAuctionModality.url,
+                        eligibleMinimumDifference = EndedAuctions.Auctions.Detail.ElectronicAuctionModality.EligibleMinimumDifference(
+                            amount = electronicAuctionModality.eligibleMinimumDifference.amount,
+                            currency = electronicAuctionModality.eligibleMinimumDifference.currency
+                        )
+                    )
+                },
                 electronicAuctionProgress = auction.electronicAuctionProgress.map { progress ->
                     EndedAuctions.Auctions.Detail.ElectronicAuctionProgress(
                         id = progress.id,
