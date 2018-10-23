@@ -1,14 +1,11 @@
 package com.procurement.auction.controller
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.procurement.auction.configuration.properties.GlobalProperties
 import com.procurement.auction.domain.request.Command
 import com.procurement.auction.domain.request.CommandRQ
 import com.procurement.auction.domain.request.auction.EndRQ
 import com.procurement.auction.domain.request.auction.StartRQ
 import com.procurement.auction.domain.request.schedule.ScheduleRQ
-import com.procurement.auction.domain.response.schedule.ScheduleRS
-import com.procurement.auction.entity.schedule.ScheduledAuctions
 import com.procurement.auction.service.AuctionEndService
 import com.procurement.auction.service.AuctionStartService
 import com.procurement.auction.service.ScheduleService
@@ -35,8 +32,7 @@ class ScheduleController(private val objectMapper: ObjectMapper,
         when (command.command) {
             Command.SCHEDULE -> {
                 val data = objectMapper.toObject<ScheduleRQ>(body)
-                val scheduledAuctions = scheduleService.schedule(data)
-                val response = genResponse(request = data, scheduledAuctions = scheduledAuctions)
+                val response = scheduleService.schedule(data)
                 return ResponseEntity.ok(response)
             }
             Command.AUCTIONS_START -> {
@@ -50,39 +46,5 @@ class ScheduleController(private val objectMapper: ObjectMapper,
                 return ResponseEntity.ok(response)
             }
         }
-    }
-
-    private fun genResponse(request: ScheduleRQ, scheduledAuctions: ScheduledAuctions): ScheduleRS {
-        return ScheduleRS(
-            id = request.id,
-            version = GlobalProperties.App.apiVersion,
-            data = ScheduleRS.Data(
-                auctionPeriod = ScheduleRS.Data.AuctionPeriod(
-                    startDate = scheduledAuctions.auctionPeriod.startDateTime
-                ),
-                electronicAuctions = ScheduleRS.Data.ElectronicAuctions(
-                    details = scheduledAuctions.electronicAuctions.details
-                        .map { detail ->
-                            ScheduleRS.Data.ElectronicAuctions.Detail(
-                                id = detail.id,
-                                relatedLot = detail.relatedLot,
-                                auctionPeriod = ScheduleRS.Data.ElectronicAuctions.Detail.AuctionPeriod(
-                                    startDate = detail.auctionPeriod.startDateTime
-                                ),
-                                electronicAuctionModalities = detail.electronicAuctionModalities
-                                    .map { electronicAuctionModality ->
-                                        ScheduleRS.Data.ElectronicAuctions.Detail.ElectronicAuctionModality(
-                                            url = electronicAuctionModality.url,
-                                            eligibleMinimumDifference = ScheduleRS.Data.ElectronicAuctions.Detail.ElectronicAuctionModality.EligibleMinimumDifference(
-                                                amount = electronicAuctionModality.eligibleMinimumDifference.amount,
-                                                currency = electronicAuctionModality.eligibleMinimumDifference.currency
-                                            )
-                                        )
-                                    }
-                            )
-                        }
-                )
-            )
-        )
     }
 }

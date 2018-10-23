@@ -9,6 +9,7 @@ import com.procurement.auction.domain.Country
 import com.procurement.auction.domain.OperationId
 import com.procurement.auction.domain.RelatedLot
 import com.procurement.auction.domain.request.schedule.ScheduleRQ
+import com.procurement.auction.domain.response.schedule.ScheduleRS
 import com.procurement.auction.domain.schedule.AuctionsDefinition
 import com.procurement.auction.domain.schedule.SlotDefinition
 import com.procurement.auction.entity.schedule.ScheduledAuctions
@@ -25,7 +26,7 @@ import java.time.LocalTime
 import java.util.*
 
 interface ScheduleService {
-    fun schedule(request: ScheduleRQ): ScheduledAuctions
+    fun schedule(request: ScheduleRQ): ScheduleRS
 }
 
 @Service
@@ -42,28 +43,33 @@ class ScheduleServiceImpl(private val auctionProperties: AuctionProperties,
 
     private val urlAuction: String = genUrlAuctions()
 
-    override fun schedule(request: ScheduleRQ): ScheduledAuctions {
+    override fun schedule(request: ScheduleRQ): ScheduleRS {
         if (request.data.electronicAuctions.details.isEmpty())
             throw NoLotsToScheduleAuctionsException()
 
         val scheduledAuctions = loadScheduledAuctions(request.context.cpid, request.context.operationId)
-        if (scheduledAuctions != null) {
-            return scheduledAuctions
-        }
+            ?: schedulingAuctions(request)
 
-        val auctionsDefinition: AuctionsDefinition = auctionConversionService.convert(request)
-        slotsService.validateCountLots(auctionsDefinition)
+        return genResponse(request, scheduledAuctions)
+    }
 
-        val country = auctionsDefinition.country
+    private fun loadScheduledAuctions(cpid: CPID, operationId: OperationId): ScheduledAuctions? {
+        return scheduledAuctionsRepository.load(cpid, operationId)
+    }
 
+    private fun schedulingAuctions(request: ScheduleRQ): ScheduledAuctions {
+        val auctionsDefinition = genAuctionsDefinition(request)
         var dateStartAuction = minDateOfStartAuction(auctionsDefinition.tenderPeriodEnd)
+        val country = auctionsDefinition.country
         while (true) {
             val selectedDate = getWorkDayByCalendar(country, dateStartAuction)
             val slots = slotsService.loadSlots(selectedDate, country)
             val booked = slotsService.booking(auctionsDefinition.details, slots)
             if (booked.isNotEmpty()) {
                 val newScheduledAuctions =
-                    genScheduledAuctions(startDate = selectedDate, auctionsDefinition = auctionsDefinition, booked = booked)
+                    genScheduledAuctions(startDate = selectedDate,
+                        auctionsDefinition = auctionsDefinition,
+                        booked = booked)
                 val actualScheduledAuctions = saveScheduledAuctions(request, newScheduledAuctions)
                 if (newScheduledAuctions != actualScheduledAuctions) {
                     return actualScheduledAuctions
@@ -80,11 +86,13 @@ class ScheduleServiceImpl(private val auctionProperties: AuctionProperties,
         }
     }
 
-    private fun loadScheduledAuctions(cpid: CPID, operationId: OperationId): ScheduledAuctions? {
-        return scheduledAuctionsRepository.load(cpid, operationId)
+    private fun genAuctionsDefinition(request: ScheduleRQ): AuctionsDefinition {
+        val auctionsDefinition: AuctionsDefinition = auctionConversionService.convert(request)
+        slotsService.validateCountLots(auctionsDefinition)
+        return auctionsDefinition
     }
 
-    fun minDateOfStartAuction(endDate: LocalDate): LocalDate = endDate.plusDays(dateOffsetDays)
+    private fun minDateOfStartAuction(endDate: LocalDate): LocalDate = endDate.plusDays(dateOffsetDays)
 
     private tailrec fun getWorkDayByCalendar(country: Country, dateStartAuction: LocalDate): LocalDate {
         val year = dateStartAuction.year
@@ -174,6 +182,40 @@ class ScheduleServiceImpl(private val auctionProperties: AuctionProperties,
         URL(uri).toURI().toASCIIString()
     } catch (exception: Exception) {
         throw IllegalStateException("Invalid the auction url: '$uri'.")
+    }
+
+    private fun genResponse(request: ScheduleRQ, scheduledAuctions: ScheduledAuctions): ScheduleRS {
+        return ScheduleRS(
+            id = request.id,
+            version = GlobalProperties.App.apiVersion,
+            data = ScheduleRS.Data(
+                auctionPeriod = ScheduleRS.Data.AuctionPeriod(
+                    startDate = scheduledAuctions.auctionPeriod.startDateTime
+                ),
+                electronicAuctions = ScheduleRS.Data.ElectronicAuctions(
+                    details = scheduledAuctions.electronicAuctions.details
+                        .map { detail ->
+                            ScheduleRS.Data.ElectronicAuctions.Detail(
+                                id = detail.id,
+                                relatedLot = detail.relatedLot,
+                                auctionPeriod = ScheduleRS.Data.ElectronicAuctions.Detail.AuctionPeriod(
+                                    startDate = detail.auctionPeriod.startDateTime
+                                ),
+                                electronicAuctionModalities = detail.electronicAuctionModalities
+                                    .map { electronicAuctionModality ->
+                                        ScheduleRS.Data.ElectronicAuctions.Detail.ElectronicAuctionModality(
+                                            url = electronicAuctionModality.url,
+                                            eligibleMinimumDifference = ScheduleRS.Data.ElectronicAuctions.Detail.ElectronicAuctionModality.EligibleMinimumDifference(
+                                                amount = electronicAuctionModality.eligibleMinimumDifference.amount,
+                                                currency = electronicAuctionModality.eligibleMinimumDifference.currency
+                                            )
+                                        )
+                                    }
+                            )
+                        }
+                )
+            )
+        )
     }
 }
 

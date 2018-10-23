@@ -13,7 +13,7 @@ import com.procurement.auction.domain.CommandId
 import com.procurement.auction.domain.Currency
 import com.procurement.auction.domain.RelatedLot
 import com.procurement.auction.domain.binding.JsonDateTimeDeserializer
-import com.procurement.auction.entity.schedule.ScheduledAuctions
+import com.procurement.auction.domain.response.schedule.ScheduleRS
 import com.procurement.auction.exception.JsonParseToObjectException
 import com.procurement.auction.service.AuctionEndService
 import com.procurement.auction.service.AuctionStartService
@@ -48,25 +48,25 @@ class ScheduleControllerTest : AbstractBase() {
         private const val currency: Currency = "MDL"
         private val apiVersion = ApiVersion(1, 0, 0)
 
-        private val scheduledAuctions = ScheduledAuctions(
+        private val scheduleRS = ScheduleRS(
+            id = commandId,
             version = apiVersion,
-            usedSlots = setOf(1),
-            auctionPeriod = ScheduledAuctions.AuctionPeriod(
-                startDateTime = auctionsStartDate
-            ),
-            electronicAuctions = ScheduledAuctions.ElectronicAuctions(
-                details = mutableListOf<ScheduledAuctions.ElectronicAuctions.Detail>().apply {
-                    add(
-                        ScheduledAuctions.ElectronicAuctions.Detail(
+            data = ScheduleRS.Data(
+                auctionPeriod = ScheduleRS.Data.AuctionPeriod(
+                    startDate = auctionsStartDate
+                ),
+                electronicAuctions = ScheduleRS.Data.ElectronicAuctions(
+                    details = listOf(
+                        ScheduleRS.Data.ElectronicAuctions.Detail(
                             id = auctionId,
                             relatedLot = relatedLot,
-                            auctionPeriod = ScheduledAuctions.ElectronicAuctions.Detail.AuctionPeriod(
-                                startDateTime = lotStartDate
+                            auctionPeriod = ScheduleRS.Data.ElectronicAuctions.Detail.AuctionPeriod(
+                                startDate = lotStartDate
                             ),
                             electronicAuctionModalities = listOf(
-                                ScheduledAuctions.ElectronicAuctions.Detail.ElectronicAuctionModality(
+                                ScheduleRS.Data.ElectronicAuctions.Detail.ElectronicAuctionModality(
                                     url = auctionUrl,
-                                    eligibleMinimumDifference = ScheduledAuctions.ElectronicAuctions.Detail.ElectronicAuctionModality.EligibleMinimumDifference(
+                                    eligibleMinimumDifference = ScheduleRS.Data.ElectronicAuctions.Detail.ElectronicAuctionModality.EligibleMinimumDifference(
                                         amount = amount,
                                         currency = currency
                                     )
@@ -74,7 +74,7 @@ class ScheduleControllerTest : AbstractBase() {
                             )
                         )
                     )
-                }
+                )
             )
         )
     }
@@ -103,7 +103,7 @@ class ScheduleControllerTest : AbstractBase() {
         val content = RESOURCES.load("json/schedule/request.json")
 
         whenever(scheduleService.schedule(any()))
-            .thenReturn(scheduledAuctions)
+            .thenReturn(scheduleRS)
 
         mockMvc.perform(
             post(URL)
