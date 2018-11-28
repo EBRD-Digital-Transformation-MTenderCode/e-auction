@@ -1,0 +1,19 @@
+{
+  "occupancy": [
+    {
+      "slotId": "1613a7a7-b621-4f36-80b9-aaf5d09dcbcc",
+      "cpids": [
+        "cpid-3",
+        "cpid-1",
+        "cpid-2"
+      ]
+    },
+    {
+      "slotId": "44809ee7-fa2e-44b0-8b32-9635834ada64",
+      "cpids": [
+        "cpid-1",
+        "cpid-3"
+      ]
+    }
+  ]
+}

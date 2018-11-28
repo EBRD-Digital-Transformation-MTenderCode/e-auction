@@ -1,0 +1,52 @@
+{
+  "tender": {
+    "title": "",
+    "description": ""
+  },
+  "auctions": {
+    "details": [
+      {
+        "id": "7720871e-26c7-48f4-89b7-704d526ec791",
+        "title": "",
+        "description": "",
+        "relatedLot": "39614de2-c348-11e8-987b-a7ad59777db6",
+        "value": {
+          "amount": 100.00,
+          "currency": "MDL"
+        },
+        "auctionPeriod": {
+          "startDate": "2018-09-28T18:02:25Z"
+        },
+        "modalities": [
+          {
+            "url": "http://eauction.mtender.md/cpid/lot-id",
+            "eligibleMinimumDifference": {
+              "amount": 5.00,
+              "currency": "MDL"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "bidders": {
+    "details": [
+      {
+        "platformId": "445f6851-c908-407d-9b45-14b92f3e964b",
+        "bids": [
+          {
+            "id": "a80b61e0-c348-11e8-b9a8-dd319bd9bbdf",
+            "relatedLot": "39614de2-c348-11e8-987b-a7ad59777db6",
+            "pendingDate": "2018-09-28T18:02:25Z",
+            "value": {
+              "amount": 150.00,
+              "currency": "MDL"
+            },
+            "url": "http://eauction.mtender.md/cpid/lot-id?bid_id={bid_id}&amp;sign={sign}",
+            "sign": "d9f16fab-13bd-4afd-a8c0-ae3ac6b3771c"
+          }
+        ]
+      }
+    ]
+  }
+}

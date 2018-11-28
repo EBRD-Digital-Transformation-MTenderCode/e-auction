@@ -33,7 +33,7 @@ scheduler:
   - start-time: "11:00Z"
   - start-time: "12:00Z"
   end-time-all-slots: "13:00Z"
-  qty-lines-per-slot: 70
+  qty-lines-per-slot: 2
 
 management:
   actuator-security:
@@ -46,7 +46,7 @@ management:
 
   endpoints:
     jmx:
-      domain: com.procurement.auction
+      domain: com.procurement.tender
       exposure:
         exclude: "*"
     web:

@@ -1,0 +1,16 @@
+{
+  "slots": [
+    {
+      "slotId": "1613a7a7-b621-4f36-80b9-aaf5d09dcbcc",
+      "startTime": "09:00Z",
+      "endTime": "16:00Z",
+      "maxLines": 10
+    },
+    {
+      "slotId": "44809ee7-fa2e-44b0-8b32-9635834ada64",
+      "startTime": "10:00Z",
+      "endTime": "16:00Z",
+      "maxLines": 10
+    }
+  ]
+}

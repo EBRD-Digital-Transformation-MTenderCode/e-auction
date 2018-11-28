@@ -1,0 +1,74 @@
+{
+  "tender": {
+    "auctionPeriod": {
+      "startDate": "2018-09-14T08:48:17Z",
+      "endDate": "2018-09-16T08:48:17Z"
+    },
+    "electronicAuctions": {
+      "details": [
+        {
+          "id": "13060792-d677-4153-81c5-9d3e1d31e3a5",
+          "relatedLot": "91bd62e4-ea9d-475a-9942-9c9d6716ee55",
+          "auctionPeriod": {
+            "startDate": "2018-09-14T08:48:17Z",
+            "endDate": "2018-09-14T09:00:17Z"
+          },
+          "electronicAuctionModalities": [
+            {
+              "url": "https://eauction.mtender.md/cpid-1/91bd62e4-ea9d-475a-9942-9c9d6716ee55",
+              "eligibleMinimumDifference": {
+                "amount": 150.01,
+                "currency": "MDL"
+              }
+            }
+          ],
+          "electronicAuctionProgress": [
+            {
+              "id": "1",
+              "period": {
+                "startDate": "2011-06-01T17:59:00Z",
+                "endDate": "2011-06-01T17:59:00Z"
+              },
+              "breakdown": [
+                {
+                  "relatedBid": "b4c78372-d6b4-4cc6-bb48-fe49fee12cbb",
+                  "status": "met",
+                  "dateMet": "2011-06-01T17:59:00Z",
+                  "value": {
+                    "amount": 1001.01,
+                    "currency": "MDL"
+                  }
+                },
+                {
+                  "relatedBid": "36dc3753-6e93-4cfb-ab4d-98d930733e53",
+                  "status": "met",
+                  "dateMet": "2011-06-01T17:59:00Z",
+                  "value": {
+                    "amount": 1002.01,
+                    "currency": "MDL"
+                  }
+                }
+              ]
+            }
+          ],
+          "electronicAuctionResult": [
+            {
+              "relatedBid": "b4c78372-d6b4-4cc6-bb48-fe49fee12cbb",
+              "value": {
+                "amount": 981.01,
+                "currency": "MDL"
+              }
+            },
+            {
+              "relatedBid": "36dc3753-6e93-4cfb-ab4d-98d930733e53",
+              "value": {
+                "amount": 680.01,
+                "currency": "MDL"
+              }
+            }
+          ]
+        }
+      ]
+    }
+  }
+}

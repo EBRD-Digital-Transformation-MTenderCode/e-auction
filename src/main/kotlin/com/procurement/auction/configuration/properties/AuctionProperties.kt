@@ -5,7 +5,7 @@ import java.time.Duration
 
 @ConfigurationProperties(prefix = "auctions")
 class AuctionProperties {
-    var url: Url? = null
+    var url: Url? = Url()
     var qtyRounds: Long? = 3
     var qtyParticipants: Int? = 4
     var durationOneStep: Duration? = Duration.ofSeconds(180)

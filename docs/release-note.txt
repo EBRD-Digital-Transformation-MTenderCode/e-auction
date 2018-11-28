@@ -1,0 +1,46 @@
+Configuration:
+в секцию auctions добавлены аттрибуты auctions.url.url и auctions.url.host
+auctions:
+  url:
+    url: http
+    host: auction.eprocurement.systems
+
+в секции scheduler изменилось название аттрибута scheduler.begin-time-of-slots
+- было:
+scheduler:
+  begin-time-of-slots:
+
+- стало
+scheduler:
+  slots:
+
+Cassandra:
+Добавить таблицы
+
+
+CREATE TABLE IF NOT EXISTS ocds.auction_schedule (
+    cpid text,
+    operation_id uuid,
+    operation_date timestamp,
+    auctions text,
+    PRIMARY KEY (cpid, operation_id)
+);
+
+CREATE TABLE IF NOT EXISTS ocds.auction_start (
+	cpid text,
+    operation_id uuid,
+    operation_date timestamp,
+	tender text,
+	auctions text,
+	bidders text,
+	PRIMARY KEY (cpid)
+);
+
+CREATE TABLE IF NOT EXISTS ocds.auction_end (
+	cpid text,
+    operation_id uuid,
+    operation_date timestamp,
+	tender text,
+	auctions text,
+	PRIMARY KEY (cpid)
+);
