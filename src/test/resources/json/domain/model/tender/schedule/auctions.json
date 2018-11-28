@@ -1,0 +1,49 @@
+{
+  "version": "1.0.0",
+  "usedSlots": [
+    1,
+    2
+  ],
+  "auctionPeriod": {
+    "startDate": "2018-09-14T08:48:17Z"
+  },
+  "electronicAuctions": {
+    "details": [
+      {
+        "id": "13060792-d677-4153-81c5-9d3e1d31e3a5",
+        "relatedLot": "91bd62e4-ea9d-475a-9942-9c9d6716ee55",
+        "auctionPeriod": {
+          "startDate": "2018-09-14T08:48:17Z"
+        },
+        "electronicAuctionModalities": [
+          {
+            "url": "https://eauction.mtender.md/cpid-1/91bd62e4-ea9d-475a-9942-9c9d6716ee55",
+            "eligibleMinimumDifference": {
+              "amount": 150.00,
+              "currency": "MDL"
+            }
+          }
+        ]
+      },
+      {
+        "id": "36e08a92-1d5d-4133-88ea-56c348e4a2fb",
+        "relatedLot": "78d52e5b-632e-45d6-9278-a1356bbc4a88",
+        "auctionPeriod": {
+          "startDate": "2018-09-18T10:20:10Z"
+        },
+        "electronicAuctionModalities": [
+          {
+            "url": "https://eauction.mtender.md/cpid-1/78d52e5b-632e-45d6-9278-a1356bbc4a88",
+            "eligibleMinimumDifference": {
+              "amount": 200.00,
+              "currency": "MDL"
+            }
+          }
+        ]
+      }
+    ]
+  }
+}
+
+
+

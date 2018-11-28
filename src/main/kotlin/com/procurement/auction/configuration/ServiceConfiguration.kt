@@ -13,5 +13,13 @@ import org.springframework.context.annotation.Configuration
         SchedulerProperties::class
     ]
 )
-@ComponentScan(basePackages = ["com.procurement.auction.service"])
+@ComponentScan(
+    basePackages = [
+        "com.procurement.auction.domain.factory",
+        "com.procurement.auction.domain.service",
+        "com.procurement.auction.application.service",
+        "com.procurement.auction.application.presenter",
+        "com.procurement.auction.infrastructure.dispatcher"
+    ]
+)
 class ServiceConfiguration

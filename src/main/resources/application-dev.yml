@@ -12,6 +12,9 @@ cassandra:
   password:
 
 auctions:
+  url:
+    protocol: http
+    host: auction.eprocurement.systems
   qty-rounds: 3
   qty-participants: 4
   duration-one-step: 180s
@@ -19,7 +22,7 @@ auctions:
   duration-pause-after-auction: 30s
 
 scheduler:
-  begin-time-of-slots:
+  slots:
   - start-time: "06:00Z"
 #    end-time: "15:00Z"
     max-lines: 10
@@ -30,7 +33,7 @@ scheduler:
   - start-time: "11:00Z"
   - start-time: "12:00Z"
   end-time-all-slots: "13:00Z"
-  qty-lines-per-slot: 70
+  qty-lines-per-slot: 2
 
 management:
   actuator-security:
@@ -43,7 +46,7 @@ management:
 
   endpoints:
     jmx:
-      domain: com.procurement.auction
+      domain: com.procurement.tender
       exposure:
         exclude: "*"
     web:

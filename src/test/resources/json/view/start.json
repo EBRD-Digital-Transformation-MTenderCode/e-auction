@@ -1,0 +1,76 @@
+{
+  "isAuctionStarted": true,
+  "auctionsLinks": [
+    {
+      "owner": "adb116fb-78f7-4c71-95d6-e21546ef6ae0",
+      "links": [
+        {
+          "relatedBid": "b4c78372-d6b4-4cc6-bb48-fe49fee12cbb",
+          "url": "https://eauction.mtender.md/cpid-1/91bd62e4-ea9d-475a-9942-9c9d6716ee55?bid_id=b4c78372-d6b4-4cc6-bb48-fe49fee12cbb&sign=0cec3b3c-117a-47f0-8028-0b8c0ce8f241"
+        },
+        {
+          "relatedBid": "36dc3753-6e93-4cfb-ab4d-98d930733e53",
+          "url": "https://eauction.mtender.md/cpid-1/91bd62e4-ea9d-475a-9942-9c9d6716ee55?bid_id=36dc3753-6e93-4cfb-ab4d-98d930733e53&sign=2b03293b-6159-4e1f-b292-67280ce480d5"
+        }
+      ]
+    }
+  ],
+  "electronicAuctions": {
+    "details": [
+      {
+        "id": "13060792-d677-4153-81c5-9d3e1d31e3a5",
+        "relatedLot": "91bd62e4-ea9d-475a-9942-9c9d6716ee55",
+        "auctionPeriod": {
+          "startDate": "2018-09-14T08:48:17Z"
+        },
+        "electronicAuctionModalities": [
+          {
+            "url": "https://eauction.mtender.md/cpid-1/91bd62e4-ea9d-475a-9942-9c9d6716ee55",
+            "eligibleMinimumDifference": {
+              "amount": 150.01,
+              "currency": "MDL"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "auctionsData": {
+    "tender": {
+      "id": "cpid-1",
+      "title": "Tender-title",
+      "description": "Tender-description",
+      "lots": [
+        {
+          "id": "91bd62e4-ea9d-475a-9942-9c9d6716ee55",
+          "title": "Auction-1-title",
+          "description": "Auction-1-description",
+          "eligibleMinimumDifference": 150.01,
+          "value": {
+            "amount": 160.01,
+            "currency": "MDL"
+          },
+          "auctionPeriod": {
+            "startDate": "2018-09-14T08:48:17Z"
+          }
+        }
+      ]
+    },
+    "bids": [
+      {
+        "id": "b4c78372-d6b4-4cc6-bb48-fe49fee12cbb",
+        "value": 170.01,
+        "relatedLot": "91bd62e4-ea9d-475a-9942-9c9d6716ee55",
+        "pendingDate": "2018-09-18T10:20:10Z",
+        "sign": "0cec3b3c-117a-47f0-8028-0b8c0ce8f241"
+      },
+      {
+        "id": "36dc3753-6e93-4cfb-ab4d-98d930733e53",
+        "value": 180.01,
+        "relatedLot": "91bd62e4-ea9d-475a-9942-9c9d6716ee55",
+        "pendingDate": "2018-09-18T10:20:20Z",
+        "sign": "2b03293b-6159-4e1f-b292-67280ce480d5"
+      }
+    ]
+  }
+}

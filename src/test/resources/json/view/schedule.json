@@ -1,0 +1,25 @@
+{
+  "auctionPeriod": {
+    "startDate": "2018-09-14T08:48:17Z"
+  },
+  "electronicAuctions": {
+    "details": [
+      {
+        "id": "13060792-d677-4153-81c5-9d3e1d31e3a5",
+        "relatedLot": "91bd62e4-ea9d-475a-9942-9c9d6716ee55",
+        "auctionPeriod": {
+          "startDate": "2018-09-14T08:48:17Z"
+        },
+        "electronicAuctionModalities": [
+          {
+            "url": "https://eauction.mtender.md/cpid-1/91bd62e4-ea9d-475a-9942-9c9d6716ee55",
+            "eligibleMinimumDifference": {
+              "amount": 150.01,
+              "currency": "MDL"
+            }
+          }
+        ]
+      }
+    ]
+  }
+}
