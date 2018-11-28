@@ -55,7 +55,7 @@ object CassandraClusterBuilder {
 
         builder.withProtocolVersion(ProtocolVersion.NEWEST_SUPPORTED)
 
-        return builder.build()
+        return builder.withoutJMXReporting().build()
     }
 
     private fun <T> instantiate(type: Class<out T>): T {
