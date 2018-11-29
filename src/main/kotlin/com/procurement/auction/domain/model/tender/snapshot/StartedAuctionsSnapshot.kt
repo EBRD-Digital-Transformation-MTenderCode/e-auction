@@ -1,7 +1,5 @@
 package com.procurement.auction.domain.model.tender.snapshot
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties
-import com.fasterxml.jackson.annotation.JsonInclude
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.annotation.JsonPropertyOrder
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize
@@ -18,9 +16,6 @@ import com.procurement.auction.domain.model.auction.status.AuctionsStatusSeriali
 import com.procurement.auction.domain.model.bid.id.BidId
 import com.procurement.auction.domain.model.bid.id.BidIdDeserializer
 import com.procurement.auction.domain.model.bid.id.BidIdSerializer
-import com.procurement.auction.domain.model.breakdown.status.BreakdownStatus
-import com.procurement.auction.domain.model.breakdown.status.BreakdownStatusDeserializer
-import com.procurement.auction.domain.model.breakdown.status.BreakdownStatusSerializer
 import com.procurement.auction.domain.model.country.Country
 import com.procurement.auction.domain.model.country.CountryDeserializer
 import com.procurement.auction.domain.model.country.CountrySerializer
@@ -39,9 +34,6 @@ import com.procurement.auction.domain.model.operationId.OperationId
 import com.procurement.auction.domain.model.platformId.PlatformId
 import com.procurement.auction.domain.model.platformId.PlatformIdDeserializer
 import com.procurement.auction.domain.model.platformId.PlatformIdSerializer
-import com.procurement.auction.domain.model.progressId.ProgressId
-import com.procurement.auction.domain.model.progressId.ProgressIdDeserializer
-import com.procurement.auction.domain.model.progressId.ProgressIdSerializer
 import com.procurement.auction.domain.model.sign.Sign
 import com.procurement.auction.domain.model.sign.SignDeserializer
 import com.procurement.auction.domain.model.sign.SignSerializer
@@ -54,16 +46,15 @@ import com.procurement.auction.domain.model.version.ApiVersionSerializer
 import com.procurement.auction.domain.model.version.RowVersion
 import java.time.LocalDateTime
 
-class TenderSnapshot(
+class StartedAuctionsSnapshot(
     val rowVersion: RowVersion,
     val operationId: OperationId,
-    val country: Country,
     val data: Data
 ) {
-    val apiVersion: ApiVersion
-        get() = data.apiVersion
+    companion object {
+        val apiVersion = ApiVersion(1, 0, 0)
+    }
 
-    @JsonIgnoreProperties(ignoreUnknown = true)
     @JsonPropertyOrder("version", "tender", "slots", "auctions")
     class Data(
         @JsonDeserialize(using = ApiVersionDeserializer::class)
@@ -74,7 +65,6 @@ class TenderSnapshot(
 
         @JsonDeserialize(using = SlotsIdsDeserializer::class)
         @JsonSerialize(using = SlotsIdsSerializer::class)
-        @field:JsonInclude(JsonInclude.Include.NON_EMPTY) @param:JsonInclude(JsonInclude.Include.NON_EMPTY)
         @field:JsonProperty("slots") @param:JsonProperty("slots") val slots: Set<SlotId>,
 
         @field:JsonProperty("auctions") @param:JsonProperty("auctions") val auctions: List<Auction>
@@ -92,35 +82,17 @@ class TenderSnapshot(
 
             @JsonDeserialize(using = AuctionsStatusDeserializer::class)
             @JsonSerialize(using = AuctionsStatusSerializer::class)
-            @field:JsonProperty("status") @param:JsonProperty("status") val auctionsStatus: AuctionsStatus,
+            @field:JsonProperty("status") @param:JsonProperty("status") val status: AuctionsStatus,
 
-            @field:JsonInclude(JsonInclude.Include.NON_NULL) @param:JsonInclude(JsonInclude.Include.NON_NULL)
-            @field:JsonProperty("title") @param:JsonProperty("title") val title: String? = null,
-
-            @field:JsonInclude(JsonInclude.Include.NON_NULL) @param:JsonInclude(JsonInclude.Include.NON_NULL)
-            @field:JsonProperty("description") @param:JsonProperty("description") val description: String? = null,
+            @field:JsonProperty("title") @param:JsonProperty("title") val title: String,
+            @field:JsonProperty("description") @param:JsonProperty("description") val description: String,
 
             @JsonDeserialize(using = JsonDateTimeDeserializer::class)
             @JsonSerialize(using = JsonDateTimeSerializer::class)
-            @field:JsonInclude(JsonInclude.Include.NON_NULL) @param:JsonInclude(JsonInclude.Include.NON_NULL)
-            @field:JsonProperty("startDate") @param:JsonProperty("startDate") val startDate: LocalDateTime? = null,
-
-            @JsonDeserialize(using = JsonDateTimeDeserializer::class)
-            @JsonSerialize(using = JsonDateTimeSerializer::class)
-            @field:JsonInclude(JsonInclude.Include.NON_EMPTY) @param:JsonInclude(JsonInclude.Include.NON_EMPTY)
-            @field:JsonProperty("endDate") @param:JsonProperty("endDate") val endDate: LocalDateTime? = null
+            @field:JsonProperty("startDate") @param:JsonProperty("startDate") val startDate: LocalDateTime
         )
 
-        @JsonPropertyOrder("id",
-                           "lotId",
-                           "title",
-                           "description",
-                           "auctionPeriod",
-                           "value",
-                           "modalities",
-                           "bids",
-                           "progress",
-                           "results")
+        @JsonPropertyOrder("id", "lotId", "title", "description", "auctionPeriod", "value", "modalities", "bids")
         class Auction(
             @JsonDeserialize(using = AuctionIdDeserializer::class)
             @JsonSerialize(using = AuctionIdSerializer::class)
@@ -130,28 +102,12 @@ class TenderSnapshot(
             @JsonSerialize(using = LotIdSerializer::class)
             @field:JsonProperty("lotId") @param:JsonProperty("lotId") val lotId: LotId,
 
-            @field:JsonInclude(JsonInclude.Include.NON_NULL)
-            @field:JsonProperty("title") @param:JsonProperty("title") val title: String? = null,
-
-            @field:JsonInclude(JsonInclude.Include.NON_NULL)
-            @field:JsonProperty("description") @param:JsonProperty("description") val description: String? = null,
-
+            @field:JsonProperty("title") @param:JsonProperty("title") val title: String,
+            @field:JsonProperty("description") @param:JsonProperty("description") val description: String,
             @field:JsonProperty("auctionPeriod") @param:JsonProperty("auctionPeriod") val auctionPeriod: AuctionPeriod,
-
-            @field:JsonInclude(JsonInclude.Include.NON_NULL)
-            @field:JsonProperty("value") @param:JsonProperty("value") val value: Value? = null,
-
-            @field:JsonInclude(JsonInclude.Include.NON_EMPTY)
-            @field:JsonProperty("modalities") @param:JsonProperty("modalities") val modalities: List<Modality> = emptyList(),
-
-            @field:JsonInclude(JsonInclude.Include.NON_EMPTY)
-            @field:JsonProperty("bids") @param:JsonProperty("bids") val bids: List<Bid>? = null,
-
-            @field:JsonInclude(JsonInclude.Include.NON_EMPTY)
-            @field:JsonProperty("progress") @param:JsonProperty("progress") val progress: List<Offer>? = null,
-
-            @field:JsonInclude(JsonInclude.Include.NON_EMPTY)
-            @field:JsonProperty("results") @param:JsonProperty("results") val results: List<Result>? = null
+            @field:JsonProperty("value") @param:JsonProperty("value") val value: Value,
+            @field:JsonProperty("modalities") @param:JsonProperty("modalities") val modalities: List<Modality>,
+            @field:JsonProperty("bids") @param:JsonProperty("bids") val bids: List<Bid>
         ) {
             @JsonPropertyOrder("amount", "currency")
             class Value(
@@ -164,16 +120,11 @@ class TenderSnapshot(
                 @field:JsonProperty("currency") @param:JsonProperty("currency") val currency: Currency
             )
 
-            @JsonPropertyOrder("startDate", "endDate")
+            @JsonPropertyOrder("startDate")
             class AuctionPeriod(
                 @JsonDeserialize(using = JsonDateTimeDeserializer::class)
                 @JsonSerialize(using = JsonDateTimeSerializer::class)
-                @field:JsonProperty("startDate") @param:JsonProperty("startDate") val startDate: LocalDateTime,
-
-                @field:JsonInclude(JsonInclude.Include.NON_NULL)
-                @JsonDeserialize(using = JsonDateTimeDeserializer::class)
-                @JsonSerialize(using = JsonDateTimeSerializer::class)
-                @field:JsonProperty("endDate") @param:JsonProperty("endDate") val endDate: LocalDateTime? = null
+                @field:JsonProperty("startDate") @param:JsonProperty("startDate") val startDate: LocalDateTime
             )
 
             @JsonPropertyOrder("url", "eligibleMinimumDifference")
@@ -181,7 +132,6 @@ class TenderSnapshot(
                 @field:JsonProperty("url") @param:JsonProperty("url") val url: String,
                 @field:JsonProperty("eligibleMinimumDifference") @param:JsonProperty("eligibleMinimumDifference") val eligibleMinimumDifference: EligibleMinimumDifference
             ) {
-
                 @JsonPropertyOrder("amount", "currency")
                 class EligibleMinimumDifference(
                     @JsonDeserialize(using = AmountDeserializer::class)
@@ -220,80 +170,6 @@ class TenderSnapshot(
                 @JsonSerialize(using = SignSerializer::class)
                 @field:JsonProperty("sign") @param:JsonProperty("sign") val sign: Sign
             ) {
-
-                @JsonPropertyOrder("amount", "currency")
-                class Value(
-                    @JsonDeserialize(using = AmountDeserializer::class)
-                    @JsonSerialize(using = AmountSerializer::class)
-                    @field:JsonProperty("amount") @param:JsonProperty("amount") val amount: Amount,
-
-                    @JsonDeserialize(using = CurrencyDeserializer::class)
-                    @JsonSerialize(using = CurrencySerializer::class)
-                    @field:JsonProperty("currency") @param:JsonProperty("currency") val currency: Currency
-                )
-            }
-
-            @JsonPropertyOrder("id", "period", "breakdowns")
-            class Offer(
-                @JsonDeserialize(using = ProgressIdDeserializer::class)
-                @JsonSerialize(using = ProgressIdSerializer::class)
-                @field:JsonProperty("id") @param:JsonProperty("id") val id: ProgressId,
-
-                @field:JsonProperty("period") @param:JsonProperty("period") val period: Period,
-
-                @field:JsonProperty("breakdowns") @param:JsonProperty("breakdowns") val breakdowns: List<Breakdown>
-            ) {
-
-                @JsonPropertyOrder("startDate", "endDate")
-                class Period(
-                    @JsonDeserialize(using = JsonDateTimeDeserializer::class)
-                    @JsonSerialize(using = JsonDateTimeSerializer::class)
-                    @field:JsonProperty("startDate") @param:JsonProperty("startDate") val startDate: LocalDateTime,
-
-                    @JsonDeserialize(using = JsonDateTimeDeserializer::class)
-                    @JsonSerialize(using = JsonDateTimeSerializer::class)
-                    @field:JsonProperty("endDate") @param:JsonProperty("endDate") val endDate: LocalDateTime
-                )
-
-                @JsonPropertyOrder("id", "status", "dateMet", "value")
-                class Breakdown(
-                    @JsonDeserialize(using = BidIdDeserializer::class)
-                    @JsonSerialize(using = BidIdSerializer::class)
-                    @field:JsonProperty("id") @param:JsonProperty("id") val relatedBid: BidId,
-
-                    @JsonDeserialize(using = BreakdownStatusDeserializer::class)
-                    @JsonSerialize(using = BreakdownStatusSerializer::class)
-                    @field:JsonProperty("status") @param:JsonProperty("status") val status: BreakdownStatus,
-
-                    @JsonDeserialize(using = JsonDateTimeDeserializer::class)
-                    @JsonSerialize(using = JsonDateTimeSerializer::class)
-                    @field:JsonProperty("dateMet") @param:JsonProperty("dateMet") val dateMet: LocalDateTime,
-
-                    @field:JsonProperty("value") @param:JsonProperty("value") val value: Value
-                ) {
-
-                    @JsonPropertyOrder("amount", "currency")
-                    class Value(
-                        @JsonDeserialize(using = AmountDeserializer::class)
-                        @JsonSerialize(using = AmountSerializer::class)
-                        @field:JsonProperty("amount") @param:JsonProperty("amount") val amount: Amount,
-
-                        @JsonDeserialize(using = CurrencyDeserializer::class)
-                        @JsonSerialize(using = CurrencySerializer::class)
-                        @field:JsonProperty("currency") @param:JsonProperty("currency") val currency: Currency
-                    )
-                }
-            }
-
-            @JsonPropertyOrder("relatedBid", "value")
-            class Result(
-                @JsonDeserialize(using = BidIdDeserializer::class)
-                @JsonSerialize(using = BidIdSerializer::class)
-                @field:JsonProperty("relatedBid") @param:JsonProperty("relatedBid") val relatedBid: BidId,
-
-                @field:JsonProperty("value") @param:JsonProperty("value") val value: Value
-            ) {
-
                 @JsonPropertyOrder("amount", "currency")
                 class Value(
                     @JsonDeserialize(using = AmountDeserializer::class)

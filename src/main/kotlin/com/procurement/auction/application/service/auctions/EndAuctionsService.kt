@@ -2,20 +2,15 @@ package com.procurement.auction.application.service.auctions
 
 import com.procurement.auction.domain.command.EndAuctionsCommand
 import com.procurement.auction.domain.logger.Logger
-import com.procurement.auction.domain.logger.debug
-import com.procurement.auction.domain.model.auction.EndedAuction
+import com.procurement.auction.domain.logger.info
 import com.procurement.auction.domain.model.auction.status.AuctionsStatus
 import com.procurement.auction.domain.model.bid.id.BidId
-import com.procurement.auction.domain.model.breakdown.Breakdown
 import com.procurement.auction.domain.model.breakdown.status.BreakdownStatus
 import com.procurement.auction.domain.model.lotId.LotId
-import com.procurement.auction.domain.model.offer.Offer
-import com.procurement.auction.domain.model.period.Period
-import com.procurement.auction.domain.model.result.Result
-import com.procurement.auction.domain.model.tender.Tender
-import com.procurement.auction.domain.model.tender.snapshot.TenderSnapshot
-import com.procurement.auction.domain.model.value.Value
+import com.procurement.auction.domain.model.tender.snapshot.EndedAuctionsSnapshot
+import com.procurement.auction.domain.model.tender.snapshot.StartedAuctionsSnapshot
 import com.procurement.auction.domain.repository.TenderRepository
+import com.procurement.auction.domain.service.JsonDeserializeService
 import com.procurement.auction.exception.app.DuplicateBidInBreakdownException
 import com.procurement.auction.exception.app.DuplicateBidInResultsException
 import com.procurement.auction.exception.app.DuplicateLotException
@@ -25,49 +20,62 @@ import com.procurement.auction.exception.app.TenderNotFoundException
 import com.procurement.auction.exception.app.UnknownBidInBreakdownException
 import com.procurement.auction.exception.app.UnknownBidInResultException
 import com.procurement.auction.exception.app.UnknownLotException
-import com.procurement.auction.exception.command.EndCommandCanNotBeExecutedException
+import com.procurement.auction.exception.command.CommandCanNotBeExecutedException
 import com.procurement.auction.infrastructure.logger.Slf4jLogger
 import org.springframework.stereotype.Service
 
 interface EndAuctionsService {
-    fun end(command: EndAuctionsCommand): TenderSnapshot
+    fun end(command: EndAuctionsCommand): EndedAuctionsSnapshot
 }
 
 @Service
 class EndAuctionsServiceImpl(
-    private val tenderRepository: TenderRepository
+    private val tenderRepository: TenderRepository,
+    private val deserializer: JsonDeserializeService
 ) : EndAuctionsService {
     companion object {
         private val log: Logger = Slf4jLogger()
     }
 
-    override fun end(command: EndAuctionsCommand): TenderSnapshot {
+    override fun end(command: EndAuctionsCommand): EndedAuctionsSnapshot {
         val cpid = command.context.cpid
-        val tender = tenderRepository.load(cpid)
+        val entity = tenderRepository.loadEntity(cpid)
             ?: throw TenderNotFoundException(cpid)
 
-        if (!tender.canEnd) {
-            if (tender.auctionsStatus == AuctionsStatus.ENDED && tender.operationId == command.context.operationId)
-                return tender.toSnapshot()
-            else
-                throw EndCommandCanNotBeExecutedException("The '${command.name.code}' command cannot be executed. The tender is in '${tender.auctionsStatus.description}' status.")
+        return when (entity.status) {
+            AuctionsStatus.SCHEDULED ->
+                throw CommandCanNotBeExecutedException(command.name, entity.status)
+
+            AuctionsStatus.CANCELED ->
+                throw CommandCanNotBeExecutedException(command.name, entity.status)
+
+            AuctionsStatus.STARTED ->
+                processing(command, entity.toStartedAuctionsSnapshot(deserializer))
+
+            AuctionsStatus.ENDED -> {
+                if (entity.operationId == command.context.operationId)
+                    entity.toEndedAuctionsSnapshot(deserializer)
+                else
+                    throw CommandCanNotBeExecutedException(command.name, entity.status)
+            }
         }
-
-        validate(command, tender)
-
-        val endedAuctions = endedAuctions(command, tender)
-        tender.endAuctions(command.context.operationId,
-                           command.data.tender.auctionPeriod.startDate,
-                           command.data.tender.auctionPeriod.endDate,
-                           endedAuctions
-        )
-
-        tenderRepository.saveEndedAuctions(cpid, tender)
-        log.debug { "Ended auctions in tender with cpid: '$cpid'." }
-        return tender.toSnapshot()
     }
 
-    private fun validate(command: EndAuctionsCommand, tender: Tender) {
+    private fun processing(command: EndAuctionsCommand, snapshot: StartedAuctionsSnapshot): EndedAuctionsSnapshot {
+
+        val startedAuctionsByLotId = snapshot.data.auctions.associateBy { it.lotId }
+
+        validate(command, startedAuctionsByLotId)
+
+        return endedAuctions(command, startedAuctionsByLotId, snapshot)
+            .also {
+                tenderRepository.save(it)
+                log.info { "Ended auctions in tender with id: '${snapshot.data.tender.id.value}'." }
+            }
+    }
+
+    private fun validate(command: EndAuctionsCommand,
+                         startedAuctionsByLotId: Map<LotId, StartedAuctionsSnapshot.Data.Auction>) {
         val uniqueLotIds = mutableSetOf<LotId>()
         for (auction in command.data.tender.electronicAuctions.details) {
             val auctionId = auction.id
@@ -76,7 +84,7 @@ class EndAuctionsServiceImpl(
             if (!uniqueLotIds.add(lotId))
                 throw DuplicateLotException(lotId)
 
-            val startedAuction = tender.startedAuctions[lotId]
+            val startedAuction = startedAuctionsByLotId[lotId]
                 ?: throw UnknownLotException(lotId = lotId)
             val bidsStartedAuction = startedAuction.bids.associateBy { it.id }
 
@@ -136,52 +144,107 @@ class EndAuctionsServiceImpl(
         }
     }
 
-    private fun endedAuctions(command: EndAuctionsCommand, tender: Tender): List<EndedAuction> {
-        return command.data.tender.electronicAuctions.details.map { detail ->
-            val lotId = detail.relatedLot
-            val startedAuction = tender.startedAuctions[lotId]!!
+    private fun endedAuctions(command: EndAuctionsCommand,
+                              startedAuctionsByLotId: Map<LotId, StartedAuctionsSnapshot.Data.Auction>,
+                              snapshot: StartedAuctionsSnapshot): EndedAuctionsSnapshot {
 
-            EndedAuction.of(
-                startedAuction = startedAuction,
-                period = detail.auctionPeriod.let { auctionPeriod ->
-                    Period(
-                        startDate = auctionPeriod.startDate,
-                        endDate = auctionPeriod.endDate
-                    )
-                },
-                progress = detail.electronicAuctionProgress.map { progress ->
-                    Offer(
-                        id = progress.id,
-                        period = progress.period.let { period ->
-                            Period(
+        return EndedAuctionsSnapshot(
+            rowVersion = snapshot.rowVersion.next(),
+            operationId = command.context.operationId,
+            data = EndedAuctionsSnapshot.Data(
+                apiVersion = StartedAuctionsSnapshot.apiVersion,
+                tender = EndedAuctionsSnapshot.Data.Tender(
+                    id = snapshot.data.tender.id,
+                    country = snapshot.data.tender.country,
+                    status = AuctionsStatus.ENDED,
+                    title = snapshot.data.tender.title,
+                    description = snapshot.data.tender.description,
+                    startDate = snapshot.data.tender.startDate,
+                    endDate = command.data.tender.auctionPeriod.endDate
+                ),
+                slots = snapshot.data.slots.toSet(),
+                auctions = command.data.tender.electronicAuctions.details.map { detail ->
+                    val auction = startedAuctionsByLotId[detail.relatedLot]
+                        ?: throw IllegalStateException("Unknown auction by lot with id: '${detail.relatedLot}'.")
+
+                    EndedAuctionsSnapshot.Data.Auction(
+                        id = auction.id,
+                        lotId = auction.lotId,
+                        title = auction.title,
+                        description = auction.description,
+                        auctionPeriod = detail.auctionPeriod.let { period ->
+                            EndedAuctionsSnapshot.Data.Auction.AuctionPeriod(
                                 startDate = period.startDate,
                                 endDate = period.endDate
                             )
                         },
-                        breakdowns = progress.breakdowns.map { breakdown ->
-                            Breakdown(
-                                relatedBid = breakdown.relatedBid,
-                                status = BreakdownStatus("met"),
-                                dateMet = breakdown.dateMet,
-                                value = Value(
-                                    amount = breakdown.value.amount,
-                                    currency = startedAuction.value.currency
+                        value = auction.value.let { value ->
+                            EndedAuctionsSnapshot.Data.Auction.Value(
+                                amount = value.amount,
+                                currency = value.currency
+                            )
+                        },
+                        modalities = auction.modalities.map { modality ->
+                            EndedAuctionsSnapshot.Data.Auction.Modality(
+                                url = modality.url,
+                                eligibleMinimumDifference = modality.eligibleMinimumDifference.let { emd ->
+                                    EndedAuctionsSnapshot.Data.Auction.Modality.EligibleMinimumDifference(
+                                        amount = emd.amount,
+                                        currency = emd.currency
+                                    )
+                                }
+                            )
+                        },
+                        bids = auction.bids.map { bid ->
+                            EndedAuctionsSnapshot.Data.Auction.Bid(
+                                id = bid.id,
+                                owner = bid.owner,
+                                relatedLot = bid.relatedLot,
+                                pendingDate = bid.pendingDate,
+                                value = bid.value.let { value ->
+                                    EndedAuctionsSnapshot.Data.Auction.Bid.Value(
+                                        amount = value.amount,
+                                        currency = value.currency
+                                    )
+                                },
+                                url = bid.url,
+                                sign = bid.sign
+                            )
+                        },
+                        progress = detail.electronicAuctionProgress.map { progress ->
+                            EndedAuctionsSnapshot.Data.Auction.Offer(
+                                id = progress.id,
+                                period = progress.period.let { period ->
+                                    EndedAuctionsSnapshot.Data.Auction.Offer.Period(
+                                        startDate = period.startDate,
+                                        endDate = period.endDate
+                                    )
+                                },
+                                breakdowns = progress.breakdowns.map { breakdown ->
+                                    EndedAuctionsSnapshot.Data.Auction.Offer.Breakdown(
+                                        relatedBid = breakdown.relatedBid,
+                                        status = BreakdownStatus("met"),
+                                        dateMet = breakdown.dateMet,
+                                        value = EndedAuctionsSnapshot.Data.Auction.Offer.Breakdown.Value(
+                                            amount = breakdown.value.amount,
+                                            currency = auction.value.currency
+                                        )
+                                    )
+                                }
+                            )
+                        },
+                        results = detail.electronicAuctionResult.map { result ->
+                            EndedAuctionsSnapshot.Data.Auction.Result(
+                                relatedBid = result.relatedBid,
+                                value = EndedAuctionsSnapshot.Data.Auction.Result.Value(
+                                    amount = result.value.amount,
+                                    currency = auction.value.currency
                                 )
-
                             )
                         }
                     )
-                },
-                results = detail.electronicAuctionResult.map { result ->
-                    Result(
-                        relatedBid = result.relatedBid,
-                        value = Value(
-                            amount = result.value.amount,
-                            currency = startedAuction.value.currency
-                        )
-                    )
                 }
             )
-        }
+        )
     }
 }
