@@ -4,14 +4,13 @@ import com.fasterxml.jackson.annotation.JsonValue
 import com.procurement.auction.domain.model.ValueObject
 
 enum class AuctionsStatus(val id: Int, val description: String) : ValueObject {
-    NONE(0, "no auctions"),
-    SCHEDULED(1, "an auctions are scheduled"),
-    CANCELED(2, "an auctions are cancelled"),
-    STARTED(3, "an auctions are started"),
-    ENDED(4, "an auctions are ended");
+    SCHEDULED(1, "auctions are scheduled"),
+    CANCELED(2, "auctions are cancelled"),
+    STARTED(3, "auctions are started"),
+    ENDED(4, "auctions are ended");
 
     companion object {
-        val map: Map<Int, AuctionsStatus> = mutableMapOf<Int, AuctionsStatus>().apply {
+        private val map: Map<Int, AuctionsStatus> = mutableMapOf<Int, AuctionsStatus>().apply {
             enumValues<AuctionsStatus>().forEach { status ->
                 this[status.id] = status
             }

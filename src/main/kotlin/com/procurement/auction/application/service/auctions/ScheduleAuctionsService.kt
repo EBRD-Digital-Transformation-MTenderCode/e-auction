@@ -4,37 +4,38 @@ import com.procurement.auction.configuration.properties.AuctionProperties
 import com.procurement.auction.domain.command.ScheduleAuctionsCommand
 import com.procurement.auction.domain.logger.Logger
 import com.procurement.auction.domain.logger.debug
+import com.procurement.auction.domain.logger.info
 import com.procurement.auction.domain.model.auction.EstimatedDurationAuction
-import com.procurement.auction.domain.model.auction.ScheduledAuction
 import com.procurement.auction.domain.model.auction.id.AuctionId
 import com.procurement.auction.domain.model.auction.status.AuctionsStatus
 import com.procurement.auction.domain.model.bucket.AuctionsTimes
 import com.procurement.auction.domain.model.cpid.CPID
 import com.procurement.auction.domain.model.lotId.LotId
-import com.procurement.auction.domain.model.modality.Modality
-import com.procurement.auction.domain.model.tender.Tender
-import com.procurement.auction.domain.model.tender.snapshot.TenderSnapshot
-import com.procurement.auction.domain.model.value.Value
+import com.procurement.auction.domain.model.tender.TenderEntity
+import com.procurement.auction.domain.model.tender.snapshot.ScheduledAuctionsSnapshot
+import com.procurement.auction.domain.model.version.RowVersion
 import com.procurement.auction.domain.repository.TenderRepository
 import com.procurement.auction.domain.service.BucketService
+import com.procurement.auction.domain.service.JsonDeserializeService
 import com.procurement.auction.exception.app.DuplicateLotException
 import com.procurement.auction.exception.app.IncorrectNumberModalitiesException
 import com.procurement.auction.exception.app.NoLotsException
-import com.procurement.auction.exception.command.ScheduleCommandCanNotBeExecutedException
+import com.procurement.auction.exception.command.CommandCanNotBeExecutedException
 import com.procurement.auction.infrastructure.logger.Slf4jLogger
 import org.springframework.stereotype.Service
 import java.net.URL
 import java.time.LocalDate
 
 interface ScheduleAuctionsService {
-    fun schedule(command: ScheduleAuctionsCommand): TenderSnapshot
+    fun schedule(command: ScheduleAuctionsCommand): ScheduledAuctionsSnapshot
 }
 
 @Service
 class ScheduleAuctionsServiceImpl(
     private val auctionProperties: AuctionProperties,
     private val tenderRepository: TenderRepository,
-    private val bucketService: BucketService
+    private val bucketService: BucketService,
+    private val deserializer: JsonDeserializeService
 ) : ScheduleAuctionsService {
     companion object {
         private val log: Logger = Slf4jLogger()
@@ -43,42 +44,48 @@ class ScheduleAuctionsServiceImpl(
 
     private val urlAuction: String = genUrlAuctions()
 
-    override fun schedule(command: ScheduleAuctionsCommand): TenderSnapshot {
+    override fun schedule(command: ScheduleAuctionsCommand): ScheduledAuctionsSnapshot {
+        val cpid = command.context.cpid
+        val entity: TenderEntity? = tenderRepository.loadEntity(cpid)
+
+        return if (entity != null) {
+            when (entity.status) {
+                AuctionsStatus.SCHEDULED -> {
+                    if (entity.operationId == command.context.operationId)
+                        entity.toScheduledAuctionsSnapshot(deserializer)
+                    else
+                        throw CommandCanNotBeExecutedException(command.name, entity.status)
+                }
+
+                AuctionsStatus.CANCELED ->
+                    processing(command, entity.rowVersion.next())
+
+                AuctionsStatus.STARTED ->
+                    throw CommandCanNotBeExecutedException(command.name, entity.status)
+
+                AuctionsStatus.ENDED ->
+                    throw CommandCanNotBeExecutedException(command.name, entity.status)
+            }
+        } else {
+            processing(command, RowVersion.of())
+        }
+    }
+
+    private fun processing(command: ScheduleAuctionsCommand, rowVersion: RowVersion): ScheduledAuctionsSnapshot {
+        validate(command)
+
         val cpid = command.context.cpid
         val country = command.context.country
-
-        val tender = tenderRepository.load(cpid)
-            ?.also {
-                log.debug { "Read tender ($it)" }
-            } ?: Tender.of(cpid, country)
-            .also {
-                log.debug { "Created new tender ($it)" }
-            }
-
-        if (!tender.canSchedule) {
-            if (tender.auctionsStatus == AuctionsStatus.SCHEDULED && tender.operationId == command.context.operationId)
-                return tender.toSnapshot()
-            else
-                throw ScheduleCommandCanNotBeExecutedException("The '${command.name.code}' command cannot be executed. The tender is in '${tender.auctionsStatus.description}' status.")
-        }
-
-        validate(command)
 
         val dateStartAuction = minDateOfStartAuction(command.data.tenderPeriod.endDate.toLocalDate())
         val estimates = estimates(command)
         val auctionsTimes = bucketService.booking(cpid, country, dateStartAuction, estimates)
 
-        val scheduledAuctions = genScheduledAuctions(command, auctionsTimes)
-        tender.scheduleAuctions(
-            operationId = command.context.operationId,
-            startDate = auctionsTimes.startDateTime,
-            slots = auctionsTimes.slotsIds,
-            auctions = scheduledAuctions
-        )
-
-        tenderRepository.saveScheduledAuctions(cpid, tender)
-        log.debug { "Scheduled auctions in tender with $cpid." }
-        return tender.toSnapshot()
+        return genScheduledAuctions(command = command, auctionsTimes = auctionsTimes, rowVersion = rowVersion)
+            .also {
+                tenderRepository.save(it)
+                log.info { "Scheduled auctions in tender with id '${cpid.value}'." }
+            }
     }
 
     private fun validate(command: ScheduleAuctionsCommand) {
@@ -106,35 +113,54 @@ class ScheduleAuctionsServiceImpl(
     }
 
     private fun genScheduledAuctions(command: ScheduleAuctionsCommand,
-                                     auctionsTimes: AuctionsTimes): List<ScheduledAuction> {
-        return command.data.electronicAuctions.details.map { detail ->
-            val lotId = detail.relatedLot
-            val startDateTime = auctionsTimes.items[lotId]!!
+                                     auctionsTimes: AuctionsTimes,
+                                     rowVersion: RowVersion): ScheduledAuctionsSnapshot {
+        val cpid = command.context.cpid
+        val country = command.context.country
+        val operationId = command.context.operationId
 
-            ScheduledAuction(
-                id = AuctionId(),
-                lotId = lotId,
-                startDate = startDateTime,
-                status = AuctionsStatus.SCHEDULED,
-                modalities = detail.electronicAuctionModalities.map { modality ->
-                    Modality(
-                        url = genUrl(cpid = command.context.cpid, relatedLot = lotId),
-                        eligibleMinimumDifference = modality.eligibleMinimumDifference.let { emd ->
-                            Value(
-                                amount = emd.amount,
-                                currency = emd.currency
+        return ScheduledAuctionsSnapshot(
+            rowVersion = rowVersion,
+            operationId = operationId,
+            data = ScheduledAuctionsSnapshot.Data(
+                apiVersion = ScheduledAuctionsSnapshot.apiVersion,
+                tender = ScheduledAuctionsSnapshot.Data.Tender(
+                    id = cpid,
+                    country = country,
+                    status = AuctionsStatus.SCHEDULED,
+                    startDate = auctionsTimes.startDateTime
+                ),
+                slots = auctionsTimes.slotsIds.toSet(),
+                auctions = command.data.electronicAuctions.details.map { detail ->
+                    val lotId = detail.relatedLot
+                    val startDateTime = auctionsTimes.items[lotId]!!
+
+                    ScheduledAuctionsSnapshot.Data.Auction(
+                        id = AuctionId(),
+                        lotId = lotId,
+                        auctionPeriod = ScheduledAuctionsSnapshot.Data.Auction.AuctionPeriod(
+                            startDate = startDateTime
+                        ),
+                        modalities = detail.electronicAuctionModalities.map { modality ->
+                            ScheduledAuctionsSnapshot.Data.Auction.Modality(
+                                url = genUrl(cpid = command.context.cpid, relatedLot = lotId),
+                                eligibleMinimumDifference = modality.eligibleMinimumDifference.let { emd ->
+                                    ScheduledAuctionsSnapshot.Data.Auction.Modality.EligibleMinimumDifference(
+                                        amount = emd.amount,
+                                        currency = emd.currency
+                                    )
+                                }
                             )
                         }
                     )
                 }
             )
-
-        }
+        )
     }
 
     private fun minDateOfStartAuction(endDate: LocalDate): LocalDate = endDate.plusDays(dateOffsetDays)
 
-    private fun genUrl(cpid: CPID, relatedLot: LotId): String = "$urlAuction/auctions/${cpid.value}/${relatedLot.value}"
+    private fun genUrl(cpid: CPID, relatedLot: LotId): String = "$urlAuction/auction/${cpid.value}/${relatedLot.value}"
 
     private fun genUrlAuctions(): String {
         val url = auctionProperties.url

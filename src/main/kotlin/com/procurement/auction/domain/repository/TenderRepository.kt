@@ -1,13 +1,17 @@
 package com.procurement.auction.domain.repository
 
 import com.procurement.auction.domain.model.cpid.CPID
-import com.procurement.auction.domain.model.tender.Tender
+import com.procurement.auction.domain.model.tender.TenderEntity
+import com.procurement.auction.domain.model.tender.snapshot.CancelledAuctionsSnapshot
+import com.procurement.auction.domain.model.tender.snapshot.EndedAuctionsSnapshot
+import com.procurement.auction.domain.model.tender.snapshot.ScheduledAuctionsSnapshot
+import com.procurement.auction.domain.model.tender.snapshot.StartedAuctionsSnapshot
 
 interface TenderRepository {
-    fun load(cpid: CPID): Tender?
+    fun loadEntity(cpid: CPID): TenderEntity?
 
-    fun saveScheduledAuctions(cpid: CPID, tender: Tender)
-    fun saveCancelledAuctions(cpid: CPID, tender: Tender)
-    fun saveStartedAuctions(cpid: CPID, tender: Tender)
-    fun saveEndedAuctions(cpid: CPID, tender: Tender)
+    fun save(snapshot: ScheduledAuctionsSnapshot)
+    fun save(snapshot: CancelledAuctionsSnapshot)
+    fun save(snapshot: StartedAuctionsSnapshot)
+    fun save(snapshot: EndedAuctionsSnapshot)
 }
