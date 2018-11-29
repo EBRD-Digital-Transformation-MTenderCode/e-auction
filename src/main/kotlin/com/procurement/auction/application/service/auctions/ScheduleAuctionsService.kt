@@ -3,7 +3,6 @@ package com.procurement.auction.application.service.auctions
 import com.procurement.auction.configuration.properties.AuctionProperties
 import com.procurement.auction.domain.command.ScheduleAuctionsCommand
 import com.procurement.auction.domain.logger.Logger
-import com.procurement.auction.domain.logger.debug
 import com.procurement.auction.domain.logger.info
 import com.procurement.auction.domain.model.auction.EstimatedDurationAuction
 import com.procurement.auction.domain.model.auction.id.AuctionId
@@ -160,7 +159,7 @@ class ScheduleAuctionsServiceImpl(
 
     private fun minDateOfStartAuction(endDate: LocalDate): LocalDate = endDate.plusDays(dateOffsetDays)
 
-    private fun genUrl(cpid: CPID, relatedLot: LotId): String = "$urlAuction/auction/${cpid.value}/${relatedLot.value}"
+    private fun genUrl(cpid: CPID, relatedLot: LotId): String = "$urlAuction/auctions/${cpid.value}/${relatedLot.value}"
 
     private fun genUrlAuctions(): String {
         val url = auctionProperties.url
