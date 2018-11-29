@@ -5,6 +5,8 @@ import com.datastax.driver.core.Session
 import com.procurement.auction.domain.logger.Logger
 import com.procurement.auction.domain.logger.debug
 import com.procurement.auction.domain.model.auction.status.AuctionsStatus
+import com.procurement.auction.domain.model.country.Country
+import com.procurement.auction.domain.model.country.CountrySerializer
 import com.procurement.auction.domain.model.cpid.CPID
 import com.procurement.auction.domain.model.cpid.CPIDSerializer
 import com.procurement.auction.domain.model.operationId.OperationId
@@ -40,6 +42,7 @@ class TenderRepositoryImpl(
         private const val columnRowVersion = "row_version"
         private const val columnApiVersion = "api_version"
         private const val columnOperationId = "operation_id"
+        private const val columnCountry = "country"
         private const val columnStatus = "status"
         private const val columnData = "data"
         private const val paramOriginalRowVersion = "originalRowVersion"
@@ -59,10 +62,11 @@ class TenderRepositoryImpl(
                            $columnRowVersion,
                            $columnApiVersion,
                            $columnOperationId,
+                           $columnCountry,
                            $columnStatus,
                            $columnData
                )
-               VALUES (?,?,?,?,?,?) IF NOT EXISTS;"""
+               VALUES (?,?,?,?,?,?, ?) IF NOT EXISTS;"""
 
         private const val updateCQL =
             """UPDATE $KEY_SPACE.$tableName
@@ -117,6 +121,7 @@ class TenderRepositoryImpl(
                     rowVersion = snapshot.rowVersion,
                     apiVersion = snapshot.data.apiVersion,
                     operationId = snapshot.operationId,
+                    country = snapshot.data.tender.country,
                     status = snapshot.data.tender.status,
                     data = data
                 )
@@ -225,6 +230,7 @@ class TenderRepositoryImpl(
                                    rowVersion: RowVersion,
                                    apiVersion: ApiVersion,
                                    operationId: OperationId,
+                                   country: Country,
                                    status: AuctionsStatus,
                                    data: String): BoundStatement {
 
@@ -235,6 +241,7 @@ class TenderRepositoryImpl(
             it.setInt(columnRowVersion, rowVersion.modified)
             it.setString(columnApiVersion, ApiVersionSerializer.serialize(apiVersion))
             it.setString(columnOperationId, OperationIdSerializer.serialize(operationId))
+            it.setString(columnCountry, CountrySerializer.serialize(country))
             it.setInt(columnStatus, status.id)
             it.setString(columnData, data)
         }
