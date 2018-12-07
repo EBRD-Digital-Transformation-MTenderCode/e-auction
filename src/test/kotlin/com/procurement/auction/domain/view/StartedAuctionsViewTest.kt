@@ -9,8 +9,18 @@ import org.junit.jupiter.api.Test
 
 class StartedAuctionsViewTest : AbstractBase() {
     @Test
-    fun test() {
-        val json = RESOURCES.load("json/view/start.json")
+    fun auctionStartedTrue() {
+        val json = RESOURCES.load("json/view/start_true.json")
+        val obj = mapper.toObject<StartedAuctionsView>(json)
+        assertNotNull(obj)
+
+        val jsonFromObj = mapper.toJson(obj)
+        assertEquals(json, jsonFromObj)
+    }
+
+    @Test
+    fun auctionStartedFalse() {
+        val json = RESOURCES.load("json/view/start_false.json")
         val obj = mapper.toObject<StartedAuctionsView>(json)
         assertNotNull(obj)
 

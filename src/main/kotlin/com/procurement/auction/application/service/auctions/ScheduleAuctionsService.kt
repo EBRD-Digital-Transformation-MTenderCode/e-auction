@@ -23,6 +23,7 @@ import com.procurement.auction.exception.command.CommandCanNotBeExecutedExceptio
 import com.procurement.auction.infrastructure.logger.Slf4jLogger
 import org.springframework.stereotype.Service
 import java.net.URL
+import java.time.Duration
 import java.time.LocalDate
 
 interface ScheduleAuctionsService {
@@ -42,6 +43,28 @@ class ScheduleAuctionsServiceImpl(
     }
 
     private val urlAuction: String = genUrlAuctions()
+    private val durationOneAuction: Duration = durationOneAuction(auctionProperties.qtyParticipants!!)
+
+    init {
+        log.info { "qty-rounds: ${auctionProperties.qtyRounds}" }
+        log.info { "qty-participants: ${auctionProperties.qtyParticipants}" }
+        log.info { "duration-one-step: ${auctionProperties.durationOneStep}" }
+        log.info { "duration-pause-after-step: ${auctionProperties.durationPauseAfterStep}" }
+        log.info { "duration-pause-after-auction: ${auctionProperties.durationPauseAfterAuction}" }
+    }
+
+    private fun durationOneAuction(qtyParticipants: Int): Duration {
+        val durationOneRound: Duration =
+            auctionProperties.durationOneStep!! + auctionProperties.durationPauseAfterStep!!
+
+        log.info { "duration-one-round: $durationOneRound" }
+
+        val durationOneAuction = durationOneRound.multipliedBy(qtyParticipants.toLong())
+            .multipliedBy(auctionProperties.qtyRounds!!) + auctionProperties.durationPauseAfterAuction
+        log.info { "duration-one-auction: $durationOneAuction" }
+
+        return durationOneAuction
+    }
 
     override fun schedule(command: ScheduleAuctionsCommand): ScheduledAuctionsSnapshot {
         val cpid = command.context.cpid
@@ -106,7 +129,7 @@ class ScheduleAuctionsServiceImpl(
         return command.data.electronicAuctions.details.map {
             EstimatedDurationAuction(
                 lotId = it.relatedLot,
-                duration = auctionProperties.durationOneAuction
+                duration = durationOneAuction
             )
         }
     }
