@@ -43,7 +43,7 @@ class ScheduleAuctionsServiceImpl(
     }
 
     private val urlAuction: String = genUrlAuctions()
-    private val durationOneAuction: Duration = auctionProperties.durationOneAuction(auctionProperties.qtyParticipants!!)
+    private val durationOneAuction: Duration = durationOneAuction(auctionProperties.qtyParticipants!!)
 
     init {
         log.info { "qty-rounds: ${auctionProperties.qtyRounds}" }
@@ -51,7 +51,19 @@ class ScheduleAuctionsServiceImpl(
         log.info { "duration-one-step: ${auctionProperties.durationOneStep}" }
         log.info { "duration-pause-after-step: ${auctionProperties.durationPauseAfterStep}" }
         log.info { "duration-pause-after-auction: ${auctionProperties.durationPauseAfterAuction}" }
+    }
+
+    private fun durationOneAuction(qtyParticipants: Int): Duration {
+        val durationOneRound: Duration =
+            auctionProperties.durationOneStep!! + auctionProperties.durationPauseAfterStep!!
+
+        log.info { "duration-one-round: $durationOneRound" }
+
+        val durationOneAuction = durationOneRound.multipliedBy(qtyParticipants.toLong())
+            .multipliedBy(auctionProperties.qtyRounds!!) + auctionProperties.durationPauseAfterAuction
         log.info { "duration-one-auction: $durationOneAuction" }
+
+        return durationOneAuction
     }
 
     override fun schedule(command: ScheduleAuctionsCommand): ScheduledAuctionsSnapshot {
