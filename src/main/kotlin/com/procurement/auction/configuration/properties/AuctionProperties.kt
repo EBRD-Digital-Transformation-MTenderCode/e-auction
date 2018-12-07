@@ -12,9 +12,8 @@ class AuctionProperties {
     var durationPauseAfterStep: Duration? = Duration.ofSeconds(30)
     var durationPauseAfterAuction: Duration? = Duration.ofSeconds(30)
     val durationOneRound: Duration = durationOneStep!! + durationPauseAfterStep!!
-    val durationOneAuction = durationAuction(qtyParticipants!!)
 
-    fun durationAuction(qtyParticipants: Int): Duration =
+    fun durationOneAuction(qtyParticipants: Int): Duration =
         durationOneRound.multipliedBy(qtyParticipants.toLong())
             .multipliedBy(qtyRounds!!) + durationPauseAfterAuction
 
