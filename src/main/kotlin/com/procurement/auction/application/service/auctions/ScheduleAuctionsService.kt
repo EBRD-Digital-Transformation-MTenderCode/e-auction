@@ -41,6 +41,15 @@ class ScheduleAuctionsServiceImpl(
         private const val dateOffsetDays = 1L
     }
 
+    init{
+        log.info { "qty-rounds: ${auctionProperties.qtyRounds}" }
+        log.info { "qty-participants: ${auctionProperties.qtyParticipants}" }
+        log.info { "duration-one-step: ${auctionProperties.durationOneStep}" }
+        log.info { "duration-pause-after-step: ${auctionProperties.durationPauseAfterStep}" }
+        log.info { "duration-pause-after-auction: ${auctionProperties.durationPauseAfterAuction}" }
+        log.info { "duration-one-auction: ${auctionProperties.durationOneAuction}" }
+    }
+
     private val urlAuction: String = genUrlAuctions()
 
     override fun schedule(command: ScheduleAuctionsCommand): ScheduledAuctionsSnapshot {
