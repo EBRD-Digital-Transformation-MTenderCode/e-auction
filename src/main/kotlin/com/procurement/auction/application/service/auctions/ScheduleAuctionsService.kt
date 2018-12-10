@@ -8,7 +8,6 @@ import com.procurement.auction.domain.model.auction.EstimatedDurationAuction
 import com.procurement.auction.domain.model.auction.id.AuctionId
 import com.procurement.auction.domain.model.auction.status.AuctionsStatus
 import com.procurement.auction.domain.model.bucket.AuctionsTimes
-import com.procurement.auction.domain.model.cpid.CPID
 import com.procurement.auction.domain.model.lotId.LotId
 import com.procurement.auction.domain.model.tender.TenderEntity
 import com.procurement.auction.domain.model.tender.snapshot.ScheduledAuctionsSnapshot
@@ -16,13 +15,13 @@ import com.procurement.auction.domain.model.version.RowVersion
 import com.procurement.auction.domain.repository.TenderRepository
 import com.procurement.auction.domain.service.BucketService
 import com.procurement.auction.domain.service.JsonDeserializeService
+import com.procurement.auction.domain.service.UrlGeneratorService
 import com.procurement.auction.exception.app.DuplicateLotException
 import com.procurement.auction.exception.app.IncorrectNumberModalitiesException
 import com.procurement.auction.exception.app.NoLotsException
 import com.procurement.auction.exception.command.CommandCanNotBeExecutedException
 import com.procurement.auction.infrastructure.logger.Slf4jLogger
 import org.springframework.stereotype.Service
-import java.net.URL
 import java.time.Duration
 import java.time.LocalDate
 
@@ -35,14 +34,14 @@ class ScheduleAuctionsServiceImpl(
     private val auctionProperties: AuctionProperties,
     private val tenderRepository: TenderRepository,
     private val bucketService: BucketService,
-    private val deserializer: JsonDeserializeService
+    private val deserializer: JsonDeserializeService,
+    private val urlGenerator: UrlGeneratorService
 ) : ScheduleAuctionsService {
     companion object {
         private val log: Logger = Slf4jLogger()
         private const val dateOffsetDays = 1L
     }
 
-    private val urlAuction: String = genUrlAuctions()
     private val durationOneAuction: Duration = durationOneAuction(auctionProperties.qtyParticipants!!)
 
     init {
@@ -165,7 +164,7 @@ class ScheduleAuctionsServiceImpl(
                         ),
                         modalities = detail.electronicAuctionModalities.map { modality ->
                             ScheduledAuctionsSnapshot.Data.Auction.Modality(
-                                url = genUrl(cpid = command.context.cpid, relatedLot = lotId),
+                                url = urlGenerator.forModality(cpid = command.context.cpid, relatedLot = lotId),
                                 eligibleMinimumDifference = modality.eligibleMinimumDifference.let { emd ->
                                     ScheduledAuctionsSnapshot.Data.Auction.Modality.EligibleMinimumDifference(
                                         amount = emd.amount,
@@ -181,22 +180,4 @@ class ScheduleAuctionsServiceImpl(
     }
 
     private fun minDateOfStartAuction(endDate: LocalDate): LocalDate = endDate.plusDays(dateOffsetDays)
-
-    private fun genUrl(cpid: CPID, relatedLot: LotId): String = "$urlAuction/auctions/${cpid.value}/${relatedLot.value}"
-
-    private fun genUrlAuctions(): String {
-        val url = auctionProperties.url
-            ?: throw IllegalStateException("Not set the url of an tender.")
-        val protocol = url.protocol
-            ?: throw IllegalStateException("Not set the scheme of the url.")
-        val host = url.host
-            ?: throw IllegalStateException("Not set the domain name of the url.")
-        return getUrlASCII("$protocol://$host")
-    }
-
-    private fun getUrlASCII(uri: String): String = try {
-        URL(uri).toURI().toASCIIString()
-    } catch (exception: Exception) {
-        throw IllegalStateException("Invalid the tender url: '$uri'.")
-    }
 }
