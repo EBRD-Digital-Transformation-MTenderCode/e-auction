@@ -11,6 +11,7 @@ import com.procurement.auction.domain.model.tender.snapshot.ScheduledAuctionsSna
 import com.procurement.auction.domain.model.tender.snapshot.StartedAuctionsSnapshot
 import com.procurement.auction.domain.repository.TenderRepository
 import com.procurement.auction.domain.service.JsonDeserializeService
+import com.procurement.auction.domain.service.UrlGeneratorService
 import com.procurement.auction.exception.app.BidIncorrectNumberLotsException
 import com.procurement.auction.exception.app.BidOnUnknownLotException
 import com.procurement.auction.exception.app.DuplicateBidException
@@ -30,7 +31,8 @@ interface StartAuctionsService {
 @Service
 class StartAuctionsServiceImpl(
     private val tenderRepository: TenderRepository,
-    private val deserializer: JsonDeserializeService
+    private val deserializer: JsonDeserializeService,
+    private val urlGenerator: UrlGeneratorService
 ) : StartAuctionsService {
     companion object {
         private val log: Logger = Slf4jLogger()
@@ -141,6 +143,7 @@ class StartAuctionsServiceImpl(
                                 scheduledAuctions: Map<LotId, ScheduledAuctionsSnapshot.Data.Auction>,
                                 snapshot: ScheduledAuctionsSnapshot): StartedAuctionsSnapshot {
 
+        val cpid = command.context.cpid
         val bidsByLotId: Map<LotId, List<StartedAuctionsSnapshot.Data.Auction.Bid>> =
             bidsByLotId(command, actualLots, scheduledAuctions)
 
@@ -165,6 +168,7 @@ class StartAuctionsServiceImpl(
                             val scheduledAuction = scheduledAuctions[lotId]!!
                             val bids = bidsByLotId[lotId]
                             if (bids != null && bids.size > 1) {
+
                                 val auction = StartedAuctionsSnapshot.Data.Auction(
                                     id = scheduledAuction.id,
                                     lotId = scheduledAuction.lotId,
@@ -181,7 +185,7 @@ class StartAuctionsServiceImpl(
                                     },
                                     modalities = scheduledAuction.modalities.map { modality ->
                                         StartedAuctionsSnapshot.Data.Auction.Modality(
-                                            url = modality.url,
+                                            url = urlGenerator.forModality(cpid = cpid, relatedLot = lotId),
                                             eligibleMinimumDifference = modality.eligibleMinimumDifference.let { emd ->
                                                 StartedAuctionsSnapshot.Data.Auction.Modality.EligibleMinimumDifference(
                                                     amount = emd.amount,
@@ -204,7 +208,7 @@ class StartAuctionsServiceImpl(
     private fun bidsByLotId(command: StartAuctionsCommand,
                             actualLots: Set<LotId>,
                             scheduledAuctions: Map<LotId, ScheduledAuctionsSnapshot.Data.Auction>): Map<LotId, List<StartedAuctionsSnapshot.Data.Auction.Bid>> {
-
+        val cpid = command.context.cpid
         return mutableMapOf<LotId, MutableList<StartedAuctionsSnapshot.Data.Auction.Bid>>()
             .apply {
                 for (bidData in command.data.bidsData) {
@@ -229,7 +233,10 @@ class StartAuctionsServiceImpl(
                                             currency = value.currency
                                         )
                                     },
-                                    url = "${scheduledAuction.modalities[0].url}?bid_id=${bidId.value}&sign=${sign.value}",
+                                    url = urlGenerator.forBid(cpid = cpid,
+                                                              relatedLot = relatedLot,
+                                                              bidId = bidId,
+                                                              sign = sign),
                                     sign = sign
                                 )
 

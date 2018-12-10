@@ -11,6 +11,7 @@ import com.procurement.auction.domain.model.tender.snapshot.EndedAuctionsSnapsho
 import com.procurement.auction.domain.model.tender.snapshot.StartedAuctionsSnapshot
 import com.procurement.auction.domain.repository.TenderRepository
 import com.procurement.auction.domain.service.JsonDeserializeService
+import com.procurement.auction.domain.service.UrlGeneratorService
 import com.procurement.auction.exception.app.DuplicateBidInBreakdownException
 import com.procurement.auction.exception.app.DuplicateBidInResultsException
 import com.procurement.auction.exception.app.DuplicateLotException
@@ -31,7 +32,8 @@ interface EndAuctionsService {
 @Service
 class EndAuctionsServiceImpl(
     private val tenderRepository: TenderRepository,
-    private val deserializer: JsonDeserializeService
+    private val deserializer: JsonDeserializeService,
+    private val urlGenerator: UrlGeneratorService
 ) : EndAuctionsService {
     companion object {
         private val log: Logger = Slf4jLogger()
@@ -147,7 +149,7 @@ class EndAuctionsServiceImpl(
     private fun endedAuctions(command: EndAuctionsCommand,
                               startedAuctionsByLotId: Map<LotId, StartedAuctionsSnapshot.Data.Auction>,
                               snapshot: StartedAuctionsSnapshot): EndedAuctionsSnapshot {
-
+        val cpid = command.context.cpid
         return EndedAuctionsSnapshot(
             rowVersion = snapshot.rowVersion.next(),
             operationId = command.context.operationId,
@@ -186,7 +188,7 @@ class EndAuctionsServiceImpl(
                         },
                         modalities = auction.modalities.map { modality ->
                             EndedAuctionsSnapshot.Data.Auction.Modality(
-                                url = modality.url,
+                                url = urlGenerator.forModality(cpid = cpid, relatedLot = auction.lotId),
                                 eligibleMinimumDifference = modality.eligibleMinimumDifference.let { emd ->
                                     EndedAuctionsSnapshot.Data.Auction.Modality.EligibleMinimumDifference(
                                         amount = emd.amount,
@@ -207,7 +209,10 @@ class EndAuctionsServiceImpl(
                                         currency = value.currency
                                     )
                                 },
-                                url = bid.url,
+                                url = urlGenerator.forBid(cpid = cpid,
+                                                          relatedLot = bid.relatedLot,
+                                                          bidId = bid.id,
+                                                          sign = bid.sign),
                                 sign = bid.sign
                             )
                         },
