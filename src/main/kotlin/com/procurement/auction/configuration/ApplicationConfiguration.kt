@@ -8,8 +8,7 @@ import org.springframework.context.annotation.Import
     value = [
         WebConfiguration::class,
         ServiceConfiguration::class,
-        CassandraConfiguration::class,
-        ActuatorSecurity::class
+        CassandraConfiguration::class
     ]
 )
 class ApplicationConfiguration
