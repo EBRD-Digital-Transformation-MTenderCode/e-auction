@@ -1,6 +1,5 @@
 package com.procurement.auction.infrastructure.dispatcher
 
-import com.procurement.auction.application.service.tender.TenderMigrationService
 import com.procurement.auction.application.service.tender.TenderService
 import com.procurement.auction.configuration.properties.GlobalProperties
 import com.procurement.auction.domain.command.CancelAuctionsCommand
@@ -16,7 +15,6 @@ import com.procurement.auction.domain.model.command.name.CommandName.AUCTIONS_EN
 import com.procurement.auction.domain.model.command.name.CommandName.AUCTIONS_START
 import com.procurement.auction.domain.model.command.name.CommandName.AUCTION_CANCEL
 import com.procurement.auction.domain.model.command.name.CommandName.SCHEDULE
-import com.procurement.auction.domain.model.cpid.CPID
 import com.procurement.auction.domain.service.JsonDeserializeService
 import com.procurement.auction.domain.service.deserialize
 import com.procurement.auction.domain.view.CommandErrorView
@@ -29,7 +27,6 @@ import com.procurement.auction.infrastructure.logger.Slf4jLogger
 import org.slf4j.MDC
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
-import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
@@ -39,16 +36,10 @@ import javax.servlet.http.HttpServletRequest
 @RequestMapping("/command")
 class CommandDispatcher(
     private val tenderService: TenderService,
-    private val deserializer: JsonDeserializeService,
-    private val migrationService: TenderMigrationService
+    private val deserializer: JsonDeserializeService
 ) {
     companion object {
         private val log: Logger = Slf4jLogger()
-    }
-
-    @PostMapping("/migration/{cpid}")
-    fun migration(@PathVariable(name = "cpid") cpid: String) {
-        migrationService.migration(CPID(cpid))
     }
 
     @PostMapping()
