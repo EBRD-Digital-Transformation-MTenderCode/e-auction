@@ -2,7 +2,6 @@ package com.procurement.auction.infrastructure.dto.command
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.annotation.JsonProperty
-import com.fasterxml.jackson.annotation.JsonPropertyOrder
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize
 import com.fasterxml.jackson.databind.annotation.JsonSerialize
 import com.procurement.auction.domain.model.amount.Amount
@@ -40,7 +39,6 @@ import com.procurement.auction.domain.model.version.ApiVersionSerializer
 import java.time.LocalDateTime
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-@JsonPropertyOrder("version", "id", "command", "context", "data")
 data class EndAuctionsCommand(
     @JsonDeserialize(using = ApiVersionDeserializer::class)
     @JsonSerialize(using = ApiVersionSerializer::class)
@@ -57,7 +55,7 @@ data class EndAuctionsCommand(
     @field:JsonProperty("context") @param:JsonProperty("context") val context: Context,
     @field:JsonProperty("data") @param:JsonProperty("data") val data: Data
 ) {
-    @JsonPropertyOrder("cpid", "operationId", "startDate", "pmd", "country")
+
     data class Context(
         @JsonDeserialize(using = CPIDDeserializer::class)
         @JsonSerialize(using = CPIDSerializer::class)
@@ -78,11 +76,10 @@ data class EndAuctionsCommand(
         @field:JsonProperty("country") @param:JsonProperty("country") val country: Country
     )
 
-    @JsonPropertyOrder("tender")
     data class Data(
         @field:JsonProperty("tender") @param:JsonProperty("tender") val tender: Tender
     ) {
-        @JsonPropertyOrder("id", "auctionPeriod", "electronicAuctions")
+
         data class Tender(
             @JsonDeserialize(using = CPIDDeserializer::class)
             @JsonSerialize(using = CPIDSerializer::class)
@@ -91,7 +88,7 @@ data class EndAuctionsCommand(
             @field:JsonProperty("auctionPeriod") @param:JsonProperty("auctionPeriod") val auctionPeriod: AuctionPeriod,
             @field:JsonProperty("electronicAuctions") @param:JsonProperty("electronicAuctions") val electronicAuctions: ElectronicAuctions
         ) {
-            @JsonPropertyOrder("startDate", "endDate")
+
             data class AuctionPeriod(
                 @JsonDeserialize(using = JsonDateTimeDeserializer::class)
                 @JsonSerialize(using = JsonDateTimeSerializer::class)
@@ -102,15 +99,10 @@ data class EndAuctionsCommand(
                 @field:JsonProperty("endDate") @param:JsonProperty("endDate") val endDate: LocalDateTime
             )
 
-            @JsonPropertyOrder("details")
             data class ElectronicAuctions(
                 @field:JsonProperty("details") @param:JsonProperty("details") val details: List<Detail>
             ) {
-                @JsonPropertyOrder("id",
-                                   "relatedLot",
-                                   "auctionPeriod",
-                                   "electronicAuctionProgress",
-                                   "electronicAuctionResult")
+
                 data class Detail(
                     @field:JsonProperty("id") @param:JsonProperty("id") val id: String,
 
@@ -122,7 +114,7 @@ data class EndAuctionsCommand(
                     @field:JsonProperty("electronicAuctionProgress") @param:JsonProperty("electronicAuctionProgress") val electronicAuctionProgress: List<ElectronicAuctionProgress>,
                     @field:JsonProperty("electronicAuctionResult") @param:JsonProperty("electronicAuctionResult") val electronicAuctionResult: List<ElectronicAuctionResult>
                 ) {
-                    @JsonPropertyOrder("startDate", "endDate")
+
                     data class AuctionPeriod(
                         @JsonDeserialize(using = JsonDateTimeDeserializer::class)
                         @JsonSerialize(using = JsonDateTimeSerializer::class)
@@ -133,7 +125,6 @@ data class EndAuctionsCommand(
                         @field:JsonProperty("endDate") @param:JsonProperty("endDate") val endDate: LocalDateTime
                     )
 
-                    @JsonPropertyOrder("id", "period", "breakdown")
                     data class ElectronicAuctionProgress(
                         @JsonDeserialize(using = ProgressIdDeserializer::class)
                         @JsonSerialize(using = ProgressIdSerializer::class)
@@ -142,7 +133,7 @@ data class EndAuctionsCommand(
                         @field:JsonProperty("period") @param:JsonProperty("period") val period: Period,
                         @field:JsonProperty("breakdown") @param:JsonProperty("breakdown") val breakdowns: List<Breakdown>
                     ) {
-                        @JsonPropertyOrder("startDate", "endDate")
+
                         data class Period(
                             @JsonDeserialize(using = JsonDateTimeDeserializer::class)
                             @JsonSerialize(using = JsonDateTimeSerializer::class)
@@ -153,7 +144,6 @@ data class EndAuctionsCommand(
                             @field:JsonProperty("endDate") @param:JsonProperty("endDate") val endDate: LocalDateTime
                         )
 
-                        @JsonPropertyOrder("relatedBid", "dateMet", "value")
                         data class Breakdown(
                             @JsonDeserialize(using = BidIdDeserializer::class)
                             @JsonSerialize(using = BidIdSerializer::class)
@@ -165,7 +155,7 @@ data class EndAuctionsCommand(
 
                             @field:JsonProperty("value") @param:JsonProperty("value") val value: Value
                         ) {
-                            @JsonPropertyOrder("amount")
+
                             data class Value(
                                 @JsonDeserialize(using = AmountDeserializer::class)
                                 @JsonSerialize(using = AmountSerializer::class)
@@ -174,7 +164,6 @@ data class EndAuctionsCommand(
                         }
                     }
 
-                    @JsonPropertyOrder("relatedBid", "value")
                     data class ElectronicAuctionResult(
                         @JsonDeserialize(using = BidIdDeserializer::class)
                         @JsonSerialize(using = BidIdSerializer::class)
@@ -182,7 +171,7 @@ data class EndAuctionsCommand(
 
                         @field:JsonProperty("value") @param:JsonProperty("value") val value: Value
                     ) {
-                        @JsonPropertyOrder("amount")
+
                         data class Value(
                             @JsonDeserialize(using = AmountDeserializer::class)
                             @JsonSerialize(using = AmountSerializer::class)
