@@ -1,4 +1,4 @@
-package com.procurement.auction.domain.command
+package com.procurement.auction.infrastructure.dto.command
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.annotation.JsonProperty
@@ -28,8 +28,8 @@ import com.procurement.auction.domain.model.version.ApiVersionSerializer
 import java.time.LocalDateTime
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-@JsonPropertyOrder("version", "id", "command", "context", "data")
-data class CancelAuctionsCommand(
+@JsonPropertyOrder("version", "id", "command", "context")
+class Command(
     @JsonDeserialize(using = ApiVersionDeserializer::class)
     @JsonSerialize(using = ApiVersionSerializer::class)
     @field:JsonProperty("version") @param:JsonProperty("version") val version: ApiVersion,
@@ -42,8 +42,7 @@ data class CancelAuctionsCommand(
     @JsonSerialize(using = CommandNameSerializer::class)
     @field:JsonProperty("command") @param:JsonProperty("command") val name: CommandName,
 
-    @field:JsonProperty("context") @param:JsonProperty("context") val context: Context,
-    @field:JsonProperty("data") @param:JsonProperty("data") val data: Data
+    @field:JsonProperty("context") @param:JsonProperty("context") val context: Context
 ) {
     @JsonPropertyOrder("cpid", "operationId", "startDate", "pmd", "country")
     data class Context(
@@ -65,6 +64,4 @@ data class CancelAuctionsCommand(
         @JsonSerialize(using = CountrySerializer::class)
         @field:JsonProperty("country") @param:JsonProperty("country") val country: Country
     )
-
-    class Data
 }

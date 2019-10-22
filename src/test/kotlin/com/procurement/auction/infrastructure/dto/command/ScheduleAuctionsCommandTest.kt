@@ -1,4 +1,4 @@
-package com.procurement.auction.domain.command
+package com.procurement.auction.infrastructure.dto.command
 
 import com.procurement.auction.AbstractBase
 import com.procurement.auction.toJson
@@ -7,11 +7,11 @@ import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.Test
 
-class StartAuctionsCommandTest : AbstractBase() {
+class ScheduleAuctionsCommandTest : AbstractBase() {
     @Test
     fun test() {
-        val json = RESOURCES.load("json/command/start.json")
-        val obj = mapper.toObject<StartAuctionsCommand>(json)
+        val json = RESOURCES.load("json/command/schedule.json")
+        val obj = mapper.toObject<ScheduleAuctionsCommand>(json)
         assertNotNull(obj)
 
         val jsonFromObj = mapper.toJson(obj)

@@ -5,10 +5,10 @@ import com.procurement.auction.application.service.auctions.CancelAuctionsServic
 import com.procurement.auction.application.service.auctions.EndAuctionsService
 import com.procurement.auction.application.service.auctions.ScheduleAuctionsService
 import com.procurement.auction.application.service.auctions.StartAuctionsService
-import com.procurement.auction.domain.command.CancelAuctionsCommand
-import com.procurement.auction.domain.command.EndAuctionsCommand
-import com.procurement.auction.domain.command.ScheduleAuctionsCommand
-import com.procurement.auction.domain.command.StartAuctionsCommand
+import com.procurement.auction.infrastructure.dto.command.CancelAuctionsCommand
+import com.procurement.auction.infrastructure.dto.command.EndAuctionsCommand
+import com.procurement.auction.infrastructure.dto.command.ScheduleAuctionsCommand
+import com.procurement.auction.infrastructure.dto.command.StartAuctionsCommand
 import com.procurement.auction.domain.view.CancelledAuctionsView
 import com.procurement.auction.domain.view.EndedAuctionsView
 import com.procurement.auction.domain.view.ScheduledAuctionsView

@@ -1,4 +1,4 @@
-package com.procurement.auction.domain.command
+package com.procurement.auction.infrastructure.dto.command
 
 import com.procurement.auction.AbstractBase
 import com.procurement.auction.toJson

@@ -1,7 +1,7 @@
 package com.procurement.auction.application.service.auctions
 
 import com.procurement.auction.configuration.properties.AuctionProperties
-import com.procurement.auction.domain.command.ScheduleAuctionsCommand
+import com.procurement.auction.infrastructure.dto.command.ScheduleAuctionsCommand
 import com.procurement.auction.domain.logger.Logger
 import com.procurement.auction.domain.logger.info
 import com.procurement.auction.domain.model.auction.EstimatedDurationAuction

@@ -2,11 +2,11 @@ package com.procurement.auction.infrastructure.dispatcher
 
 import com.procurement.auction.application.service.tender.TenderService
 import com.procurement.auction.configuration.properties.GlobalProperties
-import com.procurement.auction.domain.command.CancelAuctionsCommand
-import com.procurement.auction.domain.command.Command
-import com.procurement.auction.domain.command.EndAuctionsCommand
-import com.procurement.auction.domain.command.ScheduleAuctionsCommand
-import com.procurement.auction.domain.command.StartAuctionsCommand
+import com.procurement.auction.infrastructure.dto.command.CancelAuctionsCommand
+import com.procurement.auction.infrastructure.dto.command.Command
+import com.procurement.auction.infrastructure.dto.command.EndAuctionsCommand
+import com.procurement.auction.infrastructure.dto.command.ScheduleAuctionsCommand
+import com.procurement.auction.infrastructure.dto.command.StartAuctionsCommand
 import com.procurement.auction.domain.logger.Logger
 import com.procurement.auction.domain.logger.debug
 import com.procurement.auction.domain.logger.error

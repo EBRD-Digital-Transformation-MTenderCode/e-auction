@@ -1,4 +1,4 @@
-package com.procurement.auction.domain.command
+package com.procurement.auction.infrastructure.dto.command
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.annotation.JsonProperty

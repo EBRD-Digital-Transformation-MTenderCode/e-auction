@@ -1,6 +1,6 @@
 package com.procurement.auction.application.service.auctions
 
-import com.procurement.auction.domain.command.CancelAuctionsCommand
+import com.procurement.auction.infrastructure.dto.command.CancelAuctionsCommand
 import com.procurement.auction.domain.logger.Logger
 import com.procurement.auction.domain.logger.info
 import com.procurement.auction.domain.model.auction.status.AuctionsStatus
