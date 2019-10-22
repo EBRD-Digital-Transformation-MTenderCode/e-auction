@@ -1,20 +1,12 @@
 package com.procurement.auction.infrastructure.dto.command
 
-import com.procurement.auction.AbstractBase
-import com.procurement.auction.toJson
-import com.procurement.auction.toObject
-import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.Assertions.assertNotNull
+import com.procurement.auction.infrastructure.dto.AbstractDTOTestBase
 import org.junit.jupiter.api.Test
 
-class ScheduleAuctionsCommandTest : AbstractBase() {
-    @Test
-    fun test() {
-        val json = RESOURCES.load("json/command/schedule.json")
-        val obj = mapper.toObject<ScheduleAuctionsCommand>(json)
-        assertNotNull(obj)
+class ScheduleAuctionsCommandTest : AbstractDTOTestBase<ScheduleAuctionsCommand>(ScheduleAuctionsCommand::class.java) {
 
-        val jsonFromObj = mapper.toJson(obj)
-        assertEquals(json, jsonFromObj)
+    @Test
+    fun fully() {
+        testBindingAndMapping("json/command/schedule.json")
     }
 }

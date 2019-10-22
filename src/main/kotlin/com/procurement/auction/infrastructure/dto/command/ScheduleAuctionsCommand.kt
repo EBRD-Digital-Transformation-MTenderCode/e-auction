@@ -2,7 +2,6 @@ package com.procurement.auction.infrastructure.dto.command
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.annotation.JsonProperty
-import com.fasterxml.jackson.annotation.JsonPropertyOrder
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize
 import com.fasterxml.jackson.databind.annotation.JsonSerialize
 import com.procurement.auction.domain.model.amount.Amount
@@ -37,7 +36,6 @@ import com.procurement.auction.domain.model.version.ApiVersionSerializer
 import java.time.LocalDateTime
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-@JsonPropertyOrder("version", "id", "command", "context", "data")
 data class ScheduleAuctionsCommand(
     @JsonDeserialize(using = ApiVersionDeserializer::class)
     @JsonSerialize(using = ApiVersionSerializer::class)
@@ -54,7 +52,7 @@ data class ScheduleAuctionsCommand(
     @field:JsonProperty("context") @param:JsonProperty("context") val context: Context,
     @field:JsonProperty("data") @param:JsonProperty("data") val data: Data
 ) {
-    @JsonPropertyOrder("cpid", "operationId", "startDate", "pmd", "country")
+
     data class Context(
         @JsonDeserialize(using = CPIDDeserializer::class)
         @JsonSerialize(using = CPIDSerializer::class)
@@ -75,7 +73,6 @@ data class ScheduleAuctionsCommand(
         @field:JsonProperty("country") @param:JsonProperty("country") val country: Country
     )
 
-    @JsonPropertyOrder("tenderPeriod", "electronicAuctions")
     data class Data(
         @field:JsonProperty("tenderPeriod") @param:JsonProperty("tenderPeriod") val tenderPeriod: TenderPeriod,
         @field:JsonProperty("electronicAuctions") @param:JsonProperty("electronicAuctions") val electronicAuctions: ElectronicAuctions
@@ -89,7 +86,7 @@ data class ScheduleAuctionsCommand(
         data class ElectronicAuctions(
             @field:JsonProperty("details") @param:JsonProperty("details") val details: List<Detail>
         ) {
-            @JsonPropertyOrder("relatedLot", "electronicAuctionModalities")
+
             data class Detail(
                 @JsonDeserialize(using = LotIdDeserializer::class)
                 @JsonSerialize(using = LotIdSerializer::class)
@@ -100,7 +97,7 @@ data class ScheduleAuctionsCommand(
                 data class ElectronicAuctionModalities(
                     @field:JsonProperty("eligibleMinimumDifference") @param:JsonProperty("eligibleMinimumDifference") val eligibleMinimumDifference: EligibleMinimumDifference
                 ) {
-                    @JsonPropertyOrder("amount", "currency")
+
                     data class EligibleMinimumDifference(
                         @JsonDeserialize(using = AmountDeserializer::class)
                         @JsonSerialize(using = AmountSerializer::class)
