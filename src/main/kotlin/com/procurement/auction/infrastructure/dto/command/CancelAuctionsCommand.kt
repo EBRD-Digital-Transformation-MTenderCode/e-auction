@@ -2,7 +2,6 @@ package com.procurement.auction.infrastructure.dto.command
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.annotation.JsonProperty
-import com.fasterxml.jackson.annotation.JsonPropertyOrder
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize
 import com.fasterxml.jackson.databind.annotation.JsonSerialize
 import com.procurement.auction.domain.model.command.id.CommandId
@@ -28,7 +27,6 @@ import com.procurement.auction.domain.model.version.ApiVersionSerializer
 import java.time.LocalDateTime
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-@JsonPropertyOrder("version", "id", "command", "context", "data")
 data class CancelAuctionsCommand(
     @JsonDeserialize(using = ApiVersionDeserializer::class)
     @JsonSerialize(using = ApiVersionSerializer::class)
@@ -45,7 +43,7 @@ data class CancelAuctionsCommand(
     @field:JsonProperty("context") @param:JsonProperty("context") val context: Context,
     @field:JsonProperty("data") @param:JsonProperty("data") val data: Data
 ) {
-    @JsonPropertyOrder("cpid", "operationId", "startDate", "pmd", "country")
+
     data class Context(
         @JsonDeserialize(using = CPIDDeserializer::class)
         @JsonSerialize(using = CPIDSerializer::class)
