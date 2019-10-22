@@ -1,7 +1,7 @@
 package com.procurement.auction.application.service.auctions
 
+import com.procurement.auction.application.auctionDuration
 import com.procurement.auction.configuration.properties.AuctionProperties
-import com.procurement.auction.infrastructure.dto.command.ScheduleAuctionsCommand
 import com.procurement.auction.domain.logger.Logger
 import com.procurement.auction.domain.logger.info
 import com.procurement.auction.domain.model.auction.EstimatedDurationAuction
@@ -20,6 +20,7 @@ import com.procurement.auction.exception.app.DuplicateLotException
 import com.procurement.auction.exception.app.IncorrectNumberModalitiesException
 import com.procurement.auction.exception.app.NoLotsException
 import com.procurement.auction.exception.command.CommandCanNotBeExecutedException
+import com.procurement.auction.infrastructure.dto.command.ScheduleAuctionsCommand
 import com.procurement.auction.infrastructure.logger.Slf4jLogger
 import org.springframework.stereotype.Service
 import java.time.Duration
@@ -42,7 +43,13 @@ class ScheduleAuctionsServiceImpl(
         private const val dateOffsetDays = 1L
     }
 
-    private val durationOneAuction: Duration = durationOneAuction(auctionProperties.qtyParticipants!!)
+    private val durationOneAuction: Duration = auctionDuration(
+        durationOneStep = auctionProperties.durationOneStep!!,
+        durationPauseAfterStep = auctionProperties.durationPauseAfterStep!!,
+        qtyParticipants = auctionProperties.qtyParticipants!!.toLong(),
+        qtyRounds = auctionProperties.qtyRounds!!,
+        durationPauseAfterAuction = auctionProperties.durationPauseAfterAuction!!
+    )
 
     init {
         log.info { "qty-rounds: ${auctionProperties.qtyRounds}" }
@@ -50,19 +57,6 @@ class ScheduleAuctionsServiceImpl(
         log.info { "duration-one-step: ${auctionProperties.durationOneStep}" }
         log.info { "duration-pause-after-step: ${auctionProperties.durationPauseAfterStep}" }
         log.info { "duration-pause-after-auction: ${auctionProperties.durationPauseAfterAuction}" }
-    }
-
-    private fun durationOneAuction(qtyParticipants: Int): Duration {
-        val durationOneRound: Duration =
-            auctionProperties.durationOneStep!! + auctionProperties.durationPauseAfterStep!!
-
-        log.info { "duration-one-round: $durationOneRound" }
-
-        val durationOneAuction = durationOneRound.multipliedBy(qtyParticipants.toLong())
-            .multipliedBy(auctionProperties.qtyRounds!!) + auctionProperties.durationPauseAfterAuction
-        log.info { "duration-one-auction: $durationOneAuction" }
-
-        return durationOneAuction
     }
 
     override fun schedule(command: ScheduleAuctionsCommand): ScheduledAuctionsSnapshot {
@@ -133,9 +127,11 @@ class ScheduleAuctionsServiceImpl(
         }
     }
 
-    private fun genScheduledAuctions(command: ScheduleAuctionsCommand,
-                                     auctionsTimes: AuctionsTimes,
-                                     rowVersion: RowVersion): ScheduledAuctionsSnapshot {
+    private fun genScheduledAuctions(
+        command: ScheduleAuctionsCommand,
+        auctionsTimes: AuctionsTimes,
+        rowVersion: RowVersion
+    ): ScheduledAuctionsSnapshot {
         val cpid = command.context.cpid
         val country = command.context.country
         val operationId = command.context.operationId
