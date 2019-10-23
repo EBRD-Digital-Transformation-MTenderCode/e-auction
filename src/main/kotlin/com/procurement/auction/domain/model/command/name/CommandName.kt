@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonValue
 import com.procurement.auction.domain.model.ValueObject
 
 enum class CommandName(val code: String) : ValueObject {
+    VALIDATE("validateAuctionsDetails"),
     SCHEDULE("scheduleAuctions"),
     AUCTIONS_START("auctionsStart"),
     AUCTIONS_END("auctionsEnd"),

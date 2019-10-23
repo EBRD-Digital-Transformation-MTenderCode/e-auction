@@ -2,11 +2,6 @@ package com.procurement.auction.infrastructure.dispatcher
 
 import com.procurement.auction.application.service.tender.TenderService
 import com.procurement.auction.configuration.properties.GlobalProperties
-import com.procurement.auction.infrastructure.dto.command.CancelAuctionsCommand
-import com.procurement.auction.infrastructure.dto.command.Command
-import com.procurement.auction.infrastructure.dto.command.EndAuctionsCommand
-import com.procurement.auction.infrastructure.dto.command.ScheduleAuctionsCommand
-import com.procurement.auction.infrastructure.dto.command.StartAuctionsCommand
 import com.procurement.auction.domain.logger.Logger
 import com.procurement.auction.domain.logger.debug
 import com.procurement.auction.domain.logger.error
@@ -15,6 +10,7 @@ import com.procurement.auction.domain.model.command.name.CommandName.AUCTIONS_EN
 import com.procurement.auction.domain.model.command.name.CommandName.AUCTIONS_START
 import com.procurement.auction.domain.model.command.name.CommandName.AUCTION_CANCEL
 import com.procurement.auction.domain.model.command.name.CommandName.SCHEDULE
+import com.procurement.auction.domain.model.command.name.CommandName.VALIDATE
 import com.procurement.auction.domain.service.JsonDeserializeService
 import com.procurement.auction.domain.service.deserialize
 import com.procurement.auction.domain.view.CommandErrorView
@@ -23,6 +19,12 @@ import com.procurement.auction.domain.view.MessageErrorView
 import com.procurement.auction.domain.view.View
 import com.procurement.auction.exception.app.ApplicationException
 import com.procurement.auction.exception.json.JsonParseToObjectException
+import com.procurement.auction.infrastructure.dto.command.CancelAuctionsCommand
+import com.procurement.auction.infrastructure.dto.command.Command
+import com.procurement.auction.infrastructure.dto.command.EndAuctionsCommand
+import com.procurement.auction.infrastructure.dto.command.ScheduleAuctionsCommand
+import com.procurement.auction.infrastructure.dto.command.StartAuctionsCommand
+import com.procurement.auction.infrastructure.dto.command.ValidateAuctionsCommand
 import com.procurement.auction.infrastructure.logger.Slf4jLogger
 import org.slf4j.MDC
 import org.springframework.http.HttpStatus
@@ -75,6 +77,14 @@ class CommandDispatcher(
         log.debug { "Retrieve command: $requestBody" }
 
         return when (command.name) {
+            VALIDATE -> {
+                commandProcessing(command) {
+                    deserializer.deserialize<ValidateAuctionsCommand>(requestBody)
+                        .let { tenderService.validateAuctions(it) }
+
+                }
+
+            }
             SCHEDULE -> {
                 commandProcessing(command) {
                     deserializer.deserialize<ScheduleAuctionsCommand>(requestBody)

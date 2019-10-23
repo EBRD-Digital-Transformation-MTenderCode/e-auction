@@ -1,0 +1,39 @@
+{
+  "id": "43234010-604e-11e9-a93c-87ed6a3fe877",
+  "command": "validateAuctionsDetails",
+  "context": {
+    "operationId": "d561d7ea-64bf-11e1-adc0-fa7ae01b8742",
+    "cpid": "ocds-t1s2t3-MD-1555418219328",
+    "country": "MD",
+    "pmd": "OT",
+    "startDate": "2019-04-16T13:48:06Z"
+  },
+  "data": {
+    "auctionLots": [
+      {
+        "id": "500cb05e-9341-47a6-8804-e2429c8f04fd",
+        "value": {
+          "amount": 100.01,
+          "currency": "MDL"
+        }
+      }
+    ],
+    "electronicAuctions": {
+      "details": [
+        {
+          "id": "0a19412c-1f03-4dc1-b11a-174e65dc7cf6",
+          "relatedLot": "500cb05e-9341-47a6-8804-e2429c8f04fd",
+          "electronicAuctionModalities": [
+            {
+              "eligibleMinimumDifference": {
+                "amount": 150.00,
+                "currency": "MDL"
+              }
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "version": "0.0.1"
+}

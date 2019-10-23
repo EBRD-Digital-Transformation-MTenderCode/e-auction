@@ -48,6 +48,12 @@ enum class CodesOfErrors(final override val httpStatus: HttpStatus, group: Strin
     INCORRECT_NUMBER_BIDS_IN_BREAKDOWN( httpStatus = HttpStatus.BAD_REQUEST,            group = "08", id = "10"),
     INCORRECT_NUMBER_BIDS_IN_RESULT(    httpStatus = HttpStatus.BAD_REQUEST,            group = "08", id = "11"),
 
+    //Lots
+    INVALID_LOTS(                       httpStatus = HttpStatus.BAD_REQUEST,            group = "09", id = "01"),
+
+    //Electronic auctions
+    INVALID_ELECTRONIC_AUCTIONS(        httpStatus = HttpStatus.BAD_REQUEST,            group = "10", id = "01"),
+
     //Common
     SERVER_ERROR(                       httpStatus = HttpStatus.INTERNAL_SERVER_ERROR,  group = "00", id = "00");
 
