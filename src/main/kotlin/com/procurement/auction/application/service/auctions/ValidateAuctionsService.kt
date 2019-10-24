@@ -7,7 +7,7 @@ import com.procurement.auction.application.toSetBy
 import com.procurement.auction.configuration.properties.AuctionProperties
 import com.procurement.auction.configuration.properties.SchedulerProperties
 import com.procurement.auction.domain.model.date.JsonTimeDeserializer
-import com.procurement.auction.domain.model.lotId.LotId
+import com.procurement.auction.domain.model.lotId.TemporalLotId
 import com.procurement.auction.exception.app.DuplicateLotException
 import com.procurement.auction.exception.app.InvalidElectronicAuctionsException
 import com.procurement.auction.exception.app.InvalidLotsException
@@ -85,7 +85,7 @@ class ValidateAuctionsServiceImpl(
      * FReq-1.1.1.18
      */
     private fun checkRelatedLotInElectronicAuctions(data: ValidateAuctionsCommand.Data) {
-        val lotsIds: Set<LotId> = data.lots.toSetBy { it.id }
+        val lotsIds: Set<TemporalLotId> = data.lots.toSetBy { it.id }
 
         data.electronicAuctions.details.forEach { detail ->
             if (detail.relatedLot !in lotsIds)
@@ -97,7 +97,7 @@ class ValidateAuctionsServiceImpl(
      * FReq-1.1.1.19
      */
     private fun checkLots(data: ValidateAuctionsCommand.Data) {
-        val electronicAuctionsByRelatedLot: Map<LotId, ValidateAuctionsCommand.Data.ElectronicAuctions.Detail> =
+        val electronicAuctionsByRelatedLot: Map<TemporalLotId, ValidateAuctionsCommand.Data.ElectronicAuctions.Detail> =
             data.electronicAuctions.details.associateBy { it.relatedLot }
 
         data.lots.forEach { lot ->
@@ -110,7 +110,7 @@ class ValidateAuctionsServiceImpl(
      * FReq-1.1.1.20
      */
     private fun checkValueInElectronicAuctions(data: ValidateAuctionsCommand.Data) {
-        val lotsById: Map<LotId, ValidateAuctionsCommand.Data.Lot> =
+        val lotsById: Map<TemporalLotId, ValidateAuctionsCommand.Data.Lot> =
             data.lots.associateBy { it.id }
 
         data.electronicAuctions.details.forEach { auction ->

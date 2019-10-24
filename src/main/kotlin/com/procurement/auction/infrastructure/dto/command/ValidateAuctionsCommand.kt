@@ -24,9 +24,7 @@ import com.procurement.auction.domain.model.currency.CurrencyDeserializer
 import com.procurement.auction.domain.model.currency.CurrencySerializer
 import com.procurement.auction.domain.model.date.JsonDateTimeDeserializer
 import com.procurement.auction.domain.model.date.JsonDateTimeSerializer
-import com.procurement.auction.domain.model.lotId.LotId
-import com.procurement.auction.domain.model.lotId.LotIdDeserializer
-import com.procurement.auction.domain.model.lotId.LotIdSerializer
+import com.procurement.auction.domain.model.lotId.TemporalLotId
 import com.procurement.auction.domain.model.operationId.OperationId
 import com.procurement.auction.domain.model.operationId.OperationIdDeserializer
 import com.procurement.auction.domain.model.operationId.OperationIdSerializer
@@ -78,10 +76,7 @@ data class ValidateAuctionsCommand(
     ) {
 
         data class Lot(
-            @JsonDeserialize(using = LotIdDeserializer::class)
-            @JsonSerialize(using = LotIdSerializer::class)
-            @field:JsonProperty("id") @param:JsonProperty("id") val id: LotId,
-
+            @field:JsonProperty("id") @param:JsonProperty("id") val id: TemporalLotId,
             @field:JsonProperty("value") @param:JsonProperty("value") val value: Value
         ) {
 
@@ -102,11 +97,7 @@ data class ValidateAuctionsCommand(
 
             data class Detail(
                 @field:JsonProperty("id") @param:JsonProperty("id") val id: String,
-
-                @JsonDeserialize(using = LotIdDeserializer::class)
-                @JsonSerialize(using = LotIdSerializer::class)
-                @field:JsonProperty("relatedLot") @param:JsonProperty("relatedLot") val relatedLot: LotId,
-
+                @field:JsonProperty("relatedLot") @param:JsonProperty("relatedLot") val relatedLot: TemporalLotId,
                 @field:JsonProperty("electronicAuctionModalities") @param:JsonProperty("electronicAuctionModalities") val electronicAuctionModalities: List<ElectronicAuctionModalities>
             ) {
 
