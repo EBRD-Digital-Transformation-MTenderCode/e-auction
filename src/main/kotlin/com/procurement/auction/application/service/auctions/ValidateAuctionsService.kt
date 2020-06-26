@@ -79,6 +79,17 @@ class ValidateAuctionsServiceImpl(
 
         if (electronicAuctionsDetails.isNotUnique { it.id })
             throw InvalidElectronicAuctionsException(message = "Electronic auctions contain duplicate identifiers.")
+
+        electronicAuctionsDetails.forEach { auctionDetails ->
+            checkElectronicAuctionsModalities(auctionDetails.electronicAuctionModalities)
+        }
+    }
+
+    private fun checkElectronicAuctionsModalities(
+        electronicAuctionsModalities: List<ValidateAuctionsCommand.Data.ElectronicAuctions.Detail.ElectronicAuctionModalities>
+    ) {
+        if (electronicAuctionsModalities.isEmpty())
+            throw InvalidElectronicAuctionsException(message = "Electronic auctions modalities are empty.")
     }
 
     /**
