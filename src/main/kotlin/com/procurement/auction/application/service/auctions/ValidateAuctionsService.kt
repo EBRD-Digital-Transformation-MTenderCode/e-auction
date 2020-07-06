@@ -2,6 +2,7 @@ package com.procurement.auction.application.service.auctions
 
 import com.procurement.auction.application.auctionDuration
 import com.procurement.auction.application.countAuctions
+import com.procurement.auction.application.getDuplicate
 import com.procurement.auction.application.isNotUnique
 import com.procurement.auction.application.toSetBy
 import com.procurement.auction.configuration.properties.AuctionProperties
@@ -115,6 +116,10 @@ class ValidateAuctionsServiceImpl(
             if (lot.id !in electronicAuctionsByRelatedLot)
                 throw InvalidLotsException("Lot with id: ${lot.id} not relate to some the electronic auction.")
         }
+
+        val duplicateReferenceToLot = data.electronicAuctions.details.getDuplicate { it.relatedLot }
+        if (duplicateReferenceToLot != null)
+            throw InvalidLotsException("Lot with id: $duplicateReferenceToLot references more than one electronic auctions' details.")
     }
 
     /**
