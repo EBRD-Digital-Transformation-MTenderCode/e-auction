@@ -17,3 +17,11 @@ inline fun <T, V> Collection<T>.toSetBy(selector: (T) -> V): Set<V> {
     }
     return collections
 }
+
+inline fun <T, V> Collection<T>.getDuplicate(selector: (T) -> V): T? {
+    val unique = HashSet<V>()
+    forEach { item ->
+        if (!unique.add(selector(item))) return item
+    }
+    return null
+}
