@@ -7,6 +7,9 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize
 import com.procurement.auction.domain.model.amount.Amount
 import com.procurement.auction.domain.model.amount.AmountDeserializer
 import com.procurement.auction.domain.model.amount.AmountSerializer
+import com.procurement.auction.domain.model.auction.id.AuctionId
+import com.procurement.auction.domain.model.auction.id.AuctionIdDeserializer
+import com.procurement.auction.domain.model.auction.id.AuctionIdSerializer
 import com.procurement.auction.domain.model.command.id.CommandId
 import com.procurement.auction.domain.model.command.id.CommandIdDeserializer
 import com.procurement.auction.domain.model.command.id.CommandIdSerializer
@@ -88,6 +91,11 @@ data class ScheduleAuctionsCommand(
         ) {
 
             data class Detail(
+
+                @JsonDeserialize(using = AuctionIdDeserializer::class)
+                @JsonSerialize(using = AuctionIdSerializer::class)
+                @field:JsonProperty("id") @param:JsonProperty("id") val id: AuctionId,
+
                 @JsonDeserialize(using = LotIdDeserializer::class)
                 @JsonSerialize(using = LotIdSerializer::class)
                 @field:JsonProperty("relatedLot") @param:JsonProperty("relatedLot") val relatedLot: LotId,

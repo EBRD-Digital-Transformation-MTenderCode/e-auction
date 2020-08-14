@@ -16,6 +16,7 @@
     "electronicAuctions": {
       "details": [
         {
+          "id": "e475447a-7ab3-4089-8740-ff6e690df0d8",
           "relatedLot": "e485447a-7ab3-4089-8740-ff6e690df0d8",
           "electronicAuctionModalities": [
             {
