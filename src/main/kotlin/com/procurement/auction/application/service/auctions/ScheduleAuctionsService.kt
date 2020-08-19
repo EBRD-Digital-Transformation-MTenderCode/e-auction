@@ -5,7 +5,6 @@ import com.procurement.auction.configuration.properties.AuctionProperties
 import com.procurement.auction.domain.logger.Logger
 import com.procurement.auction.domain.logger.info
 import com.procurement.auction.domain.model.auction.EstimatedDurationAuction
-import com.procurement.auction.domain.model.auction.id.AuctionId
 import com.procurement.auction.domain.model.auction.status.AuctionsStatus
 import com.procurement.auction.domain.model.bucket.AuctionsTimes
 import com.procurement.auction.domain.model.lotId.LotId
@@ -153,7 +152,7 @@ class ScheduleAuctionsServiceImpl(
                     val startDateTime = auctionsTimes.items[lotId]!!
 
                     ScheduledAuctionsSnapshot.Data.Auction(
-                        id = AuctionId(),
+                        id = detail.id,
                         lotId = lotId,
                         auctionPeriod = ScheduledAuctionsSnapshot.Data.Auction.AuctionPeriod(
                             startDate = startDateTime
