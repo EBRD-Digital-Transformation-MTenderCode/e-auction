@@ -3,6 +3,7 @@ package com.procurement.auction.infrastructure.service
 import com.fasterxml.jackson.databind.JsonNode
 import com.procurement.auction.application.service.Logger
 import com.procurement.auction.infrastructure.service.command.type.Command2Type
+import com.procurement.auction.infrastructure.service.handler.auction.validate.ValidateAuctionsDataHandler
 import com.procurement.auction.infrastructure.web.request.tryGetAction
 import com.procurement.auction.infrastructure.web.request.tryGetId
 import com.procurement.auction.infrastructure.web.request.tryGetVersion
@@ -12,7 +13,8 @@ import org.springframework.stereotype.Service
 
 @Service
 class Command2Service(
-    private val logger: Logger
+    private val logger: Logger,
+    private val validateAuctionsDataHandler: ValidateAuctionsDataHandler
 ) {
 
     fun execute(node: JsonNode): ApiResponse2 {
@@ -35,8 +37,7 @@ class Command2Service(
             }
 
         return when (action) {
-            Command2Type.TODO -> TODO()
-            else -> TODO("delete else case")
+            Command2Type.VALIDATE_AUCTIONS_DATA -> validateAuctionsDataHandler.handle(node)
         }
     }
 }
