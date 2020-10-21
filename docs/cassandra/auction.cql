@@ -52,3 +52,11 @@ INSERT INTO auctions.calendar(country,year,month, work_days) VALUES ('MD', 2019,
 INSERT INTO auctions.calendar(country,year,month, work_days) VALUES ('MD', 2019, 10, {1,2,3,4,7,8,9,10,11,14,15,16,17,18,21,22,23,24,25,28,29,30,31}) IF NOT EXISTS;
 INSERT INTO auctions.calendar(country,year,month, work_days) VALUES ('MD', 2019, 11, {1,4,5,6,7,8,11,12,13,14,15,18,19,20,21,22,25,26,27,28,29}) IF NOT EXISTS;
 INSERT INTO auctions.calendar(country,year,month, work_days) VALUES ('MD', 2019, 12, {2,3,4,5,6,9,10,11,12,13,16,17,18,19,20,23,24,25,26,27,30}) IF NOT EXISTS;
+
+CREATE TABLE IF NOT EXISTS  auctions.history (
+    operation_id text,
+    command text,
+    operation_date timestamp,
+    json_data text,
+    primary key(operation_id, command)
+);
