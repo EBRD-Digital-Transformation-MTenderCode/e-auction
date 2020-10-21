@@ -6,7 +6,7 @@ import com.procurement.auction.domain.model.enum.EnumElementProvider
 
 enum class Command2Type(@JsonValue override val key: String) : Action, EnumElementProvider.Key {
 
-    TODO("TODO");
+    VALIDATE_AUCTIONS_DATA("validateAuctionsData");
 
     override fun toString(): String = key
 
