@@ -1,4 +1,4 @@
-package com.procurement.auction.infrastructure.dispatcher
+package com.procurement.auction.infrastructure.web.dispatcher
 
 import com.procurement.auction.application.service.Logger
 import com.procurement.auction.application.service.Transform

@@ -4,7 +4,7 @@ import com.procurement.auction.domain.logger.Logger
 import com.procurement.auction.domain.model.bid.id.BidId
 import com.procurement.auction.domain.model.lotId.LotId
 import com.procurement.auction.domain.model.progressId.ProgressId
-import com.procurement.auction.infrastructure.dispatcher.CodesOfErrors
+import com.procurement.auction.infrastructure.web.dispatcher.CodesOfErrors
 
 class DuplicateBidInBreakdownException(auctionId: String, lotId: LotId, offerId: ProgressId, bidId: BidId) :
     ApplicationException(

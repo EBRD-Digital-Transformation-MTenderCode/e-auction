@@ -4,7 +4,7 @@ import com.procurement.auction.domain.logger.Logger
 import com.procurement.auction.domain.model.auction.status.AuctionsStatus
 import com.procurement.auction.domain.model.command.name.CommandName
 import com.procurement.auction.exception.app.ApplicationException
-import com.procurement.auction.infrastructure.dispatcher.CodesOfErrors
+import com.procurement.auction.infrastructure.web.dispatcher.CodesOfErrors
 
 class CommandCanNotBeExecutedException(name: CommandName, status: AuctionsStatus) :
     ApplicationException(
