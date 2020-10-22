@@ -3,13 +3,15 @@ package com.procurement.auction.domain.extension
 import com.procurement.auction.domain.functional.Option
 import com.procurement.auction.domain.functional.Result
 
-inline fun <T, V> Collection<T>.uniqueBy(selector: (T) -> V): Boolean {
+inline fun <T, V> Collection<T>.isUnique(selector: (T) -> V): Boolean {
     val unique = HashSet<V>()
     forEach { item ->
         if (!unique.add(selector(item))) return false
     }
     return true
 }
+
+inline fun <T, V> Collection<T>.isNotUnique(selector: (T) -> V): Boolean = !this.isUnique(selector)
 
 inline fun <T, V> Collection<T>.toSetBy(selector: (T) -> V): Set<V> {
     val collections = LinkedHashSet<V>()
