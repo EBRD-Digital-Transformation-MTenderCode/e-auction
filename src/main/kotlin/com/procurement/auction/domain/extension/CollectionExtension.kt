@@ -66,7 +66,7 @@ fun <T> getUnknownElements(received: Iterable<T>, known: Iterable<T>) =
 fun <T> getNewElements(received: Iterable<T>, known: Iterable<T>): Set<T> =
     received.asSet().subtract(known.asSet())
 
-private fun <T> Iterable<T>.asSet(): Set<T> = when (this) {
+fun <T> Iterable<T>.asSet(): Set<T> = when (this) {
     is Set -> this
     else -> this.toSet()
 }
