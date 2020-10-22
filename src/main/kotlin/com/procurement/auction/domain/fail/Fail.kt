@@ -3,7 +3,7 @@ package com.procurement.auction.domain.fail
 import com.procurement.auction.application.service.Logger
 import com.procurement.auction.domain.functional.Result
 import com.procurement.auction.domain.functional.ValidationResult
-import com.procurement.auction.domain.model.enum.EnumElementProvider
+import com.procurement.auction.domain.model.enums.EnumElementProvider
 
 sealed class Fail {
 

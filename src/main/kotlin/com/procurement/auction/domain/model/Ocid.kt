@@ -1,8 +1,8 @@
 package com.procurement.auction.domain.model
 
 import com.fasterxml.jackson.annotation.JsonValue
-import com.procurement.auction.domain.model.enum.EnumElementProvider.Companion.keysAsStringsUpper
-import com.procurement.auction.domain.model.enum.Stage
+import com.procurement.auction.domain.model.enums.EnumElementProvider.Companion.keysAsStringsUpper
+import com.procurement.auction.domain.model.enums.Stage
 
 class Ocid private constructor(private val value: String, val stage: Stage) {
 

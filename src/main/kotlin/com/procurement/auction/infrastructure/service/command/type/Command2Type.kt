@@ -2,7 +2,7 @@ package com.procurement.auction.infrastructure.service.command.type
 
 import com.fasterxml.jackson.annotation.JsonCreator
 import com.fasterxml.jackson.annotation.JsonValue
-import com.procurement.auction.domain.model.enum.EnumElementProvider
+import com.procurement.auction.domain.model.enums.EnumElementProvider
 
 enum class Command2Type(@JsonValue override val key: String) : Action, EnumElementProvider.Key {
 

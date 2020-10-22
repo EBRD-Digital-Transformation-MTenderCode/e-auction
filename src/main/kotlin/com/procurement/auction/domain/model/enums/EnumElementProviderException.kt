@@ -1,4 +1,4 @@
-package com.procurement.auction.domain.model.enum
+package com.procurement.auction.domain.model.enums
 
 data class EnumElementProviderException(private val enumType: String, val value: String, val values: String) :
     RuntimeException(

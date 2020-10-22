@@ -9,8 +9,8 @@ import com.procurement.auction.domain.functional.Result.Companion.failure
 import com.procurement.auction.domain.functional.Result.Companion.success
 import com.procurement.auction.domain.functional.asSuccess
 import com.procurement.auction.domain.functional.bind
-import com.procurement.auction.domain.model.enum.EnumElementProvider
-import com.procurement.auction.domain.model.enum.EnumElementProvider.Companion.keysAsStrings
+import com.procurement.auction.domain.model.enums.EnumElementProvider
+import com.procurement.auction.domain.model.enums.EnumElementProvider.Companion.keysAsStrings
 import java.math.BigDecimal
 
 fun JsonNode.getOrNull(name: String): JsonNode? = if (this.has(name)) this.get(name) else null

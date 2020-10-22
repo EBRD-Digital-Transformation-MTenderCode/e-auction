@@ -1,4 +1,4 @@
-package com.procurement.auction.domain.model.enum
+package com.procurement.auction.domain.model.enums
 
 import com.procurement.auction.domain.functional.Result
 import com.procurement.auction.domain.functional.Result.Companion.failure
