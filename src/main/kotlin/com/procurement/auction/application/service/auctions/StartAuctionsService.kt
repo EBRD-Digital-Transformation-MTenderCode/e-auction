@@ -1,6 +1,5 @@
 package com.procurement.auction.application.service.auctions
 
-import com.procurement.auction.infrastructure.dto.command.StartAuctionsCommand
 import com.procurement.auction.domain.logger.Logger
 import com.procurement.auction.domain.logger.info
 import com.procurement.auction.domain.model.auction.status.AuctionsStatus
@@ -21,6 +20,7 @@ import com.procurement.auction.exception.app.TenderNotFoundException
 import com.procurement.auction.exception.app.UnknownLotException
 import com.procurement.auction.exception.app.ValidationException
 import com.procurement.auction.exception.command.CommandCanNotBeExecutedException
+import com.procurement.auction.infrastructure.dto.command.StartAuctionsCommand
 import com.procurement.auction.infrastructure.logger.Slf4jLogger
 import org.springframework.stereotype.Service
 
@@ -188,7 +188,7 @@ class StartAuctionsServiceImpl(
                                             url = urlGenerator.forModality(cpid = cpid, relatedLot = lotId),
                                             eligibleMinimumDifference = modality.eligibleMinimumDifference.let { emd ->
                                                 StartedAuctionsSnapshot.Data.Auction.Modality.EligibleMinimumDifference(
-                                                    amount = emd.amount,
+                                                    amount = emd.amount!!,
                                                     currency = emd.currency
                                                 )
                                             }
