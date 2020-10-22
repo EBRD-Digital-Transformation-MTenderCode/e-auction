@@ -2,13 +2,13 @@ package com.procurement.auction.application.service.auctions
 
 import com.procurement.auction.application.auctionDuration
 import com.procurement.auction.application.countAuctions
-import com.procurement.auction.application.getDuplicate
-import com.procurement.auction.application.isNotUnique
 import com.procurement.auction.application.params.auction.validate.ValidateAuctionsDataParams
-import com.procurement.auction.application.toSetBy
 import com.procurement.auction.configuration.properties.AuctionProperties
 import com.procurement.auction.configuration.properties.SchedulerProperties
 import com.procurement.auction.domain.extension.asSet
+import com.procurement.auction.domain.extension.getDuplicate
+import com.procurement.auction.domain.extension.isNotUnique
+import com.procurement.auction.domain.extension.toSetBy
 import com.procurement.auction.domain.fail.Fail
 import com.procurement.auction.domain.fail.error.ValidationError
 import com.procurement.auction.domain.functional.Result
