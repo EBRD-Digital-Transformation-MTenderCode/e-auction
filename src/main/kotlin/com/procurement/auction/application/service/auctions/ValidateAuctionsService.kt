@@ -11,8 +11,11 @@ import com.procurement.auction.configuration.properties.SchedulerProperties
 import com.procurement.auction.domain.extension.asSet
 import com.procurement.auction.domain.fail.Fail
 import com.procurement.auction.domain.fail.error.ValidationError
+import com.procurement.auction.domain.functional.Result
 import com.procurement.auction.domain.functional.ValidationResult
-import com.procurement.auction.domain.functional.asValidationFailure
+import com.procurement.auction.domain.functional.asFailure
+import com.procurement.auction.domain.functional.asSuccess
+import com.procurement.auction.domain.functional.bind
 import com.procurement.auction.domain.model.date.JsonTimeDeserializer
 import com.procurement.auction.domain.model.lotId.TemporalLotId
 import com.procurement.auction.exception.app.DuplicateLotException
@@ -162,28 +165,23 @@ class ValidateAuctionsServiceImpl(
 
     override fun validateAuctionsData(params: ValidateAuctionsDataParams): ValidationResult<Fail> {
         checkForAuctionDuplicates(params)
-            .doOnError { error -> return ValidationResult.error(error) }
-
-        checkForMissingLots(params)
-            .doOnError { error -> return ValidationResult.error(error) }
-
-        checkEachLotIsLinkedToOneAuction(params)
-            .doOnError { error -> return ValidationResult.error(error) }
-
-        checkForUnmatchingCurrency(params)
+            .bind { checkForMissingLots(it) }
+            .bind { checkEachLotIsLinkedToOneAuction(it) }
+            .bind { checkForUnmatchingCurrency(it) }
             .doOnError { error -> return ValidationResult.error(error) }
 
         return ValidationResult.ok()
     }
 
-    private fun checkForAuctionDuplicates(params: ValidateAuctionsDataParams): ValidationResult<Fail> {
+    private fun checkForAuctionDuplicates(params: ValidateAuctionsDataParams): Result<ValidateAuctionsDataParams, Fail> {
         val duplicateAuction = params.tender.electronicAuctions.details.getDuplicate { it.id }
         if (duplicateAuction != null)
-            return ValidationError.DuplicateElectronicAuctionIds(duplicateAuction.id).asValidationFailure()
-        return ValidationResult.ok()
+            return ValidationError.DuplicateElectronicAuctionIds(duplicateAuction.id).asFailure()
+
+        return params.asSuccess()
     }
 
-    private fun checkForUnmatchingCurrency(params: ValidateAuctionsDataParams): ValidationResult<Fail> {
+    private fun checkForUnmatchingCurrency(params: ValidateAuctionsDataParams): Result<ValidateAuctionsDataParams, Fail> {
         val tenderCurrency = params.tender.value.currency
 
         val auctionWithModalitiesContainingInvalidCurrency = params.tender.electronicAuctions.details
@@ -196,31 +194,31 @@ class ValidateAuctionsServiceImpl(
             return ValidationError.AuctionModalityContainsInvalidCurrency(
                 auctionIds = auctionWithModalitiesContainingInvalidCurrency.map { it.id },
                 tenderCurrency = tenderCurrency
-            ).asValidationFailure()
+            ).asFailure()
 
-        return ValidationResult.ok()
+        return params.asSuccess()
     }
 
-    private fun checkForMissingLots(params: ValidateAuctionsDataParams): ValidationResult<Fail> {
+    private fun checkForMissingLots(params: ValidateAuctionsDataParams): Result<ValidateAuctionsDataParams, Fail> {
         val relatedLots = params.tender.electronicAuctions.details.map { it.relatedLot }
         val lots = params.tender.lots.map { it.id }
         val missingLots = relatedLots.asSet().subtract(lots.asSet())
         if (missingLots.isNotEmpty())
-            return ValidationError.LinkedLotNotFound(missingLots)
-                .asValidationFailure()
-        return ValidationResult.ok()
+            return ValidationError.LinkedLotNotFound(missingLots).asFailure()
+
+        return params.asSuccess()
     }
 
     private fun checkEachLotIsLinkedToOneAuction(
         params: ValidateAuctionsDataParams
-    ): ValidationResult<Fail> {
+    ): Result<ValidateAuctionsDataParams, Fail> {
         val lots = params.tender.lots.map { it.id }
         val auctionsNumberByLots = params.tender.electronicAuctions.details.groupingBy { it.relatedLot }.eachCount()
         lots.forEach() {
             if (auctionsNumberByLots[it] != 1)
-                return ValidationError.LotMustBeLinkedToOneAuction(it)
-                    .asValidationFailure()
+                return ValidationError.LotMustBeLinkedToOneAuction(it).asFailure()
         }
-        return ValidationResult.ok()
+
+        return params.asSuccess()
     }
 }
