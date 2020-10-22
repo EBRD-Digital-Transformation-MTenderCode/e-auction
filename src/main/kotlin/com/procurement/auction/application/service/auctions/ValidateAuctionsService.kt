@@ -161,11 +161,10 @@ class ValidateAuctionsServiceImpl(
     }
 
     override fun validateAuctionsData(params: ValidateAuctionsDataParams): ValidationResult<Fail> {
-        val duplicateAuction = params.tender.electronicAuctions.details.getDuplicate { it.id }
-        if (duplicateAuction != null)
-            return ValidationError.DuplicateElectronicAuctionIds(duplicateAuction.id).asValidationFailure()
+        checkForAuctionDuplicates(params)
+            .doOnError { error -> return ValidationResult.error(error) }
 
-        checkForMIssingLots(params)
+        checkForMissingLots(params)
             .doOnError { error -> return ValidationResult.error(error) }
 
         checkEachLotIsLinkedToOneAuction(params)
@@ -174,6 +173,13 @@ class ValidateAuctionsServiceImpl(
         checkForUnmatchingCurrency(params)
             .doOnError { error -> return ValidationResult.error(error) }
 
+        return ValidationResult.ok()
+    }
+
+    private fun checkForAuctionDuplicates(params: ValidateAuctionsDataParams): ValidationResult<Fail> {
+        val duplicateAuction = params.tender.electronicAuctions.details.getDuplicate { it.id }
+        if (duplicateAuction != null)
+            return ValidationError.DuplicateElectronicAuctionIds(duplicateAuction.id).asValidationFailure()
         return ValidationResult.ok()
     }
 
@@ -195,7 +201,7 @@ class ValidateAuctionsServiceImpl(
         return ValidationResult.ok()
     }
 
-    private fun checkForMIssingLots(params: ValidateAuctionsDataParams): ValidationResult<Fail> {
+    private fun checkForMissingLots(params: ValidateAuctionsDataParams): ValidationResult<Fail> {
         val relatedLots = params.tender.electronicAuctions.details.map { it.relatedLot }
         val lots = params.tender.lots.map { it.id }
         val missingLots = relatedLots.asSet().subtract(lots.asSet())
