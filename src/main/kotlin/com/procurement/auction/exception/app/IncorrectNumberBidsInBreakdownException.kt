@@ -3,7 +3,7 @@ package com.procurement.auction.exception.app
 import com.procurement.auction.domain.logger.Logger
 import com.procurement.auction.domain.model.lotId.LotId
 import com.procurement.auction.domain.model.progressId.ProgressId
-import com.procurement.auction.infrastructure.dispatcher.CodesOfErrors
+import com.procurement.auction.infrastructure.web.dispatcher.CodesOfErrors
 
 class IncorrectNumberBidsInBreakdownException(auctionId: String, lotId: LotId, offerId: ProgressId) :
     ApplicationException(
