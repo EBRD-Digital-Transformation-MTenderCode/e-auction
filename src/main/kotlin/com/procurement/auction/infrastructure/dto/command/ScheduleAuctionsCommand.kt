@@ -1,6 +1,7 @@
 package com.procurement.auction.infrastructure.dto.command
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
+import com.fasterxml.jackson.annotation.JsonInclude
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize
 import com.fasterxml.jackson.databind.annotation.JsonSerialize
@@ -109,7 +110,8 @@ data class ScheduleAuctionsCommand(
                     data class EligibleMinimumDifference(
                         @JsonDeserialize(using = AmountDeserializer::class)
                         @JsonSerialize(using = AmountSerializer::class)
-                        @field:JsonProperty("amount") @param:JsonProperty("amount") val amount: Amount,
+                        @JsonInclude(JsonInclude.Include.NON_NULL)
+                        @field:JsonProperty("amount") @param:JsonProperty("amount") val amount: Amount?,
 
                         @JsonDeserialize(using = CurrencyDeserializer::class)
                         @JsonSerialize(using = CurrencySerializer::class)
