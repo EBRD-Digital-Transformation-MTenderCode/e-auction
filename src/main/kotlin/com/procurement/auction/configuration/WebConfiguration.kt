@@ -7,5 +7,5 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer
 
 @Configuration
 @EnableWebMvc
-@ComponentScan(basePackages = ["com.procurement.auction.infrastructure.dispatcher"])
+@ComponentScan(basePackages = ["com.procurement.auction.infrastructure.web.dispatcher"])
 class WebConfiguration : WebMvcConfigurer
