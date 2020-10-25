@@ -156,6 +156,12 @@ class StartAuctionsServiceImpl(
                     id = snapshot.data.tender.id,
                     country = snapshot.data.tender.country,
                     status = AuctionsStatus.STARTED,
+                    value = command.data.tender.value?.let { value ->
+                        StartedAuctionsSnapshot.Data.Tender.Value(
+                            amount = value.amount,
+                            currency = value.currency
+                        )
+                    },
                     title = command.data.tender.title,
                     description = command.data.tender.description,
                     startDate = snapshot.data.tender.startDate

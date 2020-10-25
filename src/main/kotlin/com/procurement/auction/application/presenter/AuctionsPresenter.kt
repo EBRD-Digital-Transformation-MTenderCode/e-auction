@@ -95,6 +95,12 @@ class AuctionsPresenterImpl : AuctionsPresenter {
                 tender = StartedAuctionsView.AuctionsData.Tender(
                     id = snapshot.data.tender.id,
                     title = snapshot.data.tender.title,
+                    value = snapshot.data.tender.value?.let { value ->
+                        StartedAuctionsView.AuctionsData.Tender.Value(
+                            amount = value.amount,
+                            currency = value.currency
+                        )
+                    },
                     description = snapshot.data.tender.description,
                     lots = snapshot.data.auctions.map { auction ->
                         StartedAuctionsView.AuctionsData.Tender.Lot(

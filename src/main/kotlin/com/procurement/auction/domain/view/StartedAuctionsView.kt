@@ -117,9 +117,25 @@ data class StartedAuctionsView(
             @field:JsonProperty("id") @param:JsonProperty("id") val id: CPID,
 
             @field:JsonProperty("title") @param:JsonProperty("title") val title: String,
+
+            @JsonInclude(JsonInclude.Include.NON_NULL)
+            @field:JsonProperty("value") @param:JsonProperty("value") val value: Value?,
+
             @field:JsonProperty("description") @param:JsonProperty("description") val description: String,
             @field:JsonProperty("lots") @param:JsonProperty("lots") val lots: List<Lot>
         ) {
+
+            @JsonPropertyOrder("amount", "currency")
+            class Value(
+                @JsonDeserialize(using = AmountDeserializer::class)
+                @JsonSerialize(using = AmountSerializer::class)
+                @field:JsonProperty("amount") @param:JsonProperty("amount") val amount: Amount,
+
+                @JsonDeserialize(using = CurrencyDeserializer::class)
+                @JsonSerialize(using = CurrencySerializer::class)
+                @field:JsonProperty("currency") @param:JsonProperty("currency") val currency: Currency
+            )
+
             @JsonPropertyOrder("id", "title", "description", "eligibleMinimumDifference", "value", "auctionPeriod")
             data class Lot(
                 @JsonSerialize(using = LotIdSerializer::class)
