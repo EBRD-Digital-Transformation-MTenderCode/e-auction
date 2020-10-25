@@ -177,7 +177,7 @@ class StartAuctionsServiceImpl(
                                     auctionPeriod = StartedAuctionsSnapshot.Data.Auction.AuctionPeriod(
                                         startDate = scheduledAuction.auctionPeriod.startDate
                                     ),
-                                    value = lot.value.let { value ->
+                                    value = lot.value?.let { value ->
                                         StartedAuctionsSnapshot.Data.Auction.Value(
                                             amount = value.amount,
                                             currency = value.currency

@@ -118,7 +118,9 @@ data class StartAuctionsCommand(
 
                 @field:JsonProperty("title") @param:JsonProperty("title") val title: String,
                 @field:JsonProperty("description") @param:JsonProperty("description") val description: String,
-                @field:JsonProperty("value") @param:JsonProperty("value") val value: Value
+
+                @JsonInclude(JsonInclude.Include.NON_NULL)
+                @field:JsonProperty("value") @param:JsonProperty("value") val value: Value?
             ) {
 
                 data class Value(

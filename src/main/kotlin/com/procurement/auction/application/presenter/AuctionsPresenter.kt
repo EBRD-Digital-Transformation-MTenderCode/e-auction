@@ -102,7 +102,7 @@ class AuctionsPresenterImpl : AuctionsPresenter {
                             title = auction.title,
                             description = auction.description,
                             eligibleMinimumDifference = auction.modalities[0].eligibleMinimumDifference.amount,
-                            value = auction.value.let { value ->
+                            value = auction.value?.let { value ->
                                 StartedAuctionsView.AuctionsData.Tender.Lot.Value(
                                     amount = value.amount,
                                     currency = value.currency

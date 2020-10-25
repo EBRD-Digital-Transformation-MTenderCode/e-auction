@@ -132,7 +132,9 @@ data class StartedAuctionsView(
                 @JsonDeserialize(using = AmountDeserializer::class)
                 @field:JsonProperty("eligibleMinimumDifference") @param:JsonProperty("eligibleMinimumDifference") val eligibleMinimumDifference: Amount,
 
-                @field:JsonProperty("value") @param:JsonProperty("value") val value: Value,
+                @JsonInclude(JsonInclude.Include.NON_NULL)
+                @field:JsonProperty("value") @param:JsonProperty("value") val value: Value?,
+
                 @field:JsonProperty("auctionPeriod") @param:JsonProperty("auctionPeriod") val auctionPeriod: AuctionPeriod
             ) {
                 @JsonPropertyOrder("amount", "currency")
