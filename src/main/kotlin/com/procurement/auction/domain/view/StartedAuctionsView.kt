@@ -166,7 +166,8 @@ data class StartedAuctionsView(
 
             @JsonDeserialize(using = AmountDeserializer::class)
             @JsonSerialize(using = AmountSerializer::class)
-            @field:JsonProperty("value") @param:JsonProperty("value") val value: Amount,
+            @JsonInclude(JsonInclude.Include.NON_NULL)
+            @field:JsonProperty("value") @param:JsonProperty("value") val value: Amount?,
 
             @JsonSerialize(using = LotIdSerializer::class)
             @JsonDeserialize(using = LotIdDeserializer::class)

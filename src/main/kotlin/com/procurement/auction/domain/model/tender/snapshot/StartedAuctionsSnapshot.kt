@@ -178,7 +178,8 @@ class StartedAuctionsSnapshot(
                 class Value(
                     @JsonDeserialize(using = AmountDeserializer::class)
                     @JsonSerialize(using = AmountSerializer::class)
-                    @field:JsonProperty("amount") @param:JsonProperty("amount") val amount: Amount,
+                    @JsonInclude(JsonInclude.Include.NON_NULL)
+                    @field:JsonProperty("amount") @param:JsonProperty("amount") val amount: Amount?,
 
                     @JsonDeserialize(using = CurrencyDeserializer::class)
                     @JsonSerialize(using = CurrencySerializer::class)
