@@ -188,7 +188,7 @@ class StartAuctionsServiceImpl(
                                             url = urlGenerator.forModality(cpid = cpid, relatedLot = lotId),
                                             eligibleMinimumDifference = modality.eligibleMinimumDifference.let { emd ->
                                                 StartedAuctionsSnapshot.Data.Auction.Modality.EligibleMinimumDifference(
-                                                    amount = emd.amount!!,
+                                                    amount = emd.amount,
                                                     currency = emd.currency
                                                 )
                                             }

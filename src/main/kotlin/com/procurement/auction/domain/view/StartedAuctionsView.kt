@@ -94,7 +94,8 @@ data class StartedAuctionsView(
                 data class EligibleMinimumDifference(
                     @JsonSerialize(using = AmountSerializer::class)
                     @JsonDeserialize(using = AmountDeserializer::class)
-                    @field:JsonProperty("amount") @param:JsonProperty("amount") val amount: Amount,
+                    @JsonInclude(JsonInclude.Include.NON_NULL)
+                    @field:JsonProperty("amount") @param:JsonProperty("amount") val amount: Amount?,
 
                     @JsonSerialize(using = CurrencySerializer::class)
                     @JsonDeserialize(using = CurrencyDeserializer::class)
@@ -130,7 +131,8 @@ data class StartedAuctionsView(
 
                 @JsonSerialize(using = AmountSerializer::class)
                 @JsonDeserialize(using = AmountDeserializer::class)
-                @field:JsonProperty("eligibleMinimumDifference") @param:JsonProperty("eligibleMinimumDifference") val eligibleMinimumDifference: Amount,
+                @JsonInclude(JsonInclude.Include.NON_NULL)
+                @field:JsonProperty("eligibleMinimumDifference") @param:JsonProperty("eligibleMinimumDifference") val eligibleMinimumDifference: Amount?,
 
                 @JsonInclude(JsonInclude.Include.NON_NULL)
                 @field:JsonProperty("value") @param:JsonProperty("value") val value: Value?,
