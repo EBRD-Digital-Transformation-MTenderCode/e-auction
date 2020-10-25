@@ -19,7 +19,7 @@ import org.springframework.context.annotation.Configuration
         "com.procurement.auction.domain.service",
         "com.procurement.auction.application.service",
         "com.procurement.auction.application.presenter",
-        "com.procurement.auction.infrastructure.dispatcher",
+        "com.procurement.auction.infrastructure.web.dispatcher",
         "com.procurement.auction.infrastructure.service"
     ]
 )
