@@ -4,7 +4,11 @@ import com.fasterxml.jackson.annotation.JsonInclude
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.annotation.JsonPropertyOrder
 import com.fasterxml.jackson.annotation.JsonValue
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize
+import com.fasterxml.jackson.databind.annotation.JsonSerialize
 import com.procurement.auction.infrastructure.web.response.version.ApiVersion2
+import com.procurement.auction.infrastructure.web.response.version.jackson.ApiVersion2Deserializer
+import com.procurement.auction.infrastructure.web.response.version.jackson.ApiVersion2Serializer
 import java.time.LocalDateTime
 import java.util.*
 
@@ -18,7 +22,10 @@ sealed class ApiResponse2(
 }
 
 class ApiSuccessResponse2(
-    version: ApiVersion2, id: UUID,
+    @JsonDeserialize(using = ApiVersion2Deserializer::class)
+    @JsonSerialize(using = ApiVersion2Serializer::class)
+    version: ApiVersion2,
+    id: UUID,
     @JsonInclude(JsonInclude.Include.NON_EMPTY) result: Any? = null
 ) : ApiResponse2(
     version = version,
@@ -29,7 +36,13 @@ class ApiSuccessResponse2(
     override val status: ResponseStatus = ResponseStatus.SUCCESS
 }
 
-class ApiIncidentResponse2(version: ApiVersion2, id: UUID, result: Incident) :
+class ApiIncidentResponse2(
+    @JsonDeserialize(using = ApiVersion2Deserializer::class)
+    @JsonSerialize(using = ApiVersion2Serializer::class)
+    version: ApiVersion2,
+    id: UUID,
+    result: Incident
+) :
     ApiResponse2(version = version, id = id, result = result) {
 
     @field:JsonProperty("status")
@@ -42,7 +55,10 @@ class ApiIncidentResponse2(version: ApiVersion2, id: UUID, result: Incident) :
 }
 
 class ApiErrorResponse2(
-    version: ApiVersion2, id: UUID, result: List<Error>
+    @JsonDeserialize(using = ApiVersion2Deserializer::class)
+    @JsonSerialize(using = ApiVersion2Serializer::class)
+    version: ApiVersion2,
+    id: UUID, result: List<Error>
 ) : ApiResponse2(version = version, result = result, id = id) {
     @field:JsonProperty("status")
     override val status: ResponseStatus = ResponseStatus.ERROR
