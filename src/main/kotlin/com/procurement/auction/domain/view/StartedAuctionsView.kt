@@ -94,7 +94,8 @@ data class StartedAuctionsView(
                 data class EligibleMinimumDifference(
                     @JsonSerialize(using = AmountSerializer::class)
                     @JsonDeserialize(using = AmountDeserializer::class)
-                    @field:JsonProperty("amount") @param:JsonProperty("amount") val amount: Amount,
+                    @JsonInclude(JsonInclude.Include.NON_NULL)
+                    @field:JsonProperty("amount") @param:JsonProperty("amount") val amount: Amount?,
 
                     @JsonSerialize(using = CurrencySerializer::class)
                     @JsonDeserialize(using = CurrencyDeserializer::class)
@@ -116,9 +117,25 @@ data class StartedAuctionsView(
             @field:JsonProperty("id") @param:JsonProperty("id") val id: CPID,
 
             @field:JsonProperty("title") @param:JsonProperty("title") val title: String,
+
+            @JsonInclude(JsonInclude.Include.NON_NULL)
+            @field:JsonProperty("value") @param:JsonProperty("value") val value: Value?,
+
             @field:JsonProperty("description") @param:JsonProperty("description") val description: String,
             @field:JsonProperty("lots") @param:JsonProperty("lots") val lots: List<Lot>
         ) {
+
+            @JsonPropertyOrder("amount", "currency")
+            class Value(
+                @JsonDeserialize(using = AmountDeserializer::class)
+                @JsonSerialize(using = AmountSerializer::class)
+                @field:JsonProperty("amount") @param:JsonProperty("amount") val amount: Amount,
+
+                @JsonDeserialize(using = CurrencyDeserializer::class)
+                @JsonSerialize(using = CurrencySerializer::class)
+                @field:JsonProperty("currency") @param:JsonProperty("currency") val currency: Currency
+            )
+
             @JsonPropertyOrder("id", "title", "description", "eligibleMinimumDifference", "value", "auctionPeriod")
             data class Lot(
                 @JsonSerialize(using = LotIdSerializer::class)
@@ -130,9 +147,12 @@ data class StartedAuctionsView(
 
                 @JsonSerialize(using = AmountSerializer::class)
                 @JsonDeserialize(using = AmountDeserializer::class)
-                @field:JsonProperty("eligibleMinimumDifference") @param:JsonProperty("eligibleMinimumDifference") val eligibleMinimumDifference: Amount,
+                @JsonInclude(JsonInclude.Include.NON_NULL)
+                @field:JsonProperty("eligibleMinimumDifference") @param:JsonProperty("eligibleMinimumDifference") val eligibleMinimumDifference: Amount?,
 
-                @field:JsonProperty("value") @param:JsonProperty("value") val value: Value,
+                @JsonInclude(JsonInclude.Include.NON_NULL)
+                @field:JsonProperty("value") @param:JsonProperty("value") val value: Value?,
+
                 @field:JsonProperty("auctionPeriod") @param:JsonProperty("auctionPeriod") val auctionPeriod: AuctionPeriod
             ) {
                 @JsonPropertyOrder("amount", "currency")
@@ -164,7 +184,8 @@ data class StartedAuctionsView(
 
             @JsonDeserialize(using = AmountDeserializer::class)
             @JsonSerialize(using = AmountSerializer::class)
-            @field:JsonProperty("value") @param:JsonProperty("value") val value: Amount,
+            @JsonInclude(JsonInclude.Include.NON_NULL)
+            @field:JsonProperty("value") @param:JsonProperty("value") val value: Amount?,
 
             @JsonSerialize(using = LotIdSerializer::class)
             @JsonDeserialize(using = LotIdDeserializer::class)

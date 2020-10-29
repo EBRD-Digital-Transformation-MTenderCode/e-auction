@@ -1,5 +1,6 @@
 package com.procurement.auction.domain.model.tender.snapshot
 
+import com.fasterxml.jackson.annotation.JsonInclude
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.annotation.JsonPropertyOrder
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize
@@ -70,7 +71,7 @@ class StartedAuctionsSnapshot(
         @field:JsonProperty("auctions") @param:JsonProperty("auctions") val auctions: List<Auction>
     ) {
 
-        @JsonPropertyOrder("id", "country", "status", "title", "description", "startDate", "endDate")
+        @JsonPropertyOrder("id", "country", "status", "value", "title", "description", "startDate", "endDate")
         class Tender(
             @JsonDeserialize(using = CPIDDeserializer::class)
             @JsonSerialize(using = CPIDSerializer::class)
@@ -84,13 +85,27 @@ class StartedAuctionsSnapshot(
             @JsonSerialize(using = AuctionsStatusSerializer::class)
             @field:JsonProperty("status") @param:JsonProperty("status") val status: AuctionsStatus,
 
+            @JsonInclude(JsonInclude.Include.NON_NULL)
+            @field:JsonProperty("value") @param:JsonProperty("value") val value: Value?,
+
             @field:JsonProperty("title") @param:JsonProperty("title") val title: String,
             @field:JsonProperty("description") @param:JsonProperty("description") val description: String,
 
             @JsonDeserialize(using = JsonDateTimeDeserializer::class)
             @JsonSerialize(using = JsonDateTimeSerializer::class)
             @field:JsonProperty("startDate") @param:JsonProperty("startDate") val startDate: LocalDateTime
-        )
+        ) {
+            @JsonPropertyOrder("amount", "currency")
+            class Value(
+                @JsonDeserialize(using = AmountDeserializer::class)
+                @JsonSerialize(using = AmountSerializer::class)
+                @field:JsonProperty("amount") @param:JsonProperty("amount") val amount: Amount,
+
+                @JsonDeserialize(using = CurrencyDeserializer::class)
+                @JsonSerialize(using = CurrencySerializer::class)
+                @field:JsonProperty("currency") @param:JsonProperty("currency") val currency: Currency
+            )
+        }
 
         @JsonPropertyOrder("id", "lotId", "title", "description", "auctionPeriod", "value", "modalities", "bids")
         class Auction(
@@ -105,7 +120,10 @@ class StartedAuctionsSnapshot(
             @field:JsonProperty("title") @param:JsonProperty("title") val title: String,
             @field:JsonProperty("description") @param:JsonProperty("description") val description: String,
             @field:JsonProperty("auctionPeriod") @param:JsonProperty("auctionPeriod") val auctionPeriod: AuctionPeriod,
-            @field:JsonProperty("value") @param:JsonProperty("value") val value: Value,
+
+            @JsonInclude(JsonInclude.Include.NON_NULL)
+            @field:JsonProperty("value") @param:JsonProperty("value") val value: Value?,
+
             @field:JsonProperty("modalities") @param:JsonProperty("modalities") val modalities: List<Modality>,
             @field:JsonProperty("bids") @param:JsonProperty("bids") val bids: List<Bid>
         ) {
@@ -136,7 +154,8 @@ class StartedAuctionsSnapshot(
                 class EligibleMinimumDifference(
                     @JsonDeserialize(using = AmountDeserializer::class)
                     @JsonSerialize(using = AmountSerializer::class)
-                    @field:JsonProperty("amount") @param:JsonProperty("amount") val amount: Amount,
+                    @JsonInclude(JsonInclude.Include.NON_NULL)
+                    @field:JsonProperty("amount") @param:JsonProperty("amount") val amount: Amount?,
 
                     @JsonDeserialize(using = CurrencyDeserializer::class)
                     @JsonSerialize(using = CurrencySerializer::class)
@@ -174,7 +193,8 @@ class StartedAuctionsSnapshot(
                 class Value(
                     @JsonDeserialize(using = AmountDeserializer::class)
                     @JsonSerialize(using = AmountSerializer::class)
-                    @field:JsonProperty("amount") @param:JsonProperty("amount") val amount: Amount,
+                    @JsonInclude(JsonInclude.Include.NON_NULL)
+                    @field:JsonProperty("amount") @param:JsonProperty("amount") val amount: Amount?,
 
                     @JsonDeserialize(using = CurrencyDeserializer::class)
                     @JsonSerialize(using = CurrencySerializer::class)
