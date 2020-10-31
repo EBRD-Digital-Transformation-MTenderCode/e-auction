@@ -1,5 +1,6 @@
 package com.procurement.auction.domain.view
 
+import com.fasterxml.jackson.annotation.JsonInclude
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.annotation.JsonPropertyOrder
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize
@@ -93,7 +94,8 @@ data class EndedAuctionsView(
                     data class EligibleMinimumDifference(
                         @JsonSerialize(using = AmountSerializer::class)
                         @JsonDeserialize(using = AmountDeserializer::class)
-                        @field:JsonProperty("amount") @param:JsonProperty("amount") val amount: Amount,
+                        @JsonInclude(JsonInclude.Include.NON_NULL)
+                        @field:JsonProperty("amount") @param:JsonProperty("amount") val amount: Amount?,
 
                         @JsonSerialize(using = CurrencySerializer::class)
                         @JsonDeserialize(using = CurrencyDeserializer::class)
@@ -144,7 +146,8 @@ data class EndedAuctionsView(
 
                             @JsonSerialize(using = CurrencySerializer::class)
                             @JsonDeserialize(using = CurrencyDeserializer::class)
-                            @field:JsonProperty("currency") @param:JsonProperty("currency") val currency: Currency
+                            @JsonInclude(JsonInclude.Include.NON_NULL)
+                            @field:JsonProperty("currency") @param:JsonProperty("currency") val currency: Currency?
                         )
                     }
                 }
@@ -165,7 +168,8 @@ data class EndedAuctionsView(
 
                         @JsonSerialize(using = CurrencySerializer::class)
                         @JsonDeserialize(using = CurrencyDeserializer::class)
-                        @field:JsonProperty("currency") @param:JsonProperty("currency") val currency: Currency
+                        @JsonInclude(JsonInclude.Include.NON_NULL)
+                        @field:JsonProperty("currency") @param:JsonProperty("currency") val currency: Currency?
                     )
                 }
             }

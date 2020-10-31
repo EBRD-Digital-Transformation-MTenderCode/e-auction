@@ -1,6 +1,5 @@
 package com.procurement.auction.application.service.auctions
 
-import com.procurement.auction.infrastructure.dto.command.StartAuctionsCommand
 import com.procurement.auction.domain.logger.Logger
 import com.procurement.auction.domain.logger.info
 import com.procurement.auction.domain.model.auction.status.AuctionsStatus
@@ -21,6 +20,7 @@ import com.procurement.auction.exception.app.TenderNotFoundException
 import com.procurement.auction.exception.app.UnknownLotException
 import com.procurement.auction.exception.app.ValidationException
 import com.procurement.auction.exception.command.CommandCanNotBeExecutedException
+import com.procurement.auction.infrastructure.dto.command.StartAuctionsCommand
 import com.procurement.auction.infrastructure.logger.Slf4jLogger
 import org.springframework.stereotype.Service
 
@@ -156,6 +156,12 @@ class StartAuctionsServiceImpl(
                     id = snapshot.data.tender.id,
                     country = snapshot.data.tender.country,
                     status = AuctionsStatus.STARTED,
+                    value = command.data.tender.value?.let { value ->
+                        StartedAuctionsSnapshot.Data.Tender.Value(
+                            amount = value.amount,
+                            currency = value.currency
+                        )
+                    },
                     title = command.data.tender.title,
                     description = command.data.tender.description,
                     startDate = snapshot.data.tender.startDate
@@ -177,7 +183,7 @@ class StartAuctionsServiceImpl(
                                     auctionPeriod = StartedAuctionsSnapshot.Data.Auction.AuctionPeriod(
                                         startDate = scheduledAuction.auctionPeriod.startDate
                                     ),
-                                    value = lot.value.let { value ->
+                                    value = lot.value?.let { value ->
                                         StartedAuctionsSnapshot.Data.Auction.Value(
                                             amount = value.amount,
                                             currency = value.currency

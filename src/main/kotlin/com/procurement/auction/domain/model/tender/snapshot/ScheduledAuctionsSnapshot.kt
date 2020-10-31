@@ -1,5 +1,6 @@
 package com.procurement.auction.domain.model.tender.snapshot
 
+import com.fasterxml.jackson.annotation.JsonInclude
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.annotation.JsonPropertyOrder
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize
@@ -105,7 +106,8 @@ class ScheduledAuctionsSnapshot(
                 class EligibleMinimumDifference(
                     @JsonDeserialize(using = AmountDeserializer::class)
                     @JsonSerialize(using = AmountSerializer::class)
-                    @field:JsonProperty("amount") @param:JsonProperty("amount") val amount: Amount,
+                    @JsonInclude(JsonInclude.Include.NON_NULL)
+                    @field:JsonProperty("amount") @param:JsonProperty("amount") val amount: Amount?,
 
                     @JsonDeserialize(using = CurrencyDeserializer::class)
                     @JsonSerialize(using = CurrencySerializer::class)

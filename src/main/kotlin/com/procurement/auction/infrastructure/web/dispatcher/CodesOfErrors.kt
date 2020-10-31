@@ -1,4 +1,4 @@
-package com.procurement.auction.infrastructure.dispatcher
+package com.procurement.auction.infrastructure.web.dispatcher
 
 import com.procurement.auction.configuration.properties.GlobalProperties
 import org.springframework.http.HttpStatus
