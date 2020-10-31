@@ -2,7 +2,7 @@ package com.procurement.auction.exception.app
 
 import com.procurement.auction.domain.logger.Logger
 import com.procurement.auction.domain.model.country.Country
-import com.procurement.auction.infrastructure.dispatcher.CodesOfErrors
+import com.procurement.auction.infrastructure.web.dispatcher.CodesOfErrors
 
 class CalendarNoDataException(country: Country, year: Int, month: Int) : ApplicationException(
     loglevel = Logger.Level.ERROR,

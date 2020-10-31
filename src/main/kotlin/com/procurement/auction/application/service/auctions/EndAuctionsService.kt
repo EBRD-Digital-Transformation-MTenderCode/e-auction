@@ -1,6 +1,5 @@
 package com.procurement.auction.application.service.auctions
 
-import com.procurement.auction.infrastructure.dto.command.EndAuctionsCommand
 import com.procurement.auction.domain.logger.Logger
 import com.procurement.auction.domain.logger.info
 import com.procurement.auction.domain.model.auction.status.AuctionsStatus
@@ -22,6 +21,7 @@ import com.procurement.auction.exception.app.UnknownBidInBreakdownException
 import com.procurement.auction.exception.app.UnknownBidInResultException
 import com.procurement.auction.exception.app.UnknownLotException
 import com.procurement.auction.exception.command.CommandCanNotBeExecutedException
+import com.procurement.auction.infrastructure.dto.command.EndAuctionsCommand
 import com.procurement.auction.infrastructure.logger.Slf4jLogger
 import org.springframework.stereotype.Service
 
@@ -180,7 +180,7 @@ class EndAuctionsServiceImpl(
                                 endDate = period.endDate
                             )
                         },
-                        value = auction.value.let { value ->
+                        value = auction.value?.let { value ->
                             EndedAuctionsSnapshot.Data.Auction.Value(
                                 amount = value.amount,
                                 currency = value.currency
@@ -232,7 +232,7 @@ class EndAuctionsServiceImpl(
                                         dateMet = breakdown.dateMet,
                                         value = EndedAuctionsSnapshot.Data.Auction.Offer.Breakdown.Value(
                                             amount = breakdown.value.amount,
-                                            currency = auction.value.currency
+                                            currency = auction.value?.currency
                                         )
                                     )
                                 }
@@ -243,7 +243,7 @@ class EndAuctionsServiceImpl(
                                 relatedBid = result.relatedBid,
                                 value = EndedAuctionsSnapshot.Data.Auction.Result.Value(
                                     amount = result.value.amount,
-                                    currency = auction.value.currency
+                                    currency = auction.value?.currency
                                 )
                             )
                         }
