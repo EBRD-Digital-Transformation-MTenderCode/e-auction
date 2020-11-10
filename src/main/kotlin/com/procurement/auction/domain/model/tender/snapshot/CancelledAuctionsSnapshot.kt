@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize
 import com.fasterxml.jackson.databind.annotation.JsonSerialize
 import com.procurement.auction.domain.model.Cpid
+import com.procurement.auction.domain.model.Ocid
 import com.procurement.auction.domain.model.auction.status.AuctionsStatus
 import com.procurement.auction.domain.model.auction.status.AuctionsStatusDeserializer
 import com.procurement.auction.domain.model.auction.status.AuctionsStatusSerializer
@@ -20,6 +21,7 @@ import com.procurement.auction.domain.model.version.RowVersion
 class CancelledAuctionsSnapshot(
     val rowVersion: RowVersion,
     val operationId: OperationId,
+    val ocid: Ocid,
     val data: Data
 ) {
     companion object {

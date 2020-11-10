@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize
 import com.fasterxml.jackson.databind.annotation.JsonSerialize
 import com.procurement.auction.domain.model.Cpid
+import com.procurement.auction.domain.model.Ocid
 import com.procurement.auction.domain.model.amount.Amount
 import com.procurement.auction.domain.model.amount.AmountDeserializer
 import com.procurement.auction.domain.model.amount.AmountSerializer
@@ -54,6 +55,7 @@ import java.time.LocalDateTime
 class EndedAuctionsSnapshot(
     val rowVersion: RowVersion,
     val operationId: OperationId,
+    val ocid: Ocid,
     val data: Data
 ) {
 
