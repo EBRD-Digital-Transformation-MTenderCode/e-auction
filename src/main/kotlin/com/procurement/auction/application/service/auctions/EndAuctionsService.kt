@@ -41,7 +41,8 @@ class EndAuctionsServiceImpl(
 
     override fun end(command: EndAuctionsCommand): EndedAuctionsSnapshot {
         val cpid = command.context.cpid
-        val entity = tenderRepository.loadEntity(cpid)
+        val ocid = command.context.ocid
+        val entity = tenderRepository.loadEntity(cpid, ocid)
             ?: throw TenderNotFoundException(cpid)
 
         return when (entity.status) {
@@ -153,6 +154,7 @@ class EndAuctionsServiceImpl(
         return EndedAuctionsSnapshot(
             rowVersion = snapshot.rowVersion.next(),
             operationId = command.context.operationId,
+            ocid = snapshot.ocid,
             data = EndedAuctionsSnapshot.Data(
                 apiVersion = StartedAuctionsSnapshot.apiVersion,
                 tender = EndedAuctionsSnapshot.Data.Tender(

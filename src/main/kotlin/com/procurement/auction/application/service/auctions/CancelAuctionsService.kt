@@ -1,6 +1,5 @@
 package com.procurement.auction.application.service.auctions
 
-import com.procurement.auction.infrastructure.dto.command.CancelAuctionsCommand
 import com.procurement.auction.domain.logger.Logger
 import com.procurement.auction.domain.logger.info
 import com.procurement.auction.domain.model.auction.status.AuctionsStatus
@@ -12,6 +11,7 @@ import com.procurement.auction.domain.service.BucketService
 import com.procurement.auction.domain.service.JsonDeserializeService
 import com.procurement.auction.exception.app.TenderNotFoundException
 import com.procurement.auction.exception.command.CommandCanNotBeExecutedException
+import com.procurement.auction.infrastructure.dto.command.CancelAuctionsCommand
 import com.procurement.auction.infrastructure.logger.Slf4jLogger
 import org.springframework.stereotype.Service
 
@@ -31,7 +31,8 @@ class CancelAuctionsServiceImpl(
 
     override fun cancel(command: CancelAuctionsCommand): CancelledAuctionsSnapshot {
         val cpid = command.context.cpid
-        val entity = tenderRepository.loadEntity(cpid)
+        val ocid = command.context.ocid
+        val entity = tenderRepository.loadEntity(cpid, ocid)
             ?: throw TenderNotFoundException(cpid)
 
         return when (entity.status) {
@@ -78,6 +79,7 @@ class CancelAuctionsServiceImpl(
         return CancelledAuctionsSnapshot(
             rowVersion = snapshot.rowVersion.next(),
             operationId = command.context.operationId,
+            ocid = snapshot.ocid,
             data = CancelledAuctionsSnapshot.Data(
                 apiVersion = CancelledAuctionsSnapshot.apiVersion,
                 tender = CancelledAuctionsSnapshot.Data.Tender(

@@ -60,7 +60,8 @@ class ScheduleAuctionsServiceImpl(
 
     override fun schedule(command: ScheduleAuctionsCommand): ScheduledAuctionsSnapshot {
         val cpid = command.context.cpid
-        val entity: TenderEntity? = tenderRepository.loadEntity(cpid)
+        val ocid = command.context.ocid
+        val entity: TenderEntity? = tenderRepository.loadEntity(cpid, ocid)
 
         return if (entity != null) {
             when (entity.status) {
@@ -138,6 +139,7 @@ class ScheduleAuctionsServiceImpl(
         return ScheduledAuctionsSnapshot(
             rowVersion = rowVersion,
             operationId = operationId,
+            ocid = command.context.ocid,
             data = ScheduledAuctionsSnapshot.Data(
                 apiVersion = ScheduledAuctionsSnapshot.apiVersion,
                 tender = ScheduledAuctionsSnapshot.Data.Tender(
