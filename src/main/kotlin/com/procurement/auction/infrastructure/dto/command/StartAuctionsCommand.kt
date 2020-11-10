@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize
 import com.fasterxml.jackson.databind.annotation.JsonSerialize
 import com.procurement.auction.domain.model.Cpid
+import com.procurement.auction.domain.model.Ocid
 import com.procurement.auction.domain.model.amount.Amount
 import com.procurement.auction.domain.model.amount.AmountDeserializer
 import com.procurement.auction.domain.model.amount.AmountSerializer
@@ -62,6 +63,7 @@ data class StartAuctionsCommand(
 
     data class Context(
         @field:JsonProperty("cpid") @param:JsonProperty("cpid") val cpid: Cpid,
+        @field:JsonProperty("ocid") @param:JsonProperty("ocid") val ocid: Ocid,
 
         @JsonDeserialize(using = OperationIdDeserializer::class)
         @JsonSerialize(using = OperationIdSerializer::class)

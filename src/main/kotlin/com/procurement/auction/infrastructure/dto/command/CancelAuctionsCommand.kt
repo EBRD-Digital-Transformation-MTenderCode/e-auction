@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize
 import com.fasterxml.jackson.databind.annotation.JsonSerialize
 import com.procurement.auction.domain.model.Cpid
+import com.procurement.auction.domain.model.Ocid
 import com.procurement.auction.domain.model.command.id.CommandId
 import com.procurement.auction.domain.model.command.id.CommandIdDeserializer
 import com.procurement.auction.domain.model.command.id.CommandIdSerializer
@@ -44,6 +45,7 @@ data class CancelAuctionsCommand(
 
     data class Context(
         @field:JsonProperty("cpid") @param:JsonProperty("cpid") val cpid: Cpid,
+        @field:JsonProperty("ocid") @param:JsonProperty("cpid") val ocid: Ocid,
 
         @JsonDeserialize(using = OperationIdDeserializer::class)
         @JsonSerialize(using = OperationIdSerializer::class)
