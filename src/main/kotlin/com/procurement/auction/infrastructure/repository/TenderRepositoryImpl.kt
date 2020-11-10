@@ -5,6 +5,7 @@ import com.datastax.driver.core.Session
 import com.procurement.auction.domain.logger.Logger
 import com.procurement.auction.domain.logger.debug
 import com.procurement.auction.domain.model.Cpid
+import com.procurement.auction.domain.model.Ocid
 import com.procurement.auction.domain.model.auction.status.AuctionsStatus
 import com.procurement.auction.domain.model.country.Country
 import com.procurement.auction.domain.model.country.CountrySerializer
@@ -37,7 +38,8 @@ class TenderRepositoryImpl(
         private val log: Logger = Slf4jLogger()
 
         private const val tableName = "auctions"
-        private const val columnId = "cpid"
+        private const val columnCpid = "cpid"
+        private const val columnOcid = "ocid"
         private const val columnRowVersion = "row_version"
         private const val columnApiVersion = "api_version"
         private const val columnOperationId = "operation_id"
@@ -53,11 +55,13 @@ class TenderRepositoryImpl(
                       $columnStatus,
                       $columnData
                  FROM $KEY_SPACE.$tableName
-                WHERE $columnId=?;"""
+                WHERE $columnCpid=?
+                  AND $columnOcid=?;"""
 
         private const val insertCQL =
             """INSERT INTO $KEY_SPACE.$tableName (
-                           $columnId,
+                           $columnCpid,
+                           $columnOcid,
                            $columnRowVersion,
                            $columnApiVersion,
                            $columnOperationId,
@@ -65,7 +69,7 @@ class TenderRepositoryImpl(
                            $columnStatus,
                            $columnData
                )
-               VALUES (?,?,?,?,?,?, ?) IF NOT EXISTS;"""
+               VALUES (?,?,?,?,?,?,?,?) IF NOT EXISTS;"""
 
         private const val updateCQL =
             """UPDATE $KEY_SPACE.$tableName
@@ -74,7 +78,8 @@ class TenderRepositoryImpl(
                       $columnApiVersion=?,
                       $columnStatus=?,
                       $columnData=?
-                WHERE $columnId=?
+                WHERE $columnCpid=?
+                  AND $columnOcid=?
                    IF $columnRowVersion = :$paramOriginalRowVersion;
             """
     }
@@ -83,9 +88,10 @@ class TenderRepositoryImpl(
     private val preparedInsertCQL = session.prepare(insertCQL)
     private val preparedUpdateCQL = session.prepare(updateCQL)
 
-    override fun loadEntity(cpid: Cpid): TenderEntity? {
-        val query = preparedLoadCQL.bind().also {
-            it.setString(columnId, cpid.toString())
+    override fun loadEntity(cpid: Cpid, ocid: Ocid): TenderEntity? {
+        val query = preparedLoadCQL.bind().apply {
+            setString(columnCpid, cpid.toString())
+            setString(columnOcid, ocid.toString())
         }
 
         val resultSet = load(query)
@@ -101,6 +107,7 @@ class TenderRepositoryImpl(
                     rowVersion = rowVersion,
                     operationId = operationId,
                     status = status,
+                    ocid = ocid,
                     data = data
                 )
             }
@@ -116,7 +123,8 @@ class TenderRepositoryImpl(
             if (snapshot.rowVersion.isNew) {
                 val data = serializer.serialize(snapshot.data)
                 prepareInsertQuery(
-                    id = snapshot.data.tender.id,
+                    cpid = snapshot.data.tender.id,
+                    ocid = snapshot.ocid,
                     rowVersion = snapshot.rowVersion,
                     apiVersion = snapshot.data.apiVersion,
                     operationId = snapshot.operationId,
@@ -128,7 +136,8 @@ class TenderRepositoryImpl(
                 isNeedSave(snapshot.data.tender.id, snapshot.rowVersion)
                 val data = serializer.serialize(snapshot.data)
                 prepareUpdateQuery(
-                    id = snapshot.data.tender.id,
+                    cpid = snapshot.data.tender.id,
+                    ocid = snapshot.ocid,
                     rowVersion = snapshot.rowVersion,
                     apiVersion = snapshot.data.apiVersion,
                     operationId = snapshot.operationId,
@@ -150,7 +159,8 @@ class TenderRepositoryImpl(
 
         val data = serializer.serialize(snapshot.data)
         save(
-            id = snapshot.data.tender.id,
+            cpid = snapshot.data.tender.id,
+            ocid = snapshot.ocid,
             rowVersion = snapshot.rowVersion,
             apiVersion = snapshot.data.apiVersion,
             operationId = snapshot.operationId,
@@ -167,7 +177,8 @@ class TenderRepositoryImpl(
 
         val data = serializer.serialize(snapshot.data)
         save(
-            id = snapshot.data.tender.id,
+            cpid = snapshot.data.tender.id,
+            ocid = snapshot.ocid,
             rowVersion = snapshot.rowVersion,
             apiVersion = snapshot.data.apiVersion,
             operationId = snapshot.operationId,
@@ -184,7 +195,8 @@ class TenderRepositoryImpl(
 
         val data = serializer.serialize(snapshot.data)
         save(
-            id = snapshot.data.tender.id,
+            cpid = snapshot.data.tender.id,
+            ocid = snapshot.ocid,
             rowVersion = snapshot.rowVersion,
             apiVersion = snapshot.data.apiVersion,
             operationId = snapshot.operationId,
@@ -193,7 +205,8 @@ class TenderRepositoryImpl(
         )
     }
 
-    private fun save(id: Cpid,
+    private fun save(cpid: Cpid,
+                     ocid: Ocid,
                      rowVersion: RowVersion,
                      apiVersion: ApiVersion,
                      operationId: OperationId,
@@ -201,7 +214,8 @@ class TenderRepositoryImpl(
                      data: String) {
 
         val query = prepareUpdateQuery(
-            id = id,
+            cpid = cpid,
+            ocid = ocid,
             rowVersion = rowVersion,
             apiVersion = apiVersion,
             operationId = operationId,
@@ -220,12 +234,13 @@ class TenderRepositoryImpl(
 
             val resultSetOfString = resultSetToString(resultSet)
             throw SaveOperationException(
-                message = "Error writing tender with id: '$id' in status: '${status.description}' to the database. $resultSetOfString"
+                message = "Error writing tender with id: '$cpid' in status: '${status.description}' to the database. $resultSetOfString"
             )
         }
     }
 
-    private fun prepareInsertQuery(id: Cpid,
+    private fun prepareInsertQuery(cpid: Cpid,
+                                   ocid: Ocid,
                                    rowVersion: RowVersion,
                                    apiVersion: ApiVersion,
                                    operationId: OperationId,
@@ -233,36 +248,39 @@ class TenderRepositoryImpl(
                                    status: AuctionsStatus,
                                    data: String): BoundStatement {
 
-        log.debug { "Attempt to save data on a new tender ($id, $rowVersion, $apiVersion, $operationId, $data)" }
+        log.debug { "Attempt to save data on a new tender ($cpid, $rowVersion, $apiVersion, $operationId, $data)" }
 
-        return preparedInsertCQL.bind().also {
-            it.setString(columnId, id.toString())
-            it.setInt(columnRowVersion, rowVersion.modified)
-            it.setString(columnApiVersion, ApiVersionSerializer.serialize(apiVersion))
-            it.setString(columnOperationId, OperationIdSerializer.serialize(operationId))
-            it.setString(columnCountry, CountrySerializer.serialize(country))
-            it.setInt(columnStatus, status.id)
-            it.setString(columnData, data)
+        return preparedInsertCQL.bind().apply {
+            setString(columnCpid, cpid.toString())
+            setString(columnOcid, ocid.toString())
+            setInt(columnRowVersion, rowVersion.modified)
+            setString(columnApiVersion, ApiVersionSerializer.serialize(apiVersion))
+            setString(columnOperationId, OperationIdSerializer.serialize(operationId))
+            setString(columnCountry, CountrySerializer.serialize(country))
+            setInt(columnStatus, status.id)
+            setString(columnData, data)
         }
     }
 
-    private fun prepareUpdateQuery(id: Cpid,
+    private fun prepareUpdateQuery(cpid: Cpid,
+                                   ocid: Ocid,
                                    rowVersion: RowVersion,
                                    apiVersion: ApiVersion,
                                    operationId: OperationId,
                                    status: AuctionsStatus,
                                    data: String): BoundStatement {
 
-        log.debug { "Attempt to update data of a tender ($id, $rowVersion, $apiVersion, $operationId, $data)" }
+        log.debug { "Attempt to update data of a tender ($cpid, $rowVersion, $apiVersion, $operationId, $data)" }
 
-        return preparedUpdateCQL.bind().also {
-            it.setString(columnId, id.toString())
-            it.setInt(columnRowVersion, rowVersion.modified)
-            it.setString(columnApiVersion, ApiVersionSerializer.serialize(apiVersion))
-            it.setString(columnOperationId, OperationIdSerializer.serialize(operationId))
-            it.setInt(columnStatus, status.id)
-            it.setString(columnData, data)
-            it.setInt(paramOriginalRowVersion, rowVersion.original)
+        return preparedUpdateCQL.bind().apply {
+            setString(columnCpid, cpid.toString())
+            setString(columnOcid, ocid.toString())
+            setInt(columnRowVersion, rowVersion.modified)
+            setString(columnApiVersion, ApiVersionSerializer.serialize(apiVersion))
+            setString(columnOperationId, OperationIdSerializer.serialize(operationId))
+            setInt(columnStatus, status.id)
+            setString(columnData, data)
+            setInt(paramOriginalRowVersion, rowVersion.original)
         }
     }
 
