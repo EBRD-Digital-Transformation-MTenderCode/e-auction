@@ -1,5 +1,6 @@
 package com.procurement.auction.domain.model.tender
 
+import com.procurement.auction.domain.model.Ocid
 import com.procurement.auction.domain.model.auction.status.AuctionsStatus
 import com.procurement.auction.domain.model.operationId.OperationId
 import com.procurement.auction.domain.model.tender.snapshot.CancelledAuctionsSnapshot
@@ -14,6 +15,7 @@ class TenderEntity(
     val rowVersion: RowVersion,
     val operationId: OperationId,
     val status: AuctionsStatus,
+    val ocid: Ocid,
     private val data: String
 ) {
     fun toScheduledAuctionsSnapshot(deserializer: JsonDeserializeService): ScheduledAuctionsSnapshot {
@@ -21,6 +23,7 @@ class TenderEntity(
         return ScheduledAuctionsSnapshot(
             rowVersion = rowVersion,
             operationId = operationId,
+            ocid = ocid,
             data = data
         )
     }
@@ -30,6 +33,7 @@ class TenderEntity(
         return CancelledAuctionsSnapshot(
             rowVersion = rowVersion,
             operationId = operationId,
+            ocid = ocid,
             data = data
         )
     }
@@ -39,6 +43,7 @@ class TenderEntity(
         return StartedAuctionsSnapshot(
             rowVersion = rowVersion,
             operationId = operationId,
+            ocid = ocid,
             data = data
         )
     }
@@ -48,6 +53,7 @@ class TenderEntity(
         return EndedAuctionsSnapshot(
             rowVersion = rowVersion,
             operationId = operationId,
+            ocid = ocid,
             data = data
         )
     }
