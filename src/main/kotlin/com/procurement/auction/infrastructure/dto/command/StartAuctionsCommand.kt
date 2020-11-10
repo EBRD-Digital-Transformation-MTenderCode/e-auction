@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonInclude
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize
 import com.fasterxml.jackson.databind.annotation.JsonSerialize
+import com.procurement.auction.domain.model.Cpid
 import com.procurement.auction.domain.model.amount.Amount
 import com.procurement.auction.domain.model.amount.AmountDeserializer
 import com.procurement.auction.domain.model.amount.AmountSerializer
@@ -20,9 +21,6 @@ import com.procurement.auction.domain.model.command.name.CommandNameSerializer
 import com.procurement.auction.domain.model.country.Country
 import com.procurement.auction.domain.model.country.CountryDeserializer
 import com.procurement.auction.domain.model.country.CountrySerializer
-import com.procurement.auction.domain.model.cpid.CPID
-import com.procurement.auction.domain.model.cpid.CPIDDeserializer
-import com.procurement.auction.domain.model.cpid.CPIDSerializer
 import com.procurement.auction.domain.model.currency.Currency
 import com.procurement.auction.domain.model.currency.CurrencyDeserializer
 import com.procurement.auction.domain.model.currency.CurrencySerializer
@@ -63,9 +61,7 @@ data class StartAuctionsCommand(
 ) {
 
     data class Context(
-        @JsonDeserialize(using = CPIDDeserializer::class)
-        @JsonSerialize(using = CPIDSerializer::class)
-        @field:JsonProperty("cpid") @param:JsonProperty("cpid") val cpid: CPID,
+        @field:JsonProperty("cpid") @param:JsonProperty("cpid") val cpid: Cpid,
 
         @JsonDeserialize(using = OperationIdDeserializer::class)
         @JsonSerialize(using = OperationIdSerializer::class)
@@ -88,9 +84,7 @@ data class StartAuctionsCommand(
     ) {
 
         data class Tender(
-            @JsonDeserialize(using = CPIDDeserializer::class)
-            @JsonSerialize(using = CPIDSerializer::class)
-            @field:JsonProperty("id") @param:JsonProperty("id") val id: CPID,
+            @field:JsonProperty("id") @param:JsonProperty("id") val id: Cpid,
 
             @field:JsonProperty("title") @param:JsonProperty("title") val title: String,
             @field:JsonProperty("description") @param:JsonProperty("description") val description: String,

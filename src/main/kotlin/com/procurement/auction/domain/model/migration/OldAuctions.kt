@@ -3,13 +3,13 @@ package com.procurement.auction.domain.model.migration
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize
 import com.fasterxml.jackson.databind.annotation.JsonSerialize
+import com.procurement.auction.domain.model.Cpid
 import com.procurement.auction.domain.model.amount.Amount
 import com.procurement.auction.domain.model.amount.AmountDeserializer
 import com.procurement.auction.domain.model.amount.AmountSerializer
 import com.procurement.auction.domain.model.auction.id.AuctionId
 import com.procurement.auction.domain.model.auction.id.AuctionIdDeserializer
 import com.procurement.auction.domain.model.auction.id.AuctionIdSerializer
-import com.procurement.auction.domain.model.cpid.CPID
 import com.procurement.auction.domain.model.currency.Currency
 import com.procurement.auction.domain.model.currency.CurrencyDeserializer
 import com.procurement.auction.domain.model.currency.CurrencySerializer
@@ -22,7 +22,7 @@ import com.procurement.auction.domain.model.version.ApiVersionSerializer
 import java.time.LocalDateTime
 
 data class OldAuctions(
-    val cpid: CPID,
+    val cpid: Cpid,
     val operationId: OperationId,
     val operationDate: LocalDateTime,
     val data: Data

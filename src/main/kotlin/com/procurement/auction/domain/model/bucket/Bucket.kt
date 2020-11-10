@@ -2,9 +2,9 @@ package com.procurement.auction.domain.model.bucket
 
 import com.procurement.auction.domain.logger.Logger
 import com.procurement.auction.domain.logger.warn
+import com.procurement.auction.domain.model.Cpid
 import com.procurement.auction.domain.model.auction.EstimatedDurationAuction
 import com.procurement.auction.domain.model.bucket.id.BucketId
-import com.procurement.auction.domain.model.cpid.CPID
 import com.procurement.auction.domain.model.lotId.LotId
 import com.procurement.auction.domain.model.slots.Slot
 import com.procurement.auction.domain.model.slots.id.SlotId
@@ -35,7 +35,7 @@ class Bucket(
     val isNew: Boolean
         get() = rowVersion.isNew
 
-    fun booking(cpid: CPID, estimates: List<EstimatedDurationAuction>): AuctionsTimes? {
+    fun booking(cpid: Cpid, estimates: List<EstimatedDurationAuction>): AuctionsTimes? {
         val auctionsTimes = allocationStrategy.allocation(id.date, estimates, slots.values)
         if (auctionsTimes != null) {
             for (slotId in auctionsTimes.slotsIds) {
@@ -49,7 +49,7 @@ class Bucket(
         return auctionsTimes
     }
 
-    fun release(cpid: CPID, slotsIds: Set<SlotId>): Boolean {
+    fun release(cpid: Cpid, slotsIds: Set<SlotId>): Boolean {
         var hasChanged = false
         slotsIds.forEach { slotId ->
             if (!slots[slotId]!!.release(cpid))

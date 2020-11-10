@@ -98,7 +98,7 @@ class ScheduleAuctionsServiceImpl(
         return genScheduledAuctions(command = command, auctionsTimes = auctionsTimes, rowVersion = rowVersion)
             .also {
                 tenderRepository.save(it)
-                log.info { "Scheduled auctions in tender with id '${cpid.value}'." }
+                log.info { "Scheduled auctions in tender with id '${cpid}'." }
             }
     }
 

@@ -72,7 +72,7 @@ class EndAuctionsServiceImpl(
         return endedAuctions(command, startedAuctionsByLotId, snapshot)
             .also {
                 tenderRepository.save(it)
-                log.info { "Ended auctions in tender with id: '${snapshot.data.tender.id.value}'." }
+                log.info { "Ended auctions in tender with id: '${snapshot.data.tender.id}'." }
             }
     }
 

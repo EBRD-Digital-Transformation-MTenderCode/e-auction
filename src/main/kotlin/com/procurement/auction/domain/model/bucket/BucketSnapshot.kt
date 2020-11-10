@@ -4,10 +4,8 @@ import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.annotation.JsonPropertyOrder
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize
 import com.fasterxml.jackson.databind.annotation.JsonSerialize
+import com.procurement.auction.domain.model.Cpid
 import com.procurement.auction.domain.model.bucket.id.BucketId
-import com.procurement.auction.domain.model.cpid.CPID
-import com.procurement.auction.domain.model.cpid.CpidSetDeserializer
-import com.procurement.auction.domain.model.cpid.CpidSetSerializer
 import com.procurement.auction.domain.model.date.JsonTimeDeserializer
 import com.procurement.auction.domain.model.date.JsonTimeSerializer
 import com.procurement.auction.domain.model.slots.id.SlotId
@@ -56,9 +54,7 @@ class BucketSnapshot(
             @JsonSerialize(using = SlotIdSerializer::class)
             @field:JsonProperty("slotId") @param:JsonProperty("slotId") val slotId: SlotId,
 
-            @JsonDeserialize(using = CpidSetDeserializer::class)
-            @JsonSerialize(using = CpidSetSerializer::class)
-            @field:JsonProperty("cpids") @param:JsonProperty("cpids") val cpids: Set<CPID>
+            @field:JsonProperty("cpids") @param:JsonProperty("cpids") val cpids: Set<Cpid>
         )
     }
 }

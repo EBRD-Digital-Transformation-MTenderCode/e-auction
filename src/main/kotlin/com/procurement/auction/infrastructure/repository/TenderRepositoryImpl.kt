@@ -4,11 +4,10 @@ import com.datastax.driver.core.BoundStatement
 import com.datastax.driver.core.Session
 import com.procurement.auction.domain.logger.Logger
 import com.procurement.auction.domain.logger.debug
+import com.procurement.auction.domain.model.Cpid
 import com.procurement.auction.domain.model.auction.status.AuctionsStatus
 import com.procurement.auction.domain.model.country.Country
 import com.procurement.auction.domain.model.country.CountrySerializer
-import com.procurement.auction.domain.model.cpid.CPID
-import com.procurement.auction.domain.model.cpid.CPIDSerializer
 import com.procurement.auction.domain.model.operationId.OperationId
 import com.procurement.auction.domain.model.operationId.OperationIdDeserializer
 import com.procurement.auction.domain.model.operationId.OperationIdSerializer
@@ -84,9 +83,9 @@ class TenderRepositoryImpl(
     private val preparedInsertCQL = session.prepare(insertCQL)
     private val preparedUpdateCQL = session.prepare(updateCQL)
 
-    override fun loadEntity(cpid: CPID): TenderEntity? {
+    override fun loadEntity(cpid: Cpid): TenderEntity? {
         val query = preparedLoadCQL.bind().also {
-            it.setString(columnId, CPIDSerializer.serialize(cpid))
+            it.setString(columnId, cpid.toString())
         }
 
         val resultSet = load(query)
@@ -194,7 +193,7 @@ class TenderRepositoryImpl(
         )
     }
 
-    private fun save(id: CPID,
+    private fun save(id: Cpid,
                      rowVersion: RowVersion,
                      apiVersion: ApiVersion,
                      operationId: OperationId,
@@ -226,7 +225,7 @@ class TenderRepositoryImpl(
         }
     }
 
-    private fun prepareInsertQuery(id: CPID,
+    private fun prepareInsertQuery(id: Cpid,
                                    rowVersion: RowVersion,
                                    apiVersion: ApiVersion,
                                    operationId: OperationId,
@@ -237,7 +236,7 @@ class TenderRepositoryImpl(
         log.debug { "Attempt to save data on a new tender ($id, $rowVersion, $apiVersion, $operationId, $data)" }
 
         return preparedInsertCQL.bind().also {
-            it.setString(columnId, id.value)
+            it.setString(columnId, id.toString())
             it.setInt(columnRowVersion, rowVersion.modified)
             it.setString(columnApiVersion, ApiVersionSerializer.serialize(apiVersion))
             it.setString(columnOperationId, OperationIdSerializer.serialize(operationId))
@@ -247,7 +246,7 @@ class TenderRepositoryImpl(
         }
     }
 
-    private fun prepareUpdateQuery(id: CPID,
+    private fun prepareUpdateQuery(id: Cpid,
                                    rowVersion: RowVersion,
                                    apiVersion: ApiVersion,
                                    operationId: OperationId,
@@ -257,7 +256,7 @@ class TenderRepositoryImpl(
         log.debug { "Attempt to update data of a tender ($id, $rowVersion, $apiVersion, $operationId, $data)" }
 
         return preparedUpdateCQL.bind().also {
-            it.setString(columnId, id.value)
+            it.setString(columnId, id.toString())
             it.setInt(columnRowVersion, rowVersion.modified)
             it.setString(columnApiVersion, ApiVersionSerializer.serialize(apiVersion))
             it.setString(columnOperationId, OperationIdSerializer.serialize(operationId))
@@ -267,7 +266,7 @@ class TenderRepositoryImpl(
         }
     }
 
-    private fun isNeedSave(cpid: CPID, rowVersion: RowVersion) {
+    private fun isNeedSave(cpid: Cpid, rowVersion: RowVersion) {
         if (!rowVersion.hasChanged)
             throw IllegalStateException("Data of auctions of tender with id: '$cpid' was not saved, because the rowVersion was not changed.")
     }

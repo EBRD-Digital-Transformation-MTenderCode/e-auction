@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize
 import com.fasterxml.jackson.databind.annotation.JsonSerialize
+import com.procurement.auction.domain.model.Cpid
 import com.procurement.auction.domain.model.command.id.CommandId
 import com.procurement.auction.domain.model.command.id.CommandIdDeserializer
 import com.procurement.auction.domain.model.command.id.CommandIdSerializer
@@ -13,9 +14,6 @@ import com.procurement.auction.domain.model.command.name.CommandNameSerializer
 import com.procurement.auction.domain.model.country.Country
 import com.procurement.auction.domain.model.country.CountryDeserializer
 import com.procurement.auction.domain.model.country.CountrySerializer
-import com.procurement.auction.domain.model.cpid.CPID
-import com.procurement.auction.domain.model.cpid.CPIDDeserializer
-import com.procurement.auction.domain.model.cpid.CPIDSerializer
 import com.procurement.auction.domain.model.date.JsonDateTimeDeserializer
 import com.procurement.auction.domain.model.date.JsonDateTimeSerializer
 import com.procurement.auction.domain.model.operationId.OperationId
@@ -44,9 +42,7 @@ class Command(
 ) {
 
     data class Context(
-        @JsonDeserialize(using = CPIDDeserializer::class)
-        @JsonSerialize(using = CPIDSerializer::class)
-        @field:JsonProperty("cpid") @param:JsonProperty("cpid") val cpid: CPID,
+        @field:JsonProperty("cpid") @param:JsonProperty("cpid") val cpid: Cpid,
 
         @JsonDeserialize(using = OperationIdDeserializer::class)
         @JsonSerialize(using = OperationIdSerializer::class)

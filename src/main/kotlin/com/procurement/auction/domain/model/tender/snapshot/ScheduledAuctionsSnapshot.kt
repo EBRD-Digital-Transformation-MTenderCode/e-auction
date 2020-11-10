@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.annotation.JsonPropertyOrder
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize
 import com.fasterxml.jackson.databind.annotation.JsonSerialize
+import com.procurement.auction.domain.model.Cpid
 import com.procurement.auction.domain.model.amount.Amount
 import com.procurement.auction.domain.model.amount.AmountDeserializer
 import com.procurement.auction.domain.model.amount.AmountSerializer
@@ -17,9 +18,6 @@ import com.procurement.auction.domain.model.auction.status.AuctionsStatusSeriali
 import com.procurement.auction.domain.model.country.Country
 import com.procurement.auction.domain.model.country.CountryDeserializer
 import com.procurement.auction.domain.model.country.CountrySerializer
-import com.procurement.auction.domain.model.cpid.CPID
-import com.procurement.auction.domain.model.cpid.CPIDDeserializer
-import com.procurement.auction.domain.model.cpid.CPIDSerializer
 import com.procurement.auction.domain.model.currency.Currency
 import com.procurement.auction.domain.model.currency.CurrencyDeserializer
 import com.procurement.auction.domain.model.currency.CurrencySerializer
@@ -64,9 +62,7 @@ class ScheduledAuctionsSnapshot(
 
         @JsonPropertyOrder("id", "country", "status", "startDate")
         class Tender(
-            @JsonDeserialize(using = CPIDDeserializer::class)
-            @JsonSerialize(using = CPIDSerializer::class)
-            @field:JsonProperty("id") @param:JsonProperty("id") val id: CPID,
+            @field:JsonProperty("id") @param:JsonProperty("id") val id: Cpid,
 
             @JsonDeserialize(using = CountryDeserializer::class)
             @JsonSerialize(using = CountrySerializer::class)

@@ -74,7 +74,7 @@ class StartAuctionsServiceImpl(
         return startedAuctions(command, actualLots, scheduledAuctions, snapshot)
             .also {
                 tenderRepository.save(it)
-                log.info { "Started auctions in tender with id: '${it.data.tender.id.value}'." }
+                log.info { "Started auctions in tender with id: '${it.data.tender.id}'." }
             }
     }
 
