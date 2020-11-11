@@ -45,7 +45,7 @@ data class CancelAuctionsCommand(
 
     data class Context(
         @field:JsonProperty("cpid") @param:JsonProperty("cpid") val cpid: Cpid,
-        @field:JsonProperty("ocid") @param:JsonProperty("cpid") val ocid: Ocid,
+        @field:JsonProperty("ocid") @param:JsonProperty("ocid") val ocid: Ocid,
 
         @JsonDeserialize(using = OperationIdDeserializer::class)
         @JsonSerialize(using = OperationIdSerializer::class)
