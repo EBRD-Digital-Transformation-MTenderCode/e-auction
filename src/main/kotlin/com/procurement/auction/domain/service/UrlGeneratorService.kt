@@ -1,8 +1,8 @@
 package com.procurement.auction.domain.service
 
 import com.procurement.auction.configuration.properties.AuctionProperties
-import com.procurement.auction.domain.model.Cpid
 import com.procurement.auction.domain.model.bid.id.BidId
+import com.procurement.auction.domain.model.cpid.Cpid
 import com.procurement.auction.domain.model.lotId.LotId
 import com.procurement.auction.domain.model.sign.Sign
 import org.springframework.stereotype.Service

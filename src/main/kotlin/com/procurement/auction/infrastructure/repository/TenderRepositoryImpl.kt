@@ -4,11 +4,11 @@ import com.datastax.driver.core.BoundStatement
 import com.datastax.driver.core.Session
 import com.procurement.auction.domain.logger.Logger
 import com.procurement.auction.domain.logger.debug
-import com.procurement.auction.domain.model.Cpid
 import com.procurement.auction.domain.model.Ocid
 import com.procurement.auction.domain.model.auction.status.AuctionsStatus
 import com.procurement.auction.domain.model.country.Country
 import com.procurement.auction.domain.model.country.CountrySerializer
+import com.procurement.auction.domain.model.cpid.Cpid
 import com.procurement.auction.domain.model.operationId.OperationId
 import com.procurement.auction.domain.model.operationId.OperationIdDeserializer
 import com.procurement.auction.domain.model.operationId.OperationIdSerializer

@@ -1,6 +1,6 @@
 package com.procurement.auction.domain.model.slots
 
-import com.procurement.auction.domain.model.Cpid
+import com.procurement.auction.domain.model.cpid.Cpid
 import com.procurement.auction.domain.model.slots.id.SlotId
 import java.time.Duration
 import java.time.LocalTime

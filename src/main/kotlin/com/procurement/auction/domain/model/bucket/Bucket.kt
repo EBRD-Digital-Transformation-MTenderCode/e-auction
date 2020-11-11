@@ -2,9 +2,9 @@ package com.procurement.auction.domain.model.bucket
 
 import com.procurement.auction.domain.logger.Logger
 import com.procurement.auction.domain.logger.warn
-import com.procurement.auction.domain.model.Cpid
 import com.procurement.auction.domain.model.auction.EstimatedDurationAuction
 import com.procurement.auction.domain.model.bucket.id.BucketId
+import com.procurement.auction.domain.model.cpid.Cpid
 import com.procurement.auction.domain.model.lotId.LotId
 import com.procurement.auction.domain.model.slots.Slot
 import com.procurement.auction.domain.model.slots.id.SlotId

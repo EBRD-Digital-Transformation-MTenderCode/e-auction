@@ -8,8 +8,8 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.SerializationFeature
 import com.fasterxml.jackson.databind.module.SimpleModule
 import com.fasterxml.jackson.module.kotlin.registerKotlinModule
-import com.procurement.auction.domain.model.Cpid
 import com.procurement.auction.domain.model.Ocid
+import com.procurement.auction.domain.model.cpid.Cpid
 import com.procurement.auction.domain.model.cpid.CpidDeserializer
 import com.procurement.auction.domain.model.date.JsonDateTimeModule
 import com.procurement.auction.domain.model.ocid.OcidDeserializer

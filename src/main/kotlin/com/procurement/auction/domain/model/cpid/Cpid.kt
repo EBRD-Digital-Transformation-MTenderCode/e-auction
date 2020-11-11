@@ -1,4 +1,4 @@
-package com.procurement.auction.domain.model
+package com.procurement.auction.domain.model.cpid
 
 import com.fasterxml.jackson.annotation.JsonValue
 

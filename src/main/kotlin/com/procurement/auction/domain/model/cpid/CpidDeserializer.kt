@@ -3,7 +3,6 @@ package com.procurement.auction.domain.model.cpid
 import com.fasterxml.jackson.core.JsonParser
 import com.fasterxml.jackson.databind.DeserializationContext
 import com.fasterxml.jackson.databind.JsonDeserializer
-import com.procurement.auction.domain.model.Cpid
 
 class CpidDeserializer : JsonDeserializer<Cpid>() {
     companion object {

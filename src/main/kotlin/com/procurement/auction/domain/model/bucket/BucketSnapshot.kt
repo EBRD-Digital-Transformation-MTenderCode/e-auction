@@ -4,8 +4,8 @@ import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.annotation.JsonPropertyOrder
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize
 import com.fasterxml.jackson.databind.annotation.JsonSerialize
-import com.procurement.auction.domain.model.Cpid
 import com.procurement.auction.domain.model.bucket.id.BucketId
+import com.procurement.auction.domain.model.cpid.Cpid
 import com.procurement.auction.domain.model.date.JsonTimeDeserializer
 import com.procurement.auction.domain.model.date.JsonTimeSerializer
 import com.procurement.auction.domain.model.slots.id.SlotId

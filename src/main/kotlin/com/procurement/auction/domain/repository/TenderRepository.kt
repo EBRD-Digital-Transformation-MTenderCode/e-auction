@@ -1,7 +1,7 @@
 package com.procurement.auction.domain.repository
 
-import com.procurement.auction.domain.model.Cpid
 import com.procurement.auction.domain.model.Ocid
+import com.procurement.auction.domain.model.cpid.Cpid
 import com.procurement.auction.domain.model.tender.TenderEntity
 import com.procurement.auction.domain.model.tender.snapshot.CancelledAuctionsSnapshot
 import com.procurement.auction.domain.model.tender.snapshot.EndedAuctionsSnapshot

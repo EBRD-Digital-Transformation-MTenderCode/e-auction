@@ -3,13 +3,13 @@ package com.procurement.auction.domain.model.migration
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize
 import com.fasterxml.jackson.databind.annotation.JsonSerialize
-import com.procurement.auction.domain.model.Cpid
 import com.procurement.auction.domain.model.amount.Amount
 import com.procurement.auction.domain.model.amount.AmountDeserializer
 import com.procurement.auction.domain.model.amount.AmountSerializer
 import com.procurement.auction.domain.model.auction.id.AuctionId
 import com.procurement.auction.domain.model.auction.id.AuctionIdDeserializer
 import com.procurement.auction.domain.model.auction.id.AuctionIdSerializer
+import com.procurement.auction.domain.model.cpid.Cpid
 import com.procurement.auction.domain.model.currency.Currency
 import com.procurement.auction.domain.model.currency.CurrencyDeserializer
 import com.procurement.auction.domain.model.currency.CurrencySerializer

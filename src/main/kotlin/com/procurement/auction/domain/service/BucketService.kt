@@ -5,12 +5,12 @@ import com.procurement.auction.configuration.properties.SchedulerProperties
 import com.procurement.auction.domain.logger.Logger
 import com.procurement.auction.domain.logger.debug
 import com.procurement.auction.domain.logger.warn
-import com.procurement.auction.domain.model.Cpid
 import com.procurement.auction.domain.model.auction.EstimatedDurationAuction
 import com.procurement.auction.domain.model.bucket.AuctionsTimes
 import com.procurement.auction.domain.model.bucket.Bucket
 import com.procurement.auction.domain.model.bucket.id.BucketId
 import com.procurement.auction.domain.model.country.Country
+import com.procurement.auction.domain.model.cpid.Cpid
 import com.procurement.auction.domain.model.slots.id.SlotId
 import com.procurement.auction.domain.model.version.RowVersion
 import com.procurement.auction.domain.repository.BucketRepository
