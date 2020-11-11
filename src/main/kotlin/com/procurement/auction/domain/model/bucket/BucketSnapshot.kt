@@ -54,7 +54,7 @@ class BucketSnapshot(
             @JsonSerialize(using = SlotIdSerializer::class)
             @field:JsonProperty("slotId") @param:JsonProperty("slotId") val slotId: SlotId,
 
-            @field:JsonProperty("cpids") @param:JsonProperty("cpids") val cpids: Set<Cpid>
+            @field:JsonProperty("cpids") @param:JsonProperty("cpids") val cpids: List<Cpid>
         )
     }
 }

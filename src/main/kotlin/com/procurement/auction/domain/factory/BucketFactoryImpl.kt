@@ -36,7 +36,7 @@ class BucketFactoryImpl(
                     startTime = it.startTime,
                     endTime = it.endTime,
                     maxLines = it.maxLines,
-                    cpids = cpids[it.slotId] ?: emptySet()
+                    cpids = cpids[it.slotId] ?: emptyList()
                 )
             }.associateBy { it.id },
             allocationStrategy = allocationStrategy
