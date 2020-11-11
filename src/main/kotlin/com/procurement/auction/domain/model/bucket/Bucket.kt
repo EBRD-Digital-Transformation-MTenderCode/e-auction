@@ -39,8 +39,7 @@ class Bucket(
         val auctionsTimes = allocationStrategy.allocation(id.date, estimates, slots.values)
         if (auctionsTimes != null) {
             for (slotId in auctionsTimes.slotsIds) {
-                if (slots[slotId]!!.booking(cpid))
-                    log.warn { "Bucket with id: '$id' is already cpid: '$cpid' in slot: '$slotId'." }
+                slots[slotId]!!.booking(cpid)
             }
 
             rowVersion = rowVersion.next()
@@ -77,7 +76,7 @@ class Bucket(
             occupancySnapshotData.add(
                 BucketSnapshot.OccupancySnapshot.Detail(
                     slotId = slot.id,
-                    cpids = slot.cpids.toSet()
+                    cpids = slot.cpids
                 )
             )
         }
