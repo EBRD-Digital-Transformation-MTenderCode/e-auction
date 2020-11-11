@@ -104,7 +104,7 @@ data class StartedAuctionsView(
         }
     }
 
-    @JsonPropertyOrder("tender", "bids")
+    @JsonPropertyOrder("ocid", "tender", "bids")
     data class AuctionsData(
         @field:JsonProperty("tender") @param:JsonProperty("tender") val tender: Tender,
         @field:JsonProperty("bids") @param:JsonProperty("bids") val bids: List<Bid>,
