@@ -10,10 +10,10 @@ class Slot(
     val startTime: LocalTime,
     val endTime: LocalTime,
     val maxLines: Int,
-    cpids: Set<Cpid>
+    cpids: List<Cpid>
 ) {
-    private val _cpids = mutableSetOf<Cpid>().apply { this.addAll(cpids) }
-    val cpids: Set<Cpid>
+    private val _cpids = mutableListOf<Cpid>().apply { this.addAll(cpids) }
+    val cpids: List<Cpid>
         get() = _cpids
 
     val duration: Duration = Duration.between(startTime, endTime)
@@ -24,6 +24,7 @@ class Slot(
     fun booking(cpid: Cpid): Boolean = _cpids.add(cpid)
 
     fun release(cpid: Cpid): Boolean = _cpids.remove(cpid)
+
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (javaClass != other?.javaClass) return false
