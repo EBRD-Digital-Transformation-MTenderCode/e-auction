@@ -5,10 +5,10 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.module.SimpleModule
 import com.fasterxml.jackson.databind.node.JsonNodeFactory
 import com.fasterxml.jackson.module.kotlin.registerKotlinModule
-import com.procurement.auction.domain.model.Ocid
 import com.procurement.auction.domain.model.cpid.Cpid
 import com.procurement.auction.domain.model.cpid.CpidDeserializer
 import com.procurement.auction.domain.model.date.JsonDateTimeModule
+import com.procurement.auction.domain.model.ocid.Ocid
 import com.procurement.auction.domain.model.ocid.OcidDeserializer
 import com.procurement.auction.infrastructure.web.response.version.jackson.ApiVersion2Module
 import org.springframework.beans.factory.annotation.Autowired

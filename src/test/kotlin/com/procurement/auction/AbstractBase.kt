@@ -4,9 +4,9 @@ import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.SerializationFeature
 import com.fasterxml.jackson.databind.module.SimpleModule
-import com.procurement.auction.domain.model.Ocid
 import com.procurement.auction.domain.model.cpid.Cpid
 import com.procurement.auction.domain.model.cpid.CpidDeserializer
+import com.procurement.auction.domain.model.ocid.Ocid
 import com.procurement.auction.domain.model.ocid.OcidDeserializer
 
 abstract class AbstractBase {

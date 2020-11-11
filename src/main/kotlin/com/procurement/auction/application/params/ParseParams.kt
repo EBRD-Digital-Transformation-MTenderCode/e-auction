@@ -5,11 +5,11 @@ import com.procurement.auction.domain.fail.error.DataErrors
 import com.procurement.auction.domain.fail.error.DataTimeError
 import com.procurement.auction.domain.functional.Result
 import com.procurement.auction.domain.functional.asSuccess
-import com.procurement.auction.domain.model.Ocid
 import com.procurement.auction.domain.model.Owner
 import com.procurement.auction.domain.model.cpid.Cpid
 import com.procurement.auction.domain.model.enums.EnumElementProvider
 import com.procurement.auction.domain.model.enums.EnumElementProvider.Companion.keysAsStrings
+import com.procurement.auction.domain.model.ocid.Ocid
 import com.procurement.auction.domain.model.tryOwner
 import java.time.LocalDateTime
 

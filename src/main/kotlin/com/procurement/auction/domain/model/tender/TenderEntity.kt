@@ -1,7 +1,7 @@
 package com.procurement.auction.domain.model.tender
 
-import com.procurement.auction.domain.model.Ocid
 import com.procurement.auction.domain.model.auction.status.AuctionsStatus
+import com.procurement.auction.domain.model.ocid.Ocid
 import com.procurement.auction.domain.model.operationId.OperationId
 import com.procurement.auction.domain.model.tender.snapshot.CancelledAuctionsSnapshot
 import com.procurement.auction.domain.model.tender.snapshot.EndedAuctionsSnapshot

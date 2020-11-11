@@ -1,4 +1,4 @@
-package com.procurement.auction.domain.model
+package com.procurement.auction.domain.model.ocid
 
 import com.fasterxml.jackson.annotation.JsonValue
 import com.procurement.auction.domain.model.enums.EnumElementProvider.Companion.keysAsStringsUpper

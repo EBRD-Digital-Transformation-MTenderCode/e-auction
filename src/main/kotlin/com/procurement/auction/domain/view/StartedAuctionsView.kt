@@ -5,7 +5,6 @@ import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.annotation.JsonPropertyOrder
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize
 import com.fasterxml.jackson.databind.annotation.JsonSerialize
-import com.procurement.auction.domain.model.Ocid
 import com.procurement.auction.domain.model.amount.Amount
 import com.procurement.auction.domain.model.amount.AmountDeserializer
 import com.procurement.auction.domain.model.amount.AmountSerializer
@@ -24,6 +23,7 @@ import com.procurement.auction.domain.model.date.JsonDateTimeSerializer
 import com.procurement.auction.domain.model.lotId.LotId
 import com.procurement.auction.domain.model.lotId.LotIdDeserializer
 import com.procurement.auction.domain.model.lotId.LotIdSerializer
+import com.procurement.auction.domain.model.ocid.Ocid
 import com.procurement.auction.domain.model.platformId.PlatformId
 import com.procurement.auction.domain.model.platformId.PlatformIdDeserializer
 import com.procurement.auction.domain.model.platformId.PlatformIdSerializer
