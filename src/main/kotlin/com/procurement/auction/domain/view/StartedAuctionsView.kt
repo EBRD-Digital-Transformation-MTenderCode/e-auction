@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize
 import com.fasterxml.jackson.databind.annotation.JsonSerialize
 import com.procurement.auction.domain.model.Cpid
+import com.procurement.auction.domain.model.Ocid
 import com.procurement.auction.domain.model.amount.Amount
 import com.procurement.auction.domain.model.amount.AmountDeserializer
 import com.procurement.auction.domain.model.amount.AmountSerializer
@@ -106,8 +107,9 @@ data class StartedAuctionsView(
     @JsonPropertyOrder("tender", "bids")
     data class AuctionsData(
         @field:JsonProperty("tender") @param:JsonProperty("tender") val tender: Tender,
-        @field:JsonProperty("bids") @param:JsonProperty("bids") val bids: List<Bid>
-    ) {
+        @field:JsonProperty("bids") @param:JsonProperty("bids") val bids: List<Bid>,
+        @field:JsonProperty("ocid") @param:JsonProperty("ocid") val ocid: Ocid
+        ) {
         @JsonPropertyOrder("id", "title", "description", "tender")
         data class Tender(
             @field:JsonProperty("id") @param:JsonProperty("id") val id: Cpid,
