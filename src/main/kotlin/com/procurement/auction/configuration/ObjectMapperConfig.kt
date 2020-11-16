@@ -10,6 +10,7 @@ import com.procurement.auction.domain.model.cpid.CpidDeserializer
 import com.procurement.auction.domain.model.date.JsonDateTimeModule
 import com.procurement.auction.domain.model.ocid.Ocid
 import com.procurement.auction.domain.model.ocid.OcidDeserializer
+import com.procurement.auction.domain.model.operationId.OperationIdModule
 import com.procurement.auction.infrastructure.web.response.version.jackson.ApiVersion2Module
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Configuration
@@ -21,6 +22,7 @@ class ObjectMapperConfig(@Autowired objectMapper: ObjectMapper) {
         objectMapper.registerModule(getModule())
         objectMapper.registerModule(JsonDateTimeModule())
         objectMapper.registerModule(ApiVersion2Module())
+        objectMapper.registerModule(OperationIdModule())
         objectMapper.registerKotlinModule()
         objectMapper.configure(DeserializationFeature.USE_BIG_INTEGER_FOR_INTS, true)
         objectMapper.configure(DeserializationFeature.USE_BIG_DECIMAL_FOR_FLOATS, true)
