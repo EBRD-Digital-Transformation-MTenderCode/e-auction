@@ -7,7 +7,7 @@ import com.fasterxml.jackson.databind.JsonDeserializer
 import com.procurement.auction.infrastructure.web.response.version.ApiVersion
 import java.io.IOException
 
-class ApiVersion2Deserializer : JsonDeserializer<ApiVersion>() {
+class ApiVersionDeserializer : JsonDeserializer<ApiVersion>() {
     companion object {
         fun deserialize(text: String) = ApiVersion.orThrow(text) {
             IllegalAccessException("Invalid format of the api version. Expected: '${ApiVersion.pattern}', actual: '$text'.")

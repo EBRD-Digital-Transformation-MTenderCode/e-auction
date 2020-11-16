@@ -17,7 +17,7 @@ import com.procurement.auction.exception.database.OptimisticLockException
 import com.procurement.auction.exception.database.SaveOperationException
 import com.procurement.auction.infrastructure.cassandra.toCassandraLocalDate
 import com.procurement.auction.infrastructure.logger.Slf4jLogger
-import com.procurement.auction.infrastructure.web.response.version.jackson.ApiVersion2Deserializer
+import com.procurement.auction.infrastructure.web.response.version.jackson.ApiVersionDeserializer
 import com.procurement.auction.infrastructure.web.response.version.jackson.ApiVersion2Serializer
 import org.springframework.stereotype.Repository
 
@@ -86,7 +86,7 @@ class BucketRepositoryImpl(
         return if (resultSet.wasApplied()) {
             resultSet.one()?.let { row ->
                 val rowVersion = RowVersion.of(row.getInt(columnRowVersion))
-                val apiVersion: ApiVersion = ApiVersion2Deserializer.deserialize(row.getString(columnApiVersion))
+                val apiVersion: ApiVersion = ApiVersionDeserializer.deserialize(row.getString(columnApiVersion))
                 val slots: String = row.getString(columnSlots)
                 val occupancy: String = row.getString(columnOccupancy)
 
