@@ -9,15 +9,11 @@ import java.io.IOException
 
 class ApiVersion2Serializer : JsonSerializer<ApiVersion2>() {
     companion object {
-        fun serialize(apiVersion: ApiVersion2): String = "${apiVersion.major}.${apiVersion.minor}.${apiVersion.patch}"
+        fun serialize(apiVersion: ApiVersion2): String = apiVersion.underlying
     }
 
     @Throws(IOException::class, JsonProcessingException::class)
     override fun serialize(apiVersion: ApiVersion2, jsonGenerator: JsonGenerator, provider: SerializerProvider) {
-        jsonGenerator.writeString(
-            serialize(
-                apiVersion
-            )
-        )
+        jsonGenerator.writeString(serialize(apiVersion))
     }
 }

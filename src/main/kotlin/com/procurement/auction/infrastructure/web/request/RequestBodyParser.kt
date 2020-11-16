@@ -18,17 +18,14 @@ import com.procurement.auction.infrastructure.web.response.version.ApiVersion2
 
 fun JsonNode.tryGetVersion(): Result<ApiVersion2, DataErrors> {
     val name = "version"
-    return tryGetTextAttribute(name).bind {
-        when (val result = ApiVersion2.tryValueOf(it)) {
-            is Result.Success -> result
-            is Result.Failure -> Result.failure(
-                DataErrors.Validation.DataFormatMismatch(
-                    name = name,
-                    expectedFormat = "00.00.00",
-                    actualValue = it
-                )
-            )
-        }
+    return tryGetTextAttribute(name).bind {version ->
+        ApiVersion2.orNull(version)
+            ?.asSuccess<ApiVersion2, DataErrors>()
+            ?: DataErrors.Validation.DataFormatMismatch(
+                name = name,
+                expectedFormat = ApiVersion2.pattern,
+                actualValue = version
+            ).asFailure()
     }
 }
 
