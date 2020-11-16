@@ -12,9 +12,6 @@ import com.procurement.auction.infrastructure.web.response.version.ApiVersion
 @JsonPropertyOrder("version", "id", "data")
 class CommandSuccessView<T : View>(
     @field:JsonProperty("version") @param:JsonProperty("version") val version: ApiVersion,
-
-    @JsonDeserialize(using = CommandIdDeserializer::class)
-    @JsonSerialize(using = CommandIdSerializer::class)
     @field:JsonProperty("id") @param:JsonProperty("id") val id: CommandId,
 
     @field:JsonProperty("data") @param:JsonProperty("data") val data: T

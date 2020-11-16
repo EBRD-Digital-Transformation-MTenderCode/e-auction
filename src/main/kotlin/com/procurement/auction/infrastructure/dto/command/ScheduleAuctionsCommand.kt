@@ -39,9 +39,6 @@ import java.time.LocalDateTime
 @JsonIgnoreProperties(ignoreUnknown = true)
 data class ScheduleAuctionsCommand(
     @field:JsonProperty("version") @param:JsonProperty("version") val version: ApiVersion,
-
-    @JsonDeserialize(using = CommandIdDeserializer::class)
-    @JsonSerialize(using = CommandIdSerializer::class)
     @field:JsonProperty("id") @param:JsonProperty("id") val id: CommandId,
 
     @JsonDeserialize(using = CommandNameDeserializer::class)
