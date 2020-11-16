@@ -49,6 +49,7 @@ import java.time.LocalDateTime
 class StartedAuctionsSnapshot(
     val rowVersion: RowVersion,
     val operationId: OperationId,
+    val cpid: Cpid,
     val ocid: Ocid,
     val data: Data
 ) {

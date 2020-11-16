@@ -150,10 +150,11 @@ class EndAuctionsServiceImpl(
     private fun endedAuctions(command: EndAuctionsCommand,
                               startedAuctionsByLotId: Map<LotId, StartedAuctionsSnapshot.Data.Auction>,
                               snapshot: StartedAuctionsSnapshot): EndedAuctionsSnapshot {
-        val cpid = command.context.cpid
+        val cpid = snapshot.cpid
         return EndedAuctionsSnapshot(
             rowVersion = snapshot.rowVersion.next(),
             operationId = command.context.operationId,
+            cpid = cpid,
             ocid = snapshot.ocid,
             data = EndedAuctionsSnapshot.Data(
                 apiVersion = StartedAuctionsSnapshot.apiVersion,

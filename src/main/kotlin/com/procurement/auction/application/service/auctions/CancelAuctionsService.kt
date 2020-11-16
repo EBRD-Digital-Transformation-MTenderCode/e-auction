@@ -79,6 +79,7 @@ class CancelAuctionsServiceImpl(
         return CancelledAuctionsSnapshot(
             rowVersion = snapshot.rowVersion.next(),
             operationId = command.context.operationId,
+            cpid = snapshot.cpid,
             ocid = snapshot.ocid,
             data = CancelledAuctionsSnapshot.Data(
                 apiVersion = CancelledAuctionsSnapshot.apiVersion,

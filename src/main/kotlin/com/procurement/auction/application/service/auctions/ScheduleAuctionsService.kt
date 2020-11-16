@@ -139,6 +139,7 @@ class ScheduleAuctionsServiceImpl(
         return ScheduledAuctionsSnapshot(
             rowVersion = rowVersion,
             operationId = operationId,
+            cpid = cpid,
             ocid = command.context.ocid,
             data = ScheduledAuctionsSnapshot.Data(
                 apiVersion = ScheduledAuctionsSnapshot.apiVersion,

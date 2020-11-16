@@ -21,6 +21,7 @@ import com.procurement.auction.domain.model.version.RowVersion
 class CancelledAuctionsSnapshot(
     val rowVersion: RowVersion,
     val operationId: OperationId,
+    val cpid: Cpid,
     val ocid: Ocid,
     val data: Data
 ) {

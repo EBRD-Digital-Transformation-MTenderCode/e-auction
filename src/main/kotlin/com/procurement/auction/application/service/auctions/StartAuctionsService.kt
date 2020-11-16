@@ -144,13 +144,14 @@ class StartAuctionsServiceImpl(
                                 scheduledAuctions: Map<LotId, ScheduledAuctionsSnapshot.Data.Auction>,
                                 snapshot: ScheduledAuctionsSnapshot): StartedAuctionsSnapshot {
 
-        val cpid = command.context.cpid
+        val cpid = snapshot.cpid
         val bidsByLotId: Map<LotId, List<StartedAuctionsSnapshot.Data.Auction.Bid>> =
             bidsByLotId(command, actualLots, scheduledAuctions)
 
         return StartedAuctionsSnapshot(
             rowVersion = snapshot.rowVersion.next(),
             operationId = command.context.operationId,
+            cpid = snapshot.cpid,
             ocid = snapshot.ocid,
             data = StartedAuctionsSnapshot.Data(
                 apiVersion = StartedAuctionsSnapshot.apiVersion,

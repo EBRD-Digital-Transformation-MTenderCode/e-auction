@@ -1,6 +1,7 @@
 package com.procurement.auction.domain.model.tender
 
 import com.procurement.auction.domain.model.auction.status.AuctionsStatus
+import com.procurement.auction.domain.model.cpid.Cpid
 import com.procurement.auction.domain.model.ocid.Ocid
 import com.procurement.auction.domain.model.operationId.OperationId
 import com.procurement.auction.domain.model.tender.snapshot.CancelledAuctionsSnapshot
@@ -15,6 +16,7 @@ class TenderEntity(
     val rowVersion: RowVersion,
     val operationId: OperationId,
     val status: AuctionsStatus,
+    val cpid: Cpid,
     val ocid: Ocid,
     private val data: String
 ) {
@@ -23,6 +25,7 @@ class TenderEntity(
         return ScheduledAuctionsSnapshot(
             rowVersion = rowVersion,
             operationId = operationId,
+            cpid = cpid,
             ocid = ocid,
             data = data
         )
@@ -33,6 +36,7 @@ class TenderEntity(
         return CancelledAuctionsSnapshot(
             rowVersion = rowVersion,
             operationId = operationId,
+            cpid = cpid,
             ocid = ocid,
             data = data
         )
@@ -43,6 +47,7 @@ class TenderEntity(
         return StartedAuctionsSnapshot(
             rowVersion = rowVersion,
             operationId = operationId,
+            cpid = cpid,
             ocid = ocid,
             data = data
         )
@@ -53,6 +58,7 @@ class TenderEntity(
         return EndedAuctionsSnapshot(
             rowVersion = rowVersion,
             operationId = operationId,
+            cpid = cpid,
             ocid = ocid,
             data = data
         )

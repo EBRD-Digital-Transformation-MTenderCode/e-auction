@@ -107,6 +107,7 @@ class TenderRepositoryImpl(
                     rowVersion = rowVersion,
                     operationId = operationId,
                     status = status,
+                    cpid = cpid,
                     ocid = ocid,
                     data = data
                 )
@@ -123,7 +124,7 @@ class TenderRepositoryImpl(
             if (snapshot.rowVersion.isNew) {
                 val data = serializer.serialize(snapshot.data)
                 prepareInsertQuery(
-                    cpid = snapshot.data.tender.id,
+                    cpid = snapshot.cpid,
                     ocid = snapshot.ocid,
                     rowVersion = snapshot.rowVersion,
                     apiVersion = snapshot.data.apiVersion,
@@ -136,7 +137,7 @@ class TenderRepositoryImpl(
                 isNeedSave(snapshot.data.tender.id, snapshot.rowVersion)
                 val data = serializer.serialize(snapshot.data)
                 prepareUpdateQuery(
-                    cpid = snapshot.data.tender.id,
+                    cpid = snapshot.cpid,
                     ocid = snapshot.ocid,
                     rowVersion = snapshot.rowVersion,
                     apiVersion = snapshot.data.apiVersion,
@@ -159,7 +160,7 @@ class TenderRepositoryImpl(
 
         val data = serializer.serialize(snapshot.data)
         save(
-            cpid = snapshot.data.tender.id,
+            cpid = snapshot.cpid,
             ocid = snapshot.ocid,
             rowVersion = snapshot.rowVersion,
             apiVersion = snapshot.data.apiVersion,
@@ -177,7 +178,7 @@ class TenderRepositoryImpl(
 
         val data = serializer.serialize(snapshot.data)
         save(
-            cpid = snapshot.data.tender.id,
+            cpid = snapshot.cpid,
             ocid = snapshot.ocid,
             rowVersion = snapshot.rowVersion,
             apiVersion = snapshot.data.apiVersion,
@@ -195,7 +196,7 @@ class TenderRepositoryImpl(
 
         val data = serializer.serialize(snapshot.data)
         save(
-            cpid = snapshot.data.tender.id,
+            cpid = snapshot.cpid,
             ocid = snapshot.ocid,
             rowVersion = snapshot.rowVersion,
             apiVersion = snapshot.data.apiVersion,
