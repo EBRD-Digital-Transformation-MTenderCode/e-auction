@@ -7,6 +7,16 @@ class StartAuctionsCommandTest : AbstractDTOTestBase<StartAuctionsCommand>(Start
 
     @Test
     fun fully() {
-        testBindingAndMapping("json/command/start.json")
+        testBindingAndMapping("json/command/start_full.json")
+    }
+
+    @Test
+    fun required1() {
+        testBindingAndMapping("json/command/start_required_1.json")
+    }
+
+    @Test
+    fun required2() {
+        testBindingAndMapping("json/command/start_required_2.json")
     }
 }
