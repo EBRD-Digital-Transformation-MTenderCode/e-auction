@@ -12,7 +12,6 @@ import com.procurement.auction.infrastructure.web.request.tryGetId
 import com.procurement.auction.infrastructure.web.request.tryGetVersion
 import com.procurement.auction.infrastructure.web.response.ApiResponseV2
 import com.procurement.auction.infrastructure.web.response.ApiResponse2Generator.generateResponseOnFailure
-import com.procurement.auction.infrastructure.web.response.ApiSuccessResponse2
 
 abstract class AbstractHistoricalHandler2<ACTION : Action, R>(
     private val target: Class<R>,
@@ -46,7 +45,7 @@ abstract class AbstractHistoricalHandler2<ACTION : Action, R>(
                         logger = logger
                     )
                 }
-            return ApiSuccessResponse2(version = version, id = id, result = result)
+            return ApiResponseV2.Success(version = version, id = id, result = result)
         }
 
         return when (val result = execute(node)) {
@@ -57,7 +56,7 @@ abstract class AbstractHistoricalHandler2<ACTION : Action, R>(
                 if (logger.isDebugEnabled)
                     logger.debug("${action.key} has been executed. Result: '${transform.trySerialization(result.get)}'")
 
-                ApiSuccessResponse2(version = version, id = id, result = resultData)
+                ApiResponseV2.Success(version = version, id = id, result = resultData)
             }
             is Result.Failure -> generateResponseOnFailure(
                 fail = result.error, version = version, id = id, logger = logger

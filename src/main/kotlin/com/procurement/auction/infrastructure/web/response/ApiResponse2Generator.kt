@@ -38,14 +38,14 @@ object ApiResponse2Generator {
     }
 
     private fun generateDataErrorResponse(dataError: DataErrors.Validation, version: ApiVersion2, id: CommandId) =
-        ApiErrorResponse2(
+        ApiResponseV2.Error(
             version = version,
             id = id,
             result = listOf(
-                ApiErrorResponse2.Error(
+                ApiResponseV2.Error.Result(
                     code = getFullErrorCode(dataError.code),
                     description = dataError.description,
-                    details = ApiErrorResponse2.Error.Detail.tryCreateOrNull(
+                    details = ApiResponseV2.Error.Result.Detail.tryCreateOrNull(
                         name = dataError.name
                     ).toListOrEmpty()
                 )
@@ -53,14 +53,14 @@ object ApiResponse2Generator {
         )
 
     private fun generateValidationErrorResponse(validationError: ValidationError, version: ApiVersion2, id: CommandId) =
-        ApiErrorResponse2(
+        ApiResponseV2.Error(
             version = version,
             id = id,
             result = listOf(
-                ApiErrorResponse2.Error(
+                ApiResponseV2.Error.Result(
                     code = getFullErrorCode(validationError.code),
                     description = validationError.description,
-                    details = ApiErrorResponse2.Error.Detail.tryCreateOrNull(
+                    details = ApiResponseV2.Error.Result.Detail.tryCreateOrNull(
                         id = validationError.entityId
                     )
                         .toListOrEmpty()
@@ -70,11 +70,11 @@ object ApiResponse2Generator {
         )
 
     private fun generateErrorResponse(version: ApiVersion2, id: CommandId, error: Fail.Error) =
-        ApiErrorResponse2(
+        ApiResponseV2.Error(
             version = version,
             id = id,
             result = listOf(
-                ApiErrorResponse2.Error(
+                ApiResponseV2.Error.Result(
                     code = getFullErrorCode(error.code),
                     description = error.description
                 )
@@ -82,19 +82,20 @@ object ApiResponse2Generator {
         )
 
     private fun generateIncidentResponse(incident: Fail.Incident, version: ApiVersion2, id: CommandId) =
-        ApiIncidentResponse2(
+        ApiResponseV2.Incident(
             version = version,
             id = id,
-            result = ApiIncidentResponse2.Incident(
+            result = ApiResponseV2.Incident.Result(
                 date = nowDefaultUTC(),
-                id = UUID.randomUUID(),
-                service = ApiIncidentResponse2.Incident.Service(
+                id = UUID.randomUUID().toString(),
+                level = incident.level,
+                service = ApiResponseV2.Incident.Result.Service(
                     id = GlobalProperties2.service.id,
                     version = GlobalProperties2.service.version,
                     name = GlobalProperties2.service.name
                 ),
                 details = listOf(
-                    ApiIncidentResponse2.Incident.Details(
+                    ApiResponseV2.Incident.Result.Detail(
                         code = getFullErrorCode(incident.code),
                         description = incident.description,
                         metadata = null

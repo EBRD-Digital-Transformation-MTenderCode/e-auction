@@ -8,7 +8,7 @@ import com.procurement.auction.infrastructure.json.toJson
 import com.procurement.auction.infrastructure.web.response.version.ApiVersion2
 import org.junit.jupiter.api.Test
 
-class ApiResponse2Test : AbstractDTOTestBase<ApiSuccessResponse2>(ApiSuccessResponse2::class.java) {
+class ApiResponse2Test : AbstractDTOTestBase<ApiResponseV2.Success>(ApiResponseV2.Success::class.java) {
 
     companion object {
         private const val JSON_RESPONSE_WITH_NO_RESULT = "json/infrastructure/dto/api2/api_response_no_result.json"
@@ -19,7 +19,7 @@ class ApiResponse2Test : AbstractDTOTestBase<ApiSuccessResponse2>(ApiSuccessResp
     @Test
     fun nullResultTest() {
         val expectedJson = loadJson(JSON_RESPONSE_WITH_NO_RESULT)
-        val apiResponse2 = ApiSuccessResponse2(
+        val apiResponse2 = ApiResponseV2.Success(
             version = getApiVersion(),
             result = null,
             id = getId()
@@ -31,7 +31,7 @@ class ApiResponse2Test : AbstractDTOTestBase<ApiSuccessResponse2>(ApiSuccessResp
     @Test
     fun emptyResultTest() {
         val expectedJson = loadJson(JSON_RESPONSE_WITH_NO_RESULT)
-        val apiResponse2 = ApiSuccessResponse2(
+        val apiResponse2 = ApiResponseV2.Success(
             version = getApiVersion(),
             result = emptyList<String>(),
             id = getId()
@@ -44,7 +44,7 @@ class ApiResponse2Test : AbstractDTOTestBase<ApiSuccessResponse2>(ApiSuccessResp
     @Test
     fun listResultTest() {
         val expectedJson = loadJson(JSON_RESPONSE_WITH_RESULT_LIST)
-        val apiResponse2 = ApiSuccessResponse2(
+        val apiResponse2 = ApiResponseV2.Success(
             version = getApiVersion(),
             result = listOf(
                 "7b1584b8-5eb0-43d8-ad72-f7c074cc6bac",
@@ -60,7 +60,7 @@ class ApiResponse2Test : AbstractDTOTestBase<ApiSuccessResponse2>(ApiSuccessResp
     @Test
     fun objectResultTest() {
         val expectedJson = loadJson(JSON_RESPONSE_WITH_RESULT_OBJECT)
-        val apiResponse2 = ApiSuccessResponse2(
+        val apiResponse2 = ApiResponseV2.Success(
             version = getApiVersion(),
             result = object {
                 val first = "first"

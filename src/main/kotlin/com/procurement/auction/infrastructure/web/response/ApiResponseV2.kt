@@ -1,105 +1,115 @@
 package com.procurement.auction.infrastructure.web.response
 
+import com.fasterxml.jackson.annotation.JsonCreator
 import com.fasterxml.jackson.annotation.JsonInclude
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.annotation.JsonPropertyOrder
 import com.fasterxml.jackson.annotation.JsonValue
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize
-import com.fasterxml.jackson.databind.annotation.JsonSerialize
+import com.procurement.auction.domain.fail.Fail
 import com.procurement.auction.domain.model.command.id.CommandId
+import com.procurement.auction.domain.model.enums.EnumElementProvider
 import com.procurement.auction.infrastructure.web.response.version.ApiVersion2
-import com.procurement.auction.infrastructure.web.response.version.jackson.ApiVersion2Deserializer
-import com.procurement.auction.infrastructure.web.response.version.jackson.ApiVersion2Serializer
 import java.time.LocalDateTime
-import java.util.*
 
 @JsonPropertyOrder("version", "id", "status", "result")
-sealed class ApiResponseV2(
-    @field:JsonProperty("version") @param:JsonProperty("version") val version: ApiVersion2,
-    @field:JsonProperty("id") @param:JsonProperty("id") val id: CommandId,
-    @field:JsonProperty("result") @param:JsonProperty("result") val result: Any?
-) {
-    abstract val status: ResponseStatus
-}
+sealed class ApiResponseV2 {
+    abstract val version: ApiVersion2
+    abstract val id: CommandId
+    abstract val status: Status
+    abstract val result: Any?
 
-class ApiSuccessResponse2(
-    @JsonDeserialize(using = ApiVersion2Deserializer::class)
-    @JsonSerialize(using = ApiVersion2Serializer::class)
-    version: ApiVersion2,
-    id: CommandId,
-    @JsonInclude(JsonInclude.Include.NON_EMPTY) result: Any? = null
-) : ApiResponseV2(
-    version = version,
-    id = id,
-    result = result
-) {
-    @field:JsonProperty("status")
-    override val status: ResponseStatus = ResponseStatus.SUCCESS
-}
+    class Success(
+        @field:JsonProperty("version") @param:JsonProperty("version") override val version: ApiVersion2,
+        @field:JsonProperty("id") @param:JsonProperty("id") override val id: CommandId,
 
-class ApiIncidentResponse2(
-    @JsonDeserialize(using = ApiVersion2Deserializer::class)
-    @JsonSerialize(using = ApiVersion2Serializer::class)
-    version: ApiVersion2,
-    id: CommandId,
-    result: Incident
-) :
-    ApiResponseV2(version = version, id = id, result = result) {
+        @JsonInclude(JsonInclude.Include.NON_EMPTY)
+        @field:JsonProperty("result") @param:JsonProperty("result") override val result: Any? = null
+    ) : ApiResponseV2() {
 
-    @field:JsonProperty("status")
-    override val status: ResponseStatus = ResponseStatus.INCIDENT
-
-    class Incident(val id: UUID, val date: LocalDateTime, val service: Service, val details: List<Details>) {
-        class Service(val id: String, val name: String, val version: String)
-        class Details(val code: String, val description: String, val metadata: Any?)
+        @field:JsonProperty("status")
+        override val status: Status = Status.SUCCESS
     }
-}
-
-class ApiErrorResponse2(
-    @JsonDeserialize(using = ApiVersion2Deserializer::class)
-    @JsonSerialize(using = ApiVersion2Serializer::class)
-    version: ApiVersion2,
-    id: CommandId,
-    result: List<Error>
-) : ApiResponseV2(version = version, result = result, id = id) {
-    @field:JsonProperty("status")
-    override val status: ResponseStatus = ResponseStatus.ERROR
 
     class Error(
-        val code: String,
-        val description: String,
-        @JsonInclude(JsonInclude.Include.NON_EMPTY) val details: List<Detail> = emptyList()
-    ) {
-        class Detail private constructor(
-            @JsonInclude(JsonInclude.Include.NON_NULL) val name: String? = null,
-            @JsonInclude(JsonInclude.Include.NON_NULL) val id: String? = null
+        @field:JsonProperty("version") @param:JsonProperty("version") override val version: ApiVersion2,
+        @field:JsonProperty("id") @param:JsonProperty("id") override val id: CommandId,
+        @field:JsonProperty("result") @param:JsonProperty("result") override val result: List<Result>
+    ) : ApiResponseV2() {
+
+        @field:JsonProperty("status")
+        override val status: Status = Status.ERROR
+
+        class Result(
+            @field:JsonProperty("code") @param:JsonProperty("code") val code: String,
+            @field:JsonProperty("description") @param:JsonProperty("description") val description: String,
+
+            @JsonInclude(JsonInclude.Include.NON_EMPTY)
+            @field:JsonProperty("details") @param:JsonProperty("details") val details: List<Detail> = emptyList()
         ) {
-            companion object {
-                fun tryCreateOrNull(id: String? = null, name: String? = null): Detail? =
-                    if (id == null && name == null)
-                        null
-                    else
-                        Detail(
-                            id = id,
-                            name = name
-                        )
+
+            class Detail private constructor(
+                @field:JsonInclude(JsonInclude.Include.NON_NULL)
+                @field:JsonProperty("name") @param:JsonProperty("name") val name: String? = null,
+
+                @field:JsonInclude(JsonInclude.Include.NON_NULL)
+                @field:JsonProperty("id") @param:JsonProperty("id") val id: String? = null
+            ) {
+
+                companion object {
+                    fun tryCreateOrNull(id: String? = null, name: String? = null): Detail? =
+                        if (id == null && name == null) null else Detail(id = id, name = name)
+                }
             }
         }
     }
-}
 
-enum class ResponseStatus(private val value: String) {
+    class Incident(
+        @field:JsonProperty("version") @param:JsonProperty("version") override val version: ApiVersion2,
+        @field:JsonProperty("id") @param:JsonProperty("id") override val id: CommandId,
+        @field:JsonProperty("result") @param:JsonProperty("result") override val result: Result
+    ) : ApiResponseV2() {
 
-    SUCCESS("success"),
-    ERROR("error"),
-    INCIDENT("incident");
+        @field:JsonProperty("status")
+        override val status: Status = Status.INCIDENT
 
-    @JsonValue
-    fun value(): String {
-        return this.value
+        class Result(
+            @field:JsonProperty("id") @param:JsonProperty("id") val id: IncidentId,
+            @field:JsonProperty("date") @param:JsonProperty("date") val date: LocalDateTime,
+            @field:JsonProperty("level") @param:JsonProperty("level") val level: Fail.Incident.Level,
+            @field:JsonProperty("service") @param:JsonProperty("service") val service: Service,
+
+            @JsonInclude(JsonInclude.Include.NON_EMPTY)
+            @field:JsonProperty("details") @param:JsonProperty("details") val details: List<Detail>
+        ) {
+
+            class Service(
+                @field:JsonProperty("id") @param:JsonProperty("id") val id: String,
+                @field:JsonProperty("name") @param:JsonProperty("name") val name: String,
+                @field:JsonProperty("version") @param:JsonProperty("version") val version: String
+            )
+
+            class Detail(
+                @field:JsonProperty("code") @param:JsonProperty("code") val code: String,
+                @field:JsonProperty("description") @param:JsonProperty("description") val description: String,
+
+                @JsonInclude(JsonInclude.Include.NON_NULL)
+                @field:JsonProperty("metadata") @param:JsonProperty("metadata") val metadata: Any?
+            )
+        }
     }
 
-    override fun toString(): String {
-        return this.value
+    enum class Status(@JsonValue override val key: String) : EnumElementProvider.Key {
+        SUCCESS("success"),
+        ERROR("error"),
+        INCIDENT("incident");
+
+        override fun toString(): String = key
+
+        companion object : EnumElementProvider<Status>(info = info()) {
+
+            @JvmStatic
+            @JsonCreator
+            fun creator(name: String) = Status.orThrow(name)
+        }
     }
 }

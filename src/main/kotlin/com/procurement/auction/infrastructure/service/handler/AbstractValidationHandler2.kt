@@ -9,7 +9,6 @@ import com.procurement.auction.infrastructure.web.request.tryGetId
 import com.procurement.auction.infrastructure.web.request.tryGetVersion
 import com.procurement.auction.infrastructure.web.response.ApiResponseV2
 import com.procurement.auction.infrastructure.web.response.ApiResponse2Generator.generateResponseOnFailure
-import com.procurement.auction.infrastructure.web.response.ApiSuccessResponse2
 
 abstract class AbstractValidationHandler2<ACTION : Action, E : Fail>(
     private val logger: Logger
@@ -23,7 +22,7 @@ abstract class AbstractValidationHandler2<ACTION : Action, E : Fail>(
             is ValidationResult.Ok -> {
                 if (logger.isDebugEnabled)
                     logger.debug("${action.key} has been executed.")
-                ApiSuccessResponse2(version = version, id = id)
+                ApiResponseV2.Success(version = version, id = id)
             }
             is ValidationResult.Fail -> generateResponseOnFailure(
                 fail = result.error, version = version, id = id, logger = logger
