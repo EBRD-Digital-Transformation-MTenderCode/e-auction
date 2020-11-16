@@ -38,7 +38,7 @@ import com.procurement.auction.domain.model.operationId.OperationIdSerializer
 import com.procurement.auction.domain.model.platformId.PlatformId
 import com.procurement.auction.domain.model.platformId.PlatformIdDeserializer
 import com.procurement.auction.domain.model.platformId.PlatformIdSerializer
-import com.procurement.auction.domain.model.version.ApiVersion
+import com.procurement.auction.infrastructure.web.response.version.ApiVersion
 import com.procurement.auction.domain.model.version.ApiVersionDeserializer
 import com.procurement.auction.domain.model.version.ApiVersionSerializer
 import java.time.LocalDateTime

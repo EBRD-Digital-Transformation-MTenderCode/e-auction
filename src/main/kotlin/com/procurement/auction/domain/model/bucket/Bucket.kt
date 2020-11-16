@@ -8,10 +8,10 @@ import com.procurement.auction.domain.model.cpid.Cpid
 import com.procurement.auction.domain.model.lotId.LotId
 import com.procurement.auction.domain.model.slots.Slot
 import com.procurement.auction.domain.model.slots.id.SlotId
-import com.procurement.auction.domain.model.version.ApiVersion
 import com.procurement.auction.domain.model.version.RowVersion
 import com.procurement.auction.domain.service.AllocationStrategy
 import com.procurement.auction.infrastructure.logger.Slf4jLogger
+import com.procurement.auction.infrastructure.web.response.version.ApiVersion
 import java.time.LocalDateTime
 
 data class AuctionsTimes(

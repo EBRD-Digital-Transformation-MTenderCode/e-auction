@@ -12,7 +12,7 @@ import com.procurement.auction.infrastructure.web.request.tryGetNode
 import com.procurement.auction.infrastructure.web.request.tryGetVersion
 import com.procurement.auction.infrastructure.web.response.ApiResponseV2
 import com.procurement.auction.infrastructure.web.response.ApiResponse2Generator.generateResponseOnFailure
-import com.procurement.auction.infrastructure.web.response.version.ApiVersion2
+import com.procurement.auction.infrastructure.web.response.version.ApiVersion
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.PostMapping
@@ -63,7 +63,7 @@ class Command2Controller(
     }
 
     private fun generateResponseEntityOnFailure(
-        fail: Fail, version: ApiVersion2 = GlobalProperties2.App.apiVersion, id: CommandId = CommandId.NaN
+        fail: Fail, version: ApiVersion = GlobalProperties2.App.apiVersion, id: CommandId = CommandId.NaN
     ): ResponseEntity<ApiResponseV2> {
         val response = generateResponseOnFailure(
             fail = fail, id = id, version = version, logger = logger

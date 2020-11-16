@@ -14,16 +14,16 @@ import com.procurement.auction.infrastructure.extension.tryGetAttribute
 import com.procurement.auction.infrastructure.extension.tryGetAttributeAsEnum
 import com.procurement.auction.infrastructure.extension.tryGetTextAttribute
 import com.procurement.auction.infrastructure.service.command.type.Command2Type
-import com.procurement.auction.infrastructure.web.response.version.ApiVersion2
+import com.procurement.auction.infrastructure.web.response.version.ApiVersion
 
-fun JsonNode.tryGetVersion(): Result<ApiVersion2, DataErrors> {
+fun JsonNode.tryGetVersion(): Result<ApiVersion, DataErrors> {
     val name = "version"
     return tryGetTextAttribute(name).bind {version ->
-        ApiVersion2.orNull(version)
-            ?.asSuccess<ApiVersion2, DataErrors>()
+        ApiVersion.orNull(version)
+            ?.asSuccess<ApiVersion, DataErrors>()
             ?: DataErrors.Validation.DataFormatMismatch(
                 name = name,
-                expectedFormat = ApiVersion2.pattern,
+                expectedFormat = ApiVersion.pattern,
                 actualValue = version
             ).asFailure()
     }

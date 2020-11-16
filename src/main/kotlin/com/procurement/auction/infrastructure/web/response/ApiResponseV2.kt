@@ -8,18 +8,18 @@ import com.fasterxml.jackson.annotation.JsonValue
 import com.procurement.auction.domain.fail.Fail
 import com.procurement.auction.domain.model.command.id.CommandId
 import com.procurement.auction.domain.model.enums.EnumElementProvider
-import com.procurement.auction.infrastructure.web.response.version.ApiVersion2
+import com.procurement.auction.infrastructure.web.response.version.ApiVersion
 import java.time.LocalDateTime
 
 @JsonPropertyOrder("version", "id", "status", "result")
 sealed class ApiResponseV2 {
-    abstract val version: ApiVersion2
+    abstract val version: ApiVersion
     abstract val id: CommandId
     abstract val status: Status
     abstract val result: Any?
 
     class Success(
-        @field:JsonProperty("version") @param:JsonProperty("version") override val version: ApiVersion2,
+        @field:JsonProperty("version") @param:JsonProperty("version") override val version: ApiVersion,
         @field:JsonProperty("id") @param:JsonProperty("id") override val id: CommandId,
 
         @JsonInclude(JsonInclude.Include.NON_EMPTY)
@@ -31,7 +31,7 @@ sealed class ApiResponseV2 {
     }
 
     class Error(
-        @field:JsonProperty("version") @param:JsonProperty("version") override val version: ApiVersion2,
+        @field:JsonProperty("version") @param:JsonProperty("version") override val version: ApiVersion,
         @field:JsonProperty("id") @param:JsonProperty("id") override val id: CommandId,
         @field:JsonProperty("result") @param:JsonProperty("result") override val result: List<Result>
     ) : ApiResponseV2() {
@@ -64,7 +64,7 @@ sealed class ApiResponseV2 {
     }
 
     class Incident(
-        @field:JsonProperty("version") @param:JsonProperty("version") override val version: ApiVersion2,
+        @field:JsonProperty("version") @param:JsonProperty("version") override val version: ApiVersion,
         @field:JsonProperty("id") @param:JsonProperty("id") override val id: CommandId,
         @field:JsonProperty("result") @param:JsonProperty("result") override val result: Result
     ) : ApiResponseV2() {

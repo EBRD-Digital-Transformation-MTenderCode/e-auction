@@ -32,7 +32,7 @@ import com.procurement.auction.domain.model.operationId.OperationIdSerializer
 import com.procurement.auction.domain.model.progressId.ProgressId
 import com.procurement.auction.domain.model.progressId.ProgressIdDeserializer
 import com.procurement.auction.domain.model.progressId.ProgressIdSerializer
-import com.procurement.auction.domain.model.version.ApiVersion
+import com.procurement.auction.infrastructure.web.response.version.ApiVersion
 import com.procurement.auction.domain.model.version.ApiVersionDeserializer
 import com.procurement.auction.domain.model.version.ApiVersionSerializer
 import java.time.LocalDateTime

@@ -17,7 +17,7 @@ import com.procurement.auction.domain.model.tender.snapshot.CancelledAuctionsSna
 import com.procurement.auction.domain.model.tender.snapshot.EndedAuctionsSnapshot
 import com.procurement.auction.domain.model.tender.snapshot.ScheduledAuctionsSnapshot
 import com.procurement.auction.domain.model.tender.snapshot.StartedAuctionsSnapshot
-import com.procurement.auction.domain.model.version.ApiVersion
+import com.procurement.auction.infrastructure.web.response.version.ApiVersion
 import com.procurement.auction.domain.model.version.ApiVersionSerializer
 import com.procurement.auction.domain.model.version.RowVersion
 import com.procurement.auction.domain.repository.TenderRepository

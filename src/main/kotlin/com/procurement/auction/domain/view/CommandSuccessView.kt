@@ -7,7 +7,7 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize
 import com.procurement.auction.domain.model.command.id.CommandId
 import com.procurement.auction.domain.model.command.id.CommandIdDeserializer
 import com.procurement.auction.domain.model.command.id.CommandIdSerializer
-import com.procurement.auction.domain.model.version.ApiVersion
+import com.procurement.auction.infrastructure.web.response.version.ApiVersion
 import com.procurement.auction.domain.model.version.ApiVersionDeserializer
 import com.procurement.auction.domain.model.version.ApiVersionSerializer
 

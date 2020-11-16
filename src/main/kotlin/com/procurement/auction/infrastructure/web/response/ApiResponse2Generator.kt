@@ -8,7 +8,7 @@ import com.procurement.auction.domain.fail.Fail
 import com.procurement.auction.domain.fail.error.DataErrors
 import com.procurement.auction.domain.fail.error.ValidationError
 import com.procurement.auction.domain.model.command.id.CommandId
-import com.procurement.auction.infrastructure.web.response.version.ApiVersion2
+import com.procurement.auction.infrastructure.web.response.version.ApiVersion
 import java.util.*
 
 object ApiResponse2Generator {
@@ -18,7 +18,7 @@ object ApiResponse2Generator {
 
     fun generateResponseOnFailure(
         fail: Fail,
-        version: ApiVersion2 = GlobalProperties2.App.apiVersion,
+        version: ApiVersion = GlobalProperties2.App.apiVersion,
         id: CommandId = CommandId.NaN,
         logger: Logger
     ): ApiResponseV2 {
@@ -37,7 +37,7 @@ object ApiResponse2Generator {
         }
     }
 
-    private fun generateDataErrorResponse(dataError: DataErrors.Validation, version: ApiVersion2, id: CommandId) =
+    private fun generateDataErrorResponse(dataError: DataErrors.Validation, version: ApiVersion, id: CommandId) =
         ApiResponseV2.Error(
             version = version,
             id = id,
@@ -52,7 +52,7 @@ object ApiResponse2Generator {
             )
         )
 
-    private fun generateValidationErrorResponse(validationError: ValidationError, version: ApiVersion2, id: CommandId) =
+    private fun generateValidationErrorResponse(validationError: ValidationError, version: ApiVersion, id: CommandId) =
         ApiResponseV2.Error(
             version = version,
             id = id,
@@ -69,7 +69,7 @@ object ApiResponse2Generator {
             )
         )
 
-    private fun generateErrorResponse(version: ApiVersion2, id: CommandId, error: Fail.Error) =
+    private fun generateErrorResponse(version: ApiVersion, id: CommandId, error: Fail.Error) =
         ApiResponseV2.Error(
             version = version,
             id = id,
@@ -81,7 +81,7 @@ object ApiResponse2Generator {
             )
         )
 
-    private fun generateIncidentResponse(incident: Fail.Incident, version: ApiVersion2, id: CommandId) =
+    private fun generateIncidentResponse(incident: Fail.Incident, version: ApiVersion, id: CommandId) =
         ApiResponseV2.Incident(
             version = version,
             id = id,

@@ -11,8 +11,8 @@ import com.procurement.auction.domain.model.date.JsonTimeSerializer
 import com.procurement.auction.domain.model.slots.id.SlotId
 import com.procurement.auction.domain.model.slots.id.SlotIdDeserializer
 import com.procurement.auction.domain.model.slots.id.SlotIdSerializer
-import com.procurement.auction.domain.model.version.ApiVersion
 import com.procurement.auction.domain.model.version.RowVersion
+import com.procurement.auction.infrastructure.web.response.version.ApiVersion
 import java.time.LocalTime
 
 class BucketSnapshot(

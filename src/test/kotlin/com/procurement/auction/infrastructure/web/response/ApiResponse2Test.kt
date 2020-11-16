@@ -5,7 +5,7 @@ import com.procurement.auction.infrastructure.dto.AbstractDTOTestBase
 import com.procurement.auction.infrastructure.json.JsonValidator
 import com.procurement.auction.infrastructure.json.loadJson
 import com.procurement.auction.infrastructure.json.toJson
-import com.procurement.auction.infrastructure.web.response.version.ApiVersion2
+import com.procurement.auction.infrastructure.web.response.version.ApiVersion
 import org.junit.jupiter.api.Test
 
 class ApiResponse2Test : AbstractDTOTestBase<ApiResponseV2.Success>(ApiResponseV2.Success::class.java) {
@@ -77,6 +77,6 @@ class ApiResponse2Test : AbstractDTOTestBase<ApiResponseV2.Success>(ApiResponseV
         testBindingAndMapping(JSON_RESPONSE_WITH_RESULT_LIST)
     }
 
-    private fun getApiVersion() = ApiVersion2(2, 0, 0)
+    private fun getApiVersion() = ApiVersion(2, 0, 0)
     private fun getId() = CommandId.tryCreateOrNull("3fa85f64-5717-4562-b3fc-2c963f66afa6")!!
 }

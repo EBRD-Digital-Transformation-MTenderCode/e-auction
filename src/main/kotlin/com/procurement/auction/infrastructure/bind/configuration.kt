@@ -13,7 +13,7 @@ import com.procurement.auction.domain.model.date.JsonDateTimeModule
 import com.procurement.auction.domain.model.ocid.Ocid
 import com.procurement.auction.domain.model.ocid.OcidDeserializer
 import com.procurement.auction.domain.model.operationId.OperationIdModule
-import com.procurement.auction.infrastructure.web.response.version.jackson.ApiVersion2Module
+import com.procurement.auction.infrastructure.web.response.version.jackson.ApiVersionModule
 
 fun ObjectMapper.configuration() {
     val module = SimpleModule().apply {
@@ -23,7 +23,7 @@ fun ObjectMapper.configuration() {
 
     registerModule(module)
     registerModule(JsonDateTimeModule())
-    registerModule(ApiVersion2Module())
+    registerModule(ApiVersionModule())
     registerModule(OperationIdModule())
     registerModule(CommandIdModule())
     registerKotlinModule()

@@ -31,7 +31,7 @@ import com.procurement.auction.domain.model.operationId.OperationId
 import com.procurement.auction.domain.model.slots.id.SlotId
 import com.procurement.auction.domain.model.slots.id.SlotsIdsDeserializer
 import com.procurement.auction.domain.model.slots.id.SlotsIdsSerializer
-import com.procurement.auction.domain.model.version.ApiVersion
+import com.procurement.auction.infrastructure.web.response.version.ApiVersion
 import com.procurement.auction.domain.model.version.ApiVersionDeserializer
 import com.procurement.auction.domain.model.version.ApiVersionSerializer
 import com.procurement.auction.domain.model.version.RowVersion

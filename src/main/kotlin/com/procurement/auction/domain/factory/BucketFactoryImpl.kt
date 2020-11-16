@@ -4,11 +4,11 @@ import com.procurement.auction.domain.model.bucket.Bucket
 import com.procurement.auction.domain.model.bucket.BucketSnapshot
 import com.procurement.auction.domain.model.bucket.id.BucketId
 import com.procurement.auction.domain.model.slots.Slot
-import com.procurement.auction.domain.model.version.ApiVersion
 import com.procurement.auction.domain.model.version.RowVersion
 import com.procurement.auction.domain.service.AllocationStrategy
 import com.procurement.auction.domain.service.JsonDeserializeService
 import com.procurement.auction.domain.service.deserialize
+import com.procurement.auction.infrastructure.web.response.version.ApiVersion
 import org.springframework.stereotype.Service
 
 @Service
