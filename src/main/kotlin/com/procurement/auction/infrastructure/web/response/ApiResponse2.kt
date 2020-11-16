@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder
 import com.fasterxml.jackson.annotation.JsonValue
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize
 import com.fasterxml.jackson.databind.annotation.JsonSerialize
+import com.procurement.auction.domain.model.command.id.CommandId
 import com.procurement.auction.infrastructure.web.response.version.ApiVersion2
 import com.procurement.auction.infrastructure.web.response.version.jackson.ApiVersion2Deserializer
 import com.procurement.auction.infrastructure.web.response.version.jackson.ApiVersion2Serializer
@@ -15,7 +16,7 @@ import java.util.*
 @JsonPropertyOrder("version", "id", "status", "result")
 sealed class ApiResponse2(
     @field:JsonProperty("version") @param:JsonProperty("version") val version: ApiVersion2,
-    @field:JsonProperty("id") @param:JsonProperty("id") val id: UUID,
+    @field:JsonProperty("id") @param:JsonProperty("id") val id: CommandId,
     @field:JsonProperty("result") @param:JsonProperty("result") val result: Any?
 ) {
     abstract val status: ResponseStatus
@@ -25,7 +26,7 @@ class ApiSuccessResponse2(
     @JsonDeserialize(using = ApiVersion2Deserializer::class)
     @JsonSerialize(using = ApiVersion2Serializer::class)
     version: ApiVersion2,
-    id: UUID,
+    id: CommandId,
     @JsonInclude(JsonInclude.Include.NON_EMPTY) result: Any? = null
 ) : ApiResponse2(
     version = version,
@@ -40,7 +41,7 @@ class ApiIncidentResponse2(
     @JsonDeserialize(using = ApiVersion2Deserializer::class)
     @JsonSerialize(using = ApiVersion2Serializer::class)
     version: ApiVersion2,
-    id: UUID,
+    id: CommandId,
     result: Incident
 ) :
     ApiResponse2(version = version, id = id, result = result) {
@@ -58,7 +59,8 @@ class ApiErrorResponse2(
     @JsonDeserialize(using = ApiVersion2Deserializer::class)
     @JsonSerialize(using = ApiVersion2Serializer::class)
     version: ApiVersion2,
-    id: UUID, result: List<Error>
+    id: CommandId,
+    result: List<Error>
 ) : ApiResponse2(version = version, result = result, id = id) {
     @field:JsonProperty("status")
     override val status: ResponseStatus = ResponseStatus.ERROR

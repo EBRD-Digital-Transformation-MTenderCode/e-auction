@@ -25,7 +25,7 @@ abstract class AbstractHistoricalHandler2<ACTION : Action, R>(
         val id = node.tryGetId().get
         val version = node.tryGetVersion().get
 
-        val history = historyRepository.getHistory(id.toString(), action.key)
+        val history = historyRepository.getHistory(id, action)
             .doOnError { error ->
                 return generateResponseOnFailure(
                     fail = error, version = version, id = id, logger = logger
@@ -33,12 +33,13 @@ abstract class AbstractHistoricalHandler2<ACTION : Action, R>(
             }
             .get
         if (history != null) {
-            val data = history.jsonData
-            val result = transform.tryDeserialization(value = data, target = target)
+            val result = transform.tryDeserialization(value = history, target = target)
                 .doReturn { incident ->
                     return generateResponseOnFailure(
                         fail = Fail.Incident.Database.Parsing(
-                            column = HistoryRepositoryCassandra.JSON_DATA, value = data, exception = incident.exception
+                            column = HistoryRepositoryCassandra.JSON_DATA,
+                            value = history,
+                            exception = incident.exception
                         ),
                         id = id,
                         version = version,
@@ -52,7 +53,7 @@ abstract class AbstractHistoricalHandler2<ACTION : Action, R>(
             is Result.Success -> {
                 val resultData = result.get
                 if (resultData != null)
-                    historyRepository.saveHistory(id.toString(), action.key, resultData)
+                    historyRepository.saveHistory(id, action, resultData)
                 if (logger.isDebugEnabled)
                     logger.debug("${action.key} has been executed. Result: '${transform.trySerialization(result.get)}'")
 

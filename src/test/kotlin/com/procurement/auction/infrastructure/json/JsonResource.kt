@@ -2,22 +2,13 @@ package com.procurement.auction.infrastructure.json
 
 import com.fasterxml.jackson.core.JsonFactory
 import com.fasterxml.jackson.core.JsonProcessingException
-import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.databind.SerializationFeature
-import com.fasterxml.jackson.databind.module.SimpleModule
-import com.fasterxml.jackson.module.kotlin.registerKotlinModule
-import com.procurement.auction.domain.model.cpid.Cpid
-import com.procurement.auction.domain.model.cpid.CpidDeserializer
-import com.procurement.auction.domain.model.date.JsonDateTimeModule
-import com.procurement.auction.domain.model.ocid.Ocid
-import com.procurement.auction.domain.model.ocid.OcidDeserializer
+import com.procurement.auction.infrastructure.bind.configuration
 import com.procurement.auction.infrastructure.json.exception.JsonBindingException
 import com.procurement.auction.infrastructure.json.exception.JsonFileNotFoundException
 import com.procurement.auction.infrastructure.json.exception.JsonMappingException
 import com.procurement.auction.infrastructure.json.exception.JsonParsingException
-import com.procurement.auction.infrastructure.web.response.version.jackson.ApiVersion2Module
 import java.io.IOException
 import java.io.StringWriter
 import java.nio.charset.Charset
@@ -79,22 +70,5 @@ private object ClassPathResource {
 }
 
 object JsonMapper {
-    val mapper = ObjectMapper().apply {
-        registerKotlinModule()
-        registerModule(JsonDateTimeModule())
-        registerModule(ApiVersion2Module())
-        registerModule(getModule())
-
-        configure(DeserializationFeature.USE_BIG_INTEGER_FOR_INTS, true)
-        configure(DeserializationFeature.USE_BIG_DECIMAL_FOR_FLOATS, true)
-        configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false)
-        configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
-    }
-
-    private fun getModule(): SimpleModule {
-        val simpleModule = SimpleModule()
-        simpleModule.addDeserializer(Cpid::class.java, CpidDeserializer())
-        simpleModule.addDeserializer(Ocid::class.java, OcidDeserializer())
-        return simpleModule
-    }
+    val mapper = ObjectMapper().apply { configuration() }
 }
