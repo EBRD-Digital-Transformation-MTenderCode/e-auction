@@ -10,7 +10,7 @@ class ApiVersionModule : SimpleModule() {
     }
 
     init {
-        addSerializer(ApiVersion::class.java, ApiVersion2Serializer())
+        addSerializer(ApiVersion::class.java, ApiVersionSerializer())
         addDeserializer(ApiVersion::class.java, ApiVersionDeserializer())
     }
 }

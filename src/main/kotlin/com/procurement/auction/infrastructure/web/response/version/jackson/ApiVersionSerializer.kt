@@ -7,7 +7,7 @@ import com.fasterxml.jackson.databind.SerializerProvider
 import com.procurement.auction.infrastructure.web.response.version.ApiVersion
 import java.io.IOException
 
-class ApiVersion2Serializer : JsonSerializer<ApiVersion>() {
+class ApiVersionSerializer : JsonSerializer<ApiVersion>() {
     companion object {
         fun serialize(apiVersion: ApiVersion): String = apiVersion.underlying
     }

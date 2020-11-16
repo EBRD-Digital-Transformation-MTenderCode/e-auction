@@ -18,7 +18,7 @@ import com.procurement.auction.exception.database.SaveOperationException
 import com.procurement.auction.infrastructure.cassandra.toCassandraLocalDate
 import com.procurement.auction.infrastructure.logger.Slf4jLogger
 import com.procurement.auction.infrastructure.web.response.version.jackson.ApiVersionDeserializer
-import com.procurement.auction.infrastructure.web.response.version.jackson.ApiVersion2Serializer
+import com.procurement.auction.infrastructure.web.response.version.jackson.ApiVersionSerializer
 import org.springframework.stereotype.Repository
 
 @Repository
@@ -123,7 +123,7 @@ class BucketRepositoryImpl(
             it.setDate(columnDate, snapshot.id.date.toCassandraLocalDate())
             it.setString(columnCountry, CountrySerializer.serialize(snapshot.id.country))
             it.setInt(columnRowVersion, snapshot.rowVersion.modified)
-            it.setString(columnApiVersion, ApiVersion2Serializer.serialize(snapshot.apiVersion))
+            it.setString(columnApiVersion, ApiVersionSerializer.serialize(snapshot.apiVersion))
             it.setString(columnSlots, slots)
             it.setString(columnOccupancy, occupancy)
         }

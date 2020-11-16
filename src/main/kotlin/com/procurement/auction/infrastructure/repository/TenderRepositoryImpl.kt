@@ -25,7 +25,7 @@ import com.procurement.auction.exception.app.TenderIsAlreadyExistException
 import com.procurement.auction.exception.database.OptimisticLockException
 import com.procurement.auction.exception.database.SaveOperationException
 import com.procurement.auction.infrastructure.logger.Slf4jLogger
-import com.procurement.auction.infrastructure.web.response.version.jackson.ApiVersion2Serializer
+import com.procurement.auction.infrastructure.web.response.version.jackson.ApiVersionSerializer
 import org.springframework.stereotype.Repository
 
 @Repository
@@ -255,7 +255,7 @@ class TenderRepositoryImpl(
             setString(columnCpid, cpid.underlying)
             setString(columnOcid, ocid.underlying)
             setInt(columnRowVersion, rowVersion.modified)
-            setString(columnApiVersion, ApiVersion2Serializer.serialize(apiVersion))
+            setString(columnApiVersion, ApiVersionSerializer.serialize(apiVersion))
             setString(columnOperationId, OperationIdSerializer.serialize(operationId))
             setString(columnCountry, CountrySerializer.serialize(country))
             setInt(columnStatus, status.id)
@@ -277,7 +277,7 @@ class TenderRepositoryImpl(
             setString(columnCpid, cpid.underlying)
             setString(columnOcid, ocid.underlying)
             setInt(columnRowVersion, rowVersion.modified)
-            setString(columnApiVersion, ApiVersion2Serializer.serialize(apiVersion))
+            setString(columnApiVersion, ApiVersionSerializer.serialize(apiVersion))
             setString(columnOperationId, OperationIdSerializer.serialize(operationId))
             setInt(columnStatus, status.id)
             setString(columnData, data)
