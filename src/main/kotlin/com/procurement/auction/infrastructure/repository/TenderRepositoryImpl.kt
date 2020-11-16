@@ -90,8 +90,8 @@ class TenderRepositoryImpl(
 
     override fun loadEntity(cpid: Cpid, ocid: Ocid): TenderEntity? {
         val query = preparedLoadCQL.bind().apply {
-            setString(columnCpid, cpid.toString())
-            setString(columnOcid, ocid.toString())
+            setString(columnCpid, cpid.underlying)
+            setString(columnOcid, ocid.underlying)
         }
 
         val resultSet = load(query)
@@ -252,8 +252,8 @@ class TenderRepositoryImpl(
         log.debug { "Attempt to save data on a new tender ($cpid, $rowVersion, $apiVersion, $operationId, $data)" }
 
         return preparedInsertCQL.bind().apply {
-            setString(columnCpid, cpid.toString())
-            setString(columnOcid, ocid.toString())
+            setString(columnCpid, cpid.underlying)
+            setString(columnOcid, ocid.underlying)
             setInt(columnRowVersion, rowVersion.modified)
             setString(columnApiVersion, ApiVersionSerializer.serialize(apiVersion))
             setString(columnOperationId, OperationIdSerializer.serialize(operationId))
@@ -274,8 +274,8 @@ class TenderRepositoryImpl(
         log.debug { "Attempt to update data of a tender ($cpid, $rowVersion, $apiVersion, $operationId, $data)" }
 
         return preparedUpdateCQL.bind().apply {
-            setString(columnCpid, cpid.toString())
-            setString(columnOcid, ocid.toString())
+            setString(columnCpid, cpid.underlying)
+            setString(columnOcid, ocid.underlying)
             setInt(columnRowVersion, rowVersion.modified)
             setString(columnApiVersion, ApiVersionSerializer.serialize(apiVersion))
             setString(columnOperationId, OperationIdSerializer.serialize(operationId))
