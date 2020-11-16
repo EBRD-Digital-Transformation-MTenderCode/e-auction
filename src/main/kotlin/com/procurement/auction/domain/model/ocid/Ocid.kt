@@ -1,7 +1,6 @@
 package com.procurement.auction.domain.model.ocid
 
 import com.fasterxml.jackson.annotation.JsonValue
-import com.procurement.auction.domain.model.cpid.Cpid
 import com.procurement.auction.domain.model.enums.EnumElementProvider.Companion.keysAsStringsUpper
 import com.procurement.auction.domain.model.enums.Stage
 

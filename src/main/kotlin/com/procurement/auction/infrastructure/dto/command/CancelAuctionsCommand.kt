@@ -5,11 +5,7 @@ import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize
 import com.fasterxml.jackson.databind.annotation.JsonSerialize
 import com.procurement.auction.domain.model.command.id.CommandId
-import com.procurement.auction.domain.model.command.id.CommandIdDeserializer
-import com.procurement.auction.domain.model.command.id.CommandIdSerializer
 import com.procurement.auction.domain.model.command.name.CommandName
-import com.procurement.auction.domain.model.command.name.CommandNameDeserializer
-import com.procurement.auction.domain.model.command.name.CommandNameSerializer
 import com.procurement.auction.domain.model.country.Country
 import com.procurement.auction.domain.model.country.CountryDeserializer
 import com.procurement.auction.domain.model.country.CountrySerializer
@@ -27,11 +23,7 @@ import java.time.LocalDateTime
 data class CancelAuctionsCommand(
     @field:JsonProperty("version") @param:JsonProperty("version") val version: ApiVersion,
     @field:JsonProperty("id") @param:JsonProperty("id") val id: CommandId,
-
-    @JsonDeserialize(using = CommandNameDeserializer::class)
-    @JsonSerialize(using = CommandNameSerializer::class)
     @field:JsonProperty("command") @param:JsonProperty("command") val name: CommandName,
-
     @field:JsonProperty("context") @param:JsonProperty("context") val context: Context,
     @field:JsonProperty("data") @param:JsonProperty("data") val data: Data
 ) {
