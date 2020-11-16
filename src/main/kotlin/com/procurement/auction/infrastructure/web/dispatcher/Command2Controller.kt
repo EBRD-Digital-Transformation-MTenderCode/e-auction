@@ -10,7 +10,7 @@ import com.procurement.auction.infrastructure.service.Command2Service
 import com.procurement.auction.infrastructure.web.request.tryGetId
 import com.procurement.auction.infrastructure.web.request.tryGetNode
 import com.procurement.auction.infrastructure.web.request.tryGetVersion
-import com.procurement.auction.infrastructure.web.response.ApiResponse2
+import com.procurement.auction.infrastructure.web.response.ApiResponseV2
 import com.procurement.auction.infrastructure.web.response.ApiResponse2Generator.generateResponseOnFailure
 import com.procurement.auction.infrastructure.web.response.version.ApiVersion2
 import org.springframework.http.HttpStatus
@@ -29,7 +29,7 @@ class Command2Controller(
 ) {
 
     @PostMapping
-    fun command(@RequestBody requestBody: String): ResponseEntity<ApiResponse2> {
+    fun command(@RequestBody requestBody: String): ResponseEntity<ApiResponseV2> {
         if (logger.isDebugEnabled)
             logger.debug("RECEIVED COMMAND: '$requestBody'.")
 
@@ -64,7 +64,7 @@ class Command2Controller(
 
     private fun generateResponseEntityOnFailure(
         fail: Fail, version: ApiVersion2 = GlobalProperties2.App.apiVersion, id: CommandId = CommandId.NaN
-    ): ResponseEntity<ApiResponse2> {
+    ): ResponseEntity<ApiResponseV2> {
         val response = generateResponseOnFailure(
             fail = fail, id = id, version = version, logger = logger
         )

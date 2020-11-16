@@ -21,7 +21,7 @@ object ApiResponse2Generator {
         version: ApiVersion2 = GlobalProperties2.App.apiVersion,
         id: CommandId = CommandId.NaN,
         logger: Logger
-    ): ApiResponse2 {
+    ): ApiResponseV2 {
         fail.logging(logger)
         return when (fail) {
             is Fail.Error -> {

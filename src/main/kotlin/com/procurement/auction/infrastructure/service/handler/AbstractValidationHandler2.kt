@@ -7,15 +7,15 @@ import com.procurement.auction.domain.functional.ValidationResult
 import com.procurement.auction.infrastructure.service.command.type.Action
 import com.procurement.auction.infrastructure.web.request.tryGetId
 import com.procurement.auction.infrastructure.web.request.tryGetVersion
-import com.procurement.auction.infrastructure.web.response.ApiResponse2
+import com.procurement.auction.infrastructure.web.response.ApiResponseV2
 import com.procurement.auction.infrastructure.web.response.ApiResponse2Generator.generateResponseOnFailure
 import com.procurement.auction.infrastructure.web.response.ApiSuccessResponse2
 
 abstract class AbstractValidationHandler2<ACTION : Action, E : Fail>(
     private val logger: Logger
-) : Handler<ACTION, ApiResponse2> {
+) : Handler<ACTION, ApiResponseV2> {
 
-    override fun handle(node: JsonNode): ApiResponse2 {
+    override fun handle(node: JsonNode): ApiResponseV2 {
         val id = node.tryGetId().get
         val version = node.tryGetVersion().get
 

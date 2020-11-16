@@ -7,7 +7,7 @@ import com.procurement.auction.infrastructure.service.handler.auction.validate.V
 import com.procurement.auction.infrastructure.web.request.tryGetAction
 import com.procurement.auction.infrastructure.web.request.tryGetId
 import com.procurement.auction.infrastructure.web.request.tryGetVersion
-import com.procurement.auction.infrastructure.web.response.ApiResponse2
+import com.procurement.auction.infrastructure.web.response.ApiResponseV2
 import com.procurement.auction.infrastructure.web.response.ApiResponse2Generator.generateResponseOnFailure
 import org.springframework.stereotype.Service
 
@@ -17,7 +17,7 @@ class Command2Service(
     private val validateAuctionsDataHandler: ValidateAuctionsDataHandler
 ) {
 
-    fun execute(node: JsonNode): ApiResponse2 {
+    fun execute(node: JsonNode): ApiResponseV2 {
 
         val version = node.tryGetVersion()
             .doReturn { versionFail ->
