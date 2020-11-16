@@ -27,14 +27,10 @@ import com.procurement.auction.domain.model.operationId.OperationId
 import com.procurement.auction.domain.model.operationId.OperationIdDeserializer
 import com.procurement.auction.domain.model.operationId.OperationIdSerializer
 import com.procurement.auction.infrastructure.web.response.version.ApiVersion
-import com.procurement.auction.domain.model.version.ApiVersionDeserializer
-import com.procurement.auction.domain.model.version.ApiVersionSerializer
 import java.time.LocalDateTime
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 data class ValidateAuctionsCommand(
-    @JsonDeserialize(using = ApiVersionDeserializer::class)
-    @JsonSerialize(using = ApiVersionSerializer::class)
     @field:JsonProperty("version") @param:JsonProperty("version") val version: ApiVersion,
 
     @JsonDeserialize(using = CommandIdDeserializer::class)

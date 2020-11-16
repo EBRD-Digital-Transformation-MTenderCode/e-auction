@@ -8,13 +8,9 @@ import com.procurement.auction.domain.model.command.id.CommandId
 import com.procurement.auction.domain.model.command.id.CommandIdDeserializer
 import com.procurement.auction.domain.model.command.id.CommandIdSerializer
 import com.procurement.auction.infrastructure.web.response.version.ApiVersion
-import com.procurement.auction.domain.model.version.ApiVersionDeserializer
-import com.procurement.auction.domain.model.version.ApiVersionSerializer
 
 @JsonPropertyOrder("version", "id", "errors")
 class CommandErrorView(
-    @JsonDeserialize(using = ApiVersionDeserializer::class)
-    @JsonSerialize(using = ApiVersionSerializer::class)
     @field:JsonProperty("version") @param:JsonProperty("version") val version: ApiVersion,
 
     @JsonDeserialize(using = CommandIdDeserializer::class)

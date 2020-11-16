@@ -14,8 +14,6 @@ import com.procurement.auction.domain.model.cpid.Cpid
 import com.procurement.auction.domain.model.ocid.Ocid
 import com.procurement.auction.domain.model.operationId.OperationId
 import com.procurement.auction.infrastructure.web.response.version.ApiVersion
-import com.procurement.auction.domain.model.version.ApiVersionDeserializer
-import com.procurement.auction.domain.model.version.ApiVersionSerializer
 import com.procurement.auction.domain.model.version.RowVersion
 
 class CancelledAuctionsSnapshot(
@@ -31,10 +29,7 @@ class CancelledAuctionsSnapshot(
 
     @JsonPropertyOrder("version", "tender")
     class Data(
-        @JsonDeserialize(using = ApiVersionDeserializer::class)
-        @JsonSerialize(using = ApiVersionSerializer::class)
         @field:JsonProperty("version") @param:JsonProperty("version") val apiVersion: ApiVersion,
-
         @field:JsonProperty("tender") @param:JsonProperty("tender") val tender: Tender
     ) {
 

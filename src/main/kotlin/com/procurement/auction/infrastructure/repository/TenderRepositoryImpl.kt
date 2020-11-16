@@ -18,7 +18,6 @@ import com.procurement.auction.domain.model.tender.snapshot.EndedAuctionsSnapsho
 import com.procurement.auction.domain.model.tender.snapshot.ScheduledAuctionsSnapshot
 import com.procurement.auction.domain.model.tender.snapshot.StartedAuctionsSnapshot
 import com.procurement.auction.infrastructure.web.response.version.ApiVersion
-import com.procurement.auction.domain.model.version.ApiVersionSerializer
 import com.procurement.auction.domain.model.version.RowVersion
 import com.procurement.auction.domain.repository.TenderRepository
 import com.procurement.auction.domain.service.JsonSerializeService
@@ -26,6 +25,7 @@ import com.procurement.auction.exception.app.TenderIsAlreadyExistException
 import com.procurement.auction.exception.database.OptimisticLockException
 import com.procurement.auction.exception.database.SaveOperationException
 import com.procurement.auction.infrastructure.logger.Slf4jLogger
+import com.procurement.auction.infrastructure.web.response.version.jackson.ApiVersion2Serializer
 import org.springframework.stereotype.Repository
 
 @Repository
@@ -255,7 +255,7 @@ class TenderRepositoryImpl(
             setString(columnCpid, cpid.underlying)
             setString(columnOcid, ocid.underlying)
             setInt(columnRowVersion, rowVersion.modified)
-            setString(columnApiVersion, ApiVersionSerializer.serialize(apiVersion))
+            setString(columnApiVersion, ApiVersion2Serializer.serialize(apiVersion))
             setString(columnOperationId, OperationIdSerializer.serialize(operationId))
             setString(columnCountry, CountrySerializer.serialize(country))
             setInt(columnStatus, status.id)
@@ -277,7 +277,7 @@ class TenderRepositoryImpl(
             setString(columnCpid, cpid.underlying)
             setString(columnOcid, ocid.underlying)
             setInt(columnRowVersion, rowVersion.modified)
-            setString(columnApiVersion, ApiVersionSerializer.serialize(apiVersion))
+            setString(columnApiVersion, ApiVersion2Serializer.serialize(apiVersion))
             setString(columnOperationId, OperationIdSerializer.serialize(operationId))
             setInt(columnStatus, status.id)
             setString(columnData, data)

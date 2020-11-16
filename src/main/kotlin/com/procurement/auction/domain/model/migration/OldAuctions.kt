@@ -16,8 +16,6 @@ import com.procurement.auction.domain.model.currency.CurrencySerializer
 import com.procurement.auction.domain.model.date.JsonDateTimeDeserializer
 import com.procurement.auction.domain.model.date.JsonDateTimeSerializer
 import com.procurement.auction.domain.model.operationId.OperationId
-import com.procurement.auction.domain.model.version.ApiVersionDeserializer
-import com.procurement.auction.domain.model.version.ApiVersionSerializer
 import com.procurement.auction.infrastructure.web.response.version.ApiVersion
 import java.time.LocalDateTime
 
@@ -29,8 +27,6 @@ data class OldAuctions(
 ) {
 
     data class Data(
-        @JsonDeserialize(using = ApiVersionDeserializer::class)
-        @JsonSerialize(using = ApiVersionSerializer::class)
         @field:JsonProperty("version") @param:JsonProperty("version") val apiVersion: ApiVersion,
 
         @JsonDeserialize(using = JsonDateTimeDeserializer::class)
