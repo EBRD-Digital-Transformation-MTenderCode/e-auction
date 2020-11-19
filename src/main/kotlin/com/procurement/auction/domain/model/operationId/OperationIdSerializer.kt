@@ -8,10 +8,10 @@ import java.io.IOException
 
 class OperationIdSerializer : ValueObjectSerializer<OperationId>() {
     companion object {
-        fun serialize(operationId: OperationId) = operationId.value.toString()
+        fun serialize(operationId: OperationId) = operationId.underlying
     }
 
     @Throws(IOException::class, JsonProcessingException::class)
     override fun serialize(operationId: OperationId, jsonGenerator: JsonGenerator, provider: SerializerProvider) =
-        jsonGenerator.writeString(OperationIdSerializer.serialize(operationId))
+        jsonGenerator.writeString(serialize(operationId))
 }

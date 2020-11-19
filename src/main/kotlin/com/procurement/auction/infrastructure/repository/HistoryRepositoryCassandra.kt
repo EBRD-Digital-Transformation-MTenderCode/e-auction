@@ -7,9 +7,10 @@ import com.procurement.auction.domain.extension.toDate
 import com.procurement.auction.domain.fail.Fail
 import com.procurement.auction.domain.functional.Result
 import com.procurement.auction.domain.functional.asSuccess
-import com.procurement.auction.domain.model.entity.HistoryEntity
+import com.procurement.auction.domain.model.command.id.CommandId
 import com.procurement.auction.domain.repository.HistoryRepository
 import com.procurement.auction.infrastructure.extension.tryExecute
+import com.procurement.auction.infrastructure.service.command.type.Action
 import org.springframework.stereotype.Repository
 
 @Repository
@@ -49,47 +50,34 @@ class HistoryRepositoryCassandra(private val session: Session, private val trans
     private val preparedSaveHistoryCQL = session.prepare(SAVE_HISTORY_CQL)
     private val preparedFindHistoryByCpidAndCommandCQL = session.prepare(FIND_HISTORY_ENTRY_CQL)
 
-    override fun getHistory(operationId: String, command: String): Result<HistoryEntity?, Fail.Incident> {
+    override fun getHistory(commandId: CommandId, action: Action): Result<String?, Fail.Incident> {
         val query = preparedFindHistoryByCpidAndCommandCQL.bind()
             .apply {
-                setString(OPERATION_ID, operationId)
-                setString(COMMAND, command)
+                setString(OPERATION_ID, commandId.underlying)
+                setString(COMMAND, action.key)
             }
 
         return query.tryExecute(session)
             .doOnError { error -> return Result.failure(error) }
             .get
             .one()
-            ?.let { row ->
-                HistoryEntity(
-                    row.getString(OPERATION_ID),
-                    row.getString(COMMAND),
-                    row.getTimestamp(COMMAND_DATE),
-                    row.getString(JSON_DATA)
-                )
-            }
+            ?.getString(JSON_DATA)
             .asSuccess()
     }
 
-    override fun saveHistory(operationId: String, command: String, result: Any): Result<HistoryEntity, Fail.Incident> {
-        val entity = HistoryEntity(
-            operationId = operationId,
-            command = command,
-            operationDate = nowDefaultUTC().toDate(),
-            jsonData = transform.trySerialization(result).orForwardFail { fail -> return fail }
-        )
-
+    override fun saveHistory(commandId: CommandId, action: Action, result: Any): Result<Boolean, Fail.Incident> {
+        val data = transform.trySerialization(result).orForwardFail { return it }
         val insert = preparedSaveHistoryCQL.bind()
             .apply {
-                setString(OPERATION_ID, entity.operationId)
-                setString(COMMAND, entity.command)
-                setTimestamp(COMMAND_DATE, entity.operationDate)
-                setString(JSON_DATA, entity.jsonData)
+                setString(OPERATION_ID, commandId.underlying)
+                setString(COMMAND, action.key)
+                setTimestamp(COMMAND_DATE, nowDefaultUTC().toDate())
+                setString(JSON_DATA, data)
             }
 
-        insert.tryExecute(session)
-            .doOnError { error -> return Result.failure(error) }
-
-        return entity.asSuccess()
+        return insert.tryExecute(session)
+            .doReturn { error -> return Result.failure(error) }
+            .wasApplied()
+            .asSuccess()
     }
 }

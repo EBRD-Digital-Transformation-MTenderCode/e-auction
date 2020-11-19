@@ -50,7 +50,7 @@ class CommandDispatcher(
         return try {
             val requestBody = request.reader.readText()
             val command: Command = deserializer.deserialize(requestBody)
-            MDC.put("command-id", command.id.value.toString())
+            MDC.put("command-id", command.id.underlying)
             MDC.put("command-name", command.name.code)
             MDC.put("command-context", command.context.toString())
 

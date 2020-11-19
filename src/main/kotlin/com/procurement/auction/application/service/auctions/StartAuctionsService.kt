@@ -40,8 +40,9 @@ class StartAuctionsServiceImpl(
 
     override fun start(command: StartAuctionsCommand): StartedAuctionsSnapshot? {
         val cpid = command.context.cpid
+        val ocid = command.context.ocid
 
-        val entity = tenderRepository.loadEntity(cpid)
+        val entity = tenderRepository.loadEntity(cpid, ocid)
             ?: throw TenderNotFoundException(cpid)
 
         return when (entity.status) {
@@ -74,7 +75,7 @@ class StartAuctionsServiceImpl(
         return startedAuctions(command, actualLots, scheduledAuctions, snapshot)
             .also {
                 tenderRepository.save(it)
-                log.info { "Started auctions in tender with id: '${it.data.tender.id.value}'." }
+                log.info { "Started auctions in tender with id: '${it.data.tender.id}'." }
             }
     }
 
@@ -143,13 +144,15 @@ class StartAuctionsServiceImpl(
                                 scheduledAuctions: Map<LotId, ScheduledAuctionsSnapshot.Data.Auction>,
                                 snapshot: ScheduledAuctionsSnapshot): StartedAuctionsSnapshot {
 
-        val cpid = command.context.cpid
+        val cpid = snapshot.cpid
         val bidsByLotId: Map<LotId, List<StartedAuctionsSnapshot.Data.Auction.Bid>> =
             bidsByLotId(command, actualLots, scheduledAuctions)
 
         return StartedAuctionsSnapshot(
             rowVersion = snapshot.rowVersion.next(),
             operationId = command.context.operationId,
+            cpid = snapshot.cpid,
+            ocid = snapshot.ocid,
             data = StartedAuctionsSnapshot.Data(
                 apiVersion = StartedAuctionsSnapshot.apiVersion,
                 tender = StartedAuctionsSnapshot.Data.Tender(

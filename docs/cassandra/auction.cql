@@ -25,13 +25,14 @@ CREATE TABLE IF NOT EXISTS auctions.buckets (
 
 CREATE TABLE IF NOT EXISTS auctions.auctions (
     cpid text,
+    ocid text,
     row_version int,
     api_version text,
     operation_id text,
     country text,
     status int,
     data text,
-    PRIMARY KEY (cpid)
+    PRIMARY KEY (cpid, ocid)
 );
 
 INSERT INTO auctions.calendar(country,year,month, work_days) VALUES ('MD', 2018, 10, {1,2,3,4,5,8,9,10,11,12,15,16,17,18,19,22,23,24,25,26,29,30,31}) IF NOT EXISTS;

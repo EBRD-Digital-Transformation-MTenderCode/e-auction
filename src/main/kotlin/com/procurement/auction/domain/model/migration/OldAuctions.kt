@@ -9,28 +9,24 @@ import com.procurement.auction.domain.model.amount.AmountSerializer
 import com.procurement.auction.domain.model.auction.id.AuctionId
 import com.procurement.auction.domain.model.auction.id.AuctionIdDeserializer
 import com.procurement.auction.domain.model.auction.id.AuctionIdSerializer
-import com.procurement.auction.domain.model.cpid.CPID
+import com.procurement.auction.domain.model.cpid.Cpid
 import com.procurement.auction.domain.model.currency.Currency
 import com.procurement.auction.domain.model.currency.CurrencyDeserializer
 import com.procurement.auction.domain.model.currency.CurrencySerializer
 import com.procurement.auction.domain.model.date.JsonDateTimeDeserializer
 import com.procurement.auction.domain.model.date.JsonDateTimeSerializer
 import com.procurement.auction.domain.model.operationId.OperationId
-import com.procurement.auction.domain.model.version.ApiVersion
-import com.procurement.auction.domain.model.version.ApiVersionDeserializer
-import com.procurement.auction.domain.model.version.ApiVersionSerializer
+import com.procurement.auction.infrastructure.web.response.version.ApiVersion
 import java.time.LocalDateTime
 
 data class OldAuctions(
-    val cpid: CPID,
+    val cpid: Cpid,
     val operationId: OperationId,
     val operationDate: LocalDateTime,
     val data: Data
 ) {
 
     data class Data(
-        @JsonDeserialize(using = ApiVersionDeserializer::class)
-        @JsonSerialize(using = ApiVersionSerializer::class)
         @field:JsonProperty("version") @param:JsonProperty("version") val apiVersion: ApiVersion,
 
         @JsonDeserialize(using = JsonDateTimeDeserializer::class)

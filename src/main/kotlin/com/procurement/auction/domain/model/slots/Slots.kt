@@ -1,6 +1,6 @@
 package com.procurement.auction.domain.model.slots
 
-import com.procurement.auction.domain.model.cpid.CPID
+import com.procurement.auction.domain.model.cpid.Cpid
 import com.procurement.auction.domain.model.slots.id.SlotId
 import java.time.Duration
 import java.time.LocalTime
@@ -10,10 +10,10 @@ class Slot(
     val startTime: LocalTime,
     val endTime: LocalTime,
     val maxLines: Int,
-    cpids: Set<CPID>
+    cpids: List<Cpid>
 ) {
-    private val _cpids = mutableSetOf<CPID>().apply { this.addAll(cpids) }
-    val cpids: Set<CPID>
+    private val _cpids = mutableListOf<Cpid>().apply { this.addAll(cpids) }
+    val cpids: List<Cpid>
         get() = _cpids
 
     val duration: Duration = Duration.between(startTime, endTime)
@@ -21,9 +21,10 @@ class Slot(
     val isAvailable: Boolean
         get() = maxLines > cpids.size
 
-    fun booking(cpid: CPID): Boolean = _cpids.add(cpid)
+    fun booking(cpid: Cpid): Boolean = _cpids.add(cpid)
 
-    fun release(cpid: CPID): Boolean = _cpids.remove(cpid)
+    fun release(cpid: Cpid): Boolean = _cpids.remove(cpid)
+
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (javaClass != other?.javaClass) return false

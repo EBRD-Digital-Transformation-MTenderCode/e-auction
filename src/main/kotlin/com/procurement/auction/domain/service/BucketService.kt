@@ -10,7 +10,7 @@ import com.procurement.auction.domain.model.bucket.AuctionsTimes
 import com.procurement.auction.domain.model.bucket.Bucket
 import com.procurement.auction.domain.model.bucket.id.BucketId
 import com.procurement.auction.domain.model.country.Country
-import com.procurement.auction.domain.model.cpid.CPID
+import com.procurement.auction.domain.model.cpid.Cpid
 import com.procurement.auction.domain.model.slots.id.SlotId
 import com.procurement.auction.domain.model.version.RowVersion
 import com.procurement.auction.domain.repository.BucketRepository
@@ -27,12 +27,12 @@ import java.time.LocalDate
 interface BucketService {
     fun create(id: BucketId): Bucket
 
-    fun booking(cpid: CPID,
+    fun booking(cpid: Cpid,
                 country: Country,
                 dateStartAuction: LocalDate,
                 estimates: List<EstimatedDurationAuction>): AuctionsTimes
 
-    fun release(cpid: CPID, id: BucketId, slotsIds: Set<SlotId>)
+    fun release(cpid: Cpid, id: BucketId, slotsIds: Set<SlotId>)
 }
 
 @Service
@@ -59,7 +59,7 @@ class BucketServiceImpl(
         }
     }
 
-    override fun booking(cpid: CPID,
+    override fun booking(cpid: Cpid,
                          country: Country,
                          dateStartAuction: LocalDate,
                          estimates: List<EstimatedDurationAuction>): AuctionsTimes {
@@ -104,7 +104,7 @@ class BucketServiceImpl(
         }
     }
 
-    override fun release(cpid: CPID, id: BucketId, slotsIds: Set<SlotId>) {
+    override fun release(cpid: Cpid, id: BucketId, slotsIds: Set<SlotId>) {
         OptimisticLock@
         while (true) {
             val bucket = bucketRepository.load(id)
