@@ -71,8 +71,6 @@ data class StartAuctionsCommand(
     ) {
 
         data class Tender(
-            @field:JsonProperty("id") @param:JsonProperty("id") val id: Cpid,
-
             @field:JsonProperty("title") @param:JsonProperty("title") val title: String,
             @field:JsonProperty("description") @param:JsonProperty("description") val description: String,
             @field:JsonProperty("lots") @param:JsonProperty("lots") val lots: List<Lot>,
