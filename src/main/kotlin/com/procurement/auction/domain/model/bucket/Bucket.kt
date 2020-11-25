@@ -4,14 +4,14 @@ import com.procurement.auction.domain.logger.Logger
 import com.procurement.auction.domain.logger.warn
 import com.procurement.auction.domain.model.auction.EstimatedDurationAuction
 import com.procurement.auction.domain.model.bucket.id.BucketId
-import com.procurement.auction.domain.model.cpid.CPID
+import com.procurement.auction.domain.model.cpid.Cpid
 import com.procurement.auction.domain.model.lotId.LotId
 import com.procurement.auction.domain.model.slots.Slot
 import com.procurement.auction.domain.model.slots.id.SlotId
-import com.procurement.auction.domain.model.version.ApiVersion
 import com.procurement.auction.domain.model.version.RowVersion
 import com.procurement.auction.domain.service.AllocationStrategy
 import com.procurement.auction.infrastructure.logger.Slf4jLogger
+import com.procurement.auction.infrastructure.web.response.version.ApiVersion
 import java.time.LocalDateTime
 
 data class AuctionsTimes(
@@ -35,12 +35,11 @@ class Bucket(
     val isNew: Boolean
         get() = rowVersion.isNew
 
-    fun booking(cpid: CPID, estimates: List<EstimatedDurationAuction>): AuctionsTimes? {
+    fun booking(cpid: Cpid, estimates: List<EstimatedDurationAuction>): AuctionsTimes? {
         val auctionsTimes = allocationStrategy.allocation(id.date, estimates, slots.values)
         if (auctionsTimes != null) {
             for (slotId in auctionsTimes.slotsIds) {
-                if (slots[slotId]!!.booking(cpid))
-                    log.warn { "Bucket with id: '$id' is already cpid: '$cpid' in slot: '$slotId'." }
+                slots[slotId]!!.booking(cpid)
             }
 
             rowVersion = rowVersion.next()
@@ -49,7 +48,7 @@ class Bucket(
         return auctionsTimes
     }
 
-    fun release(cpid: CPID, slotsIds: Set<SlotId>): Boolean {
+    fun release(cpid: Cpid, slotsIds: Set<SlotId>): Boolean {
         var hasChanged = false
         slotsIds.forEach { slotId ->
             if (!slots[slotId]!!.release(cpid))
@@ -77,7 +76,7 @@ class Bucket(
             occupancySnapshotData.add(
                 BucketSnapshot.OccupancySnapshot.Detail(
                     slotId = slot.id,
-                    cpids = slot.cpids.toSet()
+                    cpids = slot.cpids
                 )
             )
         }

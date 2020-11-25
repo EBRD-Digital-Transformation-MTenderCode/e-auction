@@ -8,7 +8,7 @@ import java.io.IOException
 
 class CommandIdSerializer : ValueObjectSerializer<CommandId>() {
     companion object {
-        fun serialize(commandId: CommandId) = commandId.value.toString()
+        fun serialize(commandId: CommandId) = commandId.underlying
     }
 
     @Throws(IOException::class, JsonProcessingException::class)

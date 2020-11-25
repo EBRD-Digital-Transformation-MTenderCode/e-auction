@@ -20,9 +20,7 @@ import com.procurement.auction.domain.model.bid.id.BidIdSerializer
 import com.procurement.auction.domain.model.country.Country
 import com.procurement.auction.domain.model.country.CountryDeserializer
 import com.procurement.auction.domain.model.country.CountrySerializer
-import com.procurement.auction.domain.model.cpid.CPID
-import com.procurement.auction.domain.model.cpid.CPIDDeserializer
-import com.procurement.auction.domain.model.cpid.CPIDSerializer
+import com.procurement.auction.domain.model.cpid.Cpid
 import com.procurement.auction.domain.model.currency.Currency
 import com.procurement.auction.domain.model.currency.CurrencyDeserializer
 import com.procurement.auction.domain.model.currency.CurrencySerializer
@@ -31,6 +29,7 @@ import com.procurement.auction.domain.model.date.JsonDateTimeSerializer
 import com.procurement.auction.domain.model.lotId.LotId
 import com.procurement.auction.domain.model.lotId.LotIdDeserializer
 import com.procurement.auction.domain.model.lotId.LotIdSerializer
+import com.procurement.auction.domain.model.ocid.Ocid
 import com.procurement.auction.domain.model.operationId.OperationId
 import com.procurement.auction.domain.model.platformId.PlatformId
 import com.procurement.auction.domain.model.platformId.PlatformIdDeserializer
@@ -41,15 +40,15 @@ import com.procurement.auction.domain.model.sign.SignSerializer
 import com.procurement.auction.domain.model.slots.id.SlotId
 import com.procurement.auction.domain.model.slots.id.SlotsIdsDeserializer
 import com.procurement.auction.domain.model.slots.id.SlotsIdsSerializer
-import com.procurement.auction.domain.model.version.ApiVersion
-import com.procurement.auction.domain.model.version.ApiVersionDeserializer
-import com.procurement.auction.domain.model.version.ApiVersionSerializer
+import com.procurement.auction.infrastructure.web.response.version.ApiVersion
 import com.procurement.auction.domain.model.version.RowVersion
 import java.time.LocalDateTime
 
 class StartedAuctionsSnapshot(
     val rowVersion: RowVersion,
     val operationId: OperationId,
+    val cpid: Cpid,
+    val ocid: Ocid,
     val data: Data
 ) {
     companion object {
@@ -58,10 +57,7 @@ class StartedAuctionsSnapshot(
 
     @JsonPropertyOrder("version", "tender", "slots", "auctions")
     class Data(
-        @JsonDeserialize(using = ApiVersionDeserializer::class)
-        @JsonSerialize(using = ApiVersionSerializer::class)
         @field:JsonProperty("version") @param:JsonProperty("version") val apiVersion: ApiVersion,
-
         @field:JsonProperty("tender") @param:JsonProperty("tender") val tender: Tender,
 
         @JsonDeserialize(using = SlotsIdsDeserializer::class)
@@ -73,9 +69,7 @@ class StartedAuctionsSnapshot(
 
         @JsonPropertyOrder("id", "country", "status", "value", "title", "description", "startDate", "endDate")
         class Tender(
-            @JsonDeserialize(using = CPIDDeserializer::class)
-            @JsonSerialize(using = CPIDSerializer::class)
-            @field:JsonProperty("id") @param:JsonProperty("id") val id: CPID,
+            @field:JsonProperty("id") @param:JsonProperty("id") val id: Cpid,
 
             @JsonDeserialize(using = CountryDeserializer::class)
             @JsonSerialize(using = CountrySerializer::class)

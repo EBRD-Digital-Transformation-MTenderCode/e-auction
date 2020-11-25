@@ -41,7 +41,8 @@ class EndAuctionsServiceImpl(
 
     override fun end(command: EndAuctionsCommand): EndedAuctionsSnapshot {
         val cpid = command.context.cpid
-        val entity = tenderRepository.loadEntity(cpid)
+        val ocid = command.context.ocid
+        val entity = tenderRepository.loadEntity(cpid, ocid)
             ?: throw TenderNotFoundException(cpid)
 
         return when (entity.status) {
@@ -72,7 +73,7 @@ class EndAuctionsServiceImpl(
         return endedAuctions(command, startedAuctionsByLotId, snapshot)
             .also {
                 tenderRepository.save(it)
-                log.info { "Ended auctions in tender with id: '${snapshot.data.tender.id.value}'." }
+                log.info { "Ended auctions in tender with id: '${snapshot.data.tender.id}'." }
             }
     }
 
@@ -149,10 +150,12 @@ class EndAuctionsServiceImpl(
     private fun endedAuctions(command: EndAuctionsCommand,
                               startedAuctionsByLotId: Map<LotId, StartedAuctionsSnapshot.Data.Auction>,
                               snapshot: StartedAuctionsSnapshot): EndedAuctionsSnapshot {
-        val cpid = command.context.cpid
+        val cpid = snapshot.cpid
         return EndedAuctionsSnapshot(
             rowVersion = snapshot.rowVersion.next(),
             operationId = command.context.operationId,
+            cpid = cpid,
+            ocid = snapshot.ocid,
             data = EndedAuctionsSnapshot.Data(
                 apiVersion = StartedAuctionsSnapshot.apiVersion,
                 tender = EndedAuctionsSnapshot.Data.Tender(
