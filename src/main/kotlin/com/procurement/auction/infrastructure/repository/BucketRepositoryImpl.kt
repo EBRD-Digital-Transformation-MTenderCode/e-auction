@@ -8,8 +8,7 @@ import com.procurement.auction.domain.model.bucket.Bucket
 import com.procurement.auction.domain.model.bucket.BucketSnapshot
 import com.procurement.auction.domain.model.bucket.id.BucketId
 import com.procurement.auction.domain.model.country.CountrySerializer
-import com.procurement.auction.domain.model.version.ApiVersion
-import com.procurement.auction.domain.model.version.ApiVersionSerializer
+import com.procurement.auction.infrastructure.web.response.version.ApiVersion
 import com.procurement.auction.domain.model.version.RowVersion
 import com.procurement.auction.domain.repository.BucketRepository
 import com.procurement.auction.domain.service.JsonSerializeService
@@ -18,6 +17,8 @@ import com.procurement.auction.exception.database.OptimisticLockException
 import com.procurement.auction.exception.database.SaveOperationException
 import com.procurement.auction.infrastructure.cassandra.toCassandraLocalDate
 import com.procurement.auction.infrastructure.logger.Slf4jLogger
+import com.procurement.auction.infrastructure.web.response.version.jackson.ApiVersionDeserializer
+import com.procurement.auction.infrastructure.web.response.version.jackson.ApiVersionSerializer
 import org.springframework.stereotype.Repository
 
 @Repository
@@ -85,7 +86,7 @@ class BucketRepositoryImpl(
         return if (resultSet.wasApplied()) {
             resultSet.one()?.let { row ->
                 val rowVersion = RowVersion.of(row.getInt(columnRowVersion))
-                val apiVersion: ApiVersion = ApiVersion.valueOf(row.getString(columnApiVersion))
+                val apiVersion: ApiVersion = ApiVersionDeserializer.deserialize(row.getString(columnApiVersion))
                 val slots: String = row.getString(columnSlots)
                 val occupancy: String = row.getString(columnOccupancy)
 

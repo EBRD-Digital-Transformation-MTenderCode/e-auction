@@ -38,7 +38,7 @@ class DefaultSchedulerProperties(private val schedulerProperties: SchedulerPrope
                 startTime = it.startTime,
                 endTime = it.endTime,
                 maxLines = it.maxLines,
-                cpids = emptySet()
+                cpids = emptyList()
             )
         }
 

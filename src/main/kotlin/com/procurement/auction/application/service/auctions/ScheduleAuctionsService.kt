@@ -60,7 +60,8 @@ class ScheduleAuctionsServiceImpl(
 
     override fun schedule(command: ScheduleAuctionsCommand): ScheduledAuctionsSnapshot {
         val cpid = command.context.cpid
-        val entity: TenderEntity? = tenderRepository.loadEntity(cpid)
+        val ocid = command.context.ocid
+        val entity: TenderEntity? = tenderRepository.loadEntity(cpid, ocid)
 
         return if (entity != null) {
             when (entity.status) {
@@ -98,7 +99,7 @@ class ScheduleAuctionsServiceImpl(
         return genScheduledAuctions(command = command, auctionsTimes = auctionsTimes, rowVersion = rowVersion)
             .also {
                 tenderRepository.save(it)
-                log.info { "Scheduled auctions in tender with id '${cpid.value}'." }
+                log.info { "Scheduled auctions in tender with id '${cpid}'." }
             }
     }
 
@@ -138,6 +139,8 @@ class ScheduleAuctionsServiceImpl(
         return ScheduledAuctionsSnapshot(
             rowVersion = rowVersion,
             operationId = operationId,
+            cpid = cpid,
+            ocid = command.context.ocid,
             data = ScheduledAuctionsSnapshot.Data(
                 apiVersion = ScheduledAuctionsSnapshot.apiVersion,
                 tender = ScheduledAuctionsSnapshot.Data.Tender(

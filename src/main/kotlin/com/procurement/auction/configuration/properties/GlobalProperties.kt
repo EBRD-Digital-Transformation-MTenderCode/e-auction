@@ -1,6 +1,6 @@
 package com.procurement.auction.configuration.properties
 
-import com.procurement.auction.domain.model.version.ApiVersion
+import com.procurement.auction.infrastructure.web.response.version.ApiVersion
 
 object GlobalProperties {
     const val serviceId = "15"

@@ -14,9 +14,7 @@ import com.procurement.auction.domain.model.auction.id.AuctionIdSerializer
 import com.procurement.auction.domain.model.bid.id.BidId
 import com.procurement.auction.domain.model.bid.id.BidIdDeserializer
 import com.procurement.auction.domain.model.bid.id.BidIdSerializer
-import com.procurement.auction.domain.model.cpid.CPID
-import com.procurement.auction.domain.model.cpid.CPIDDeserializer
-import com.procurement.auction.domain.model.cpid.CPIDSerializer
+import com.procurement.auction.domain.model.cpid.Cpid
 import com.procurement.auction.domain.model.currency.Currency
 import com.procurement.auction.domain.model.currency.CurrencyDeserializer
 import com.procurement.auction.domain.model.currency.CurrencySerializer
@@ -25,6 +23,7 @@ import com.procurement.auction.domain.model.date.JsonDateTimeSerializer
 import com.procurement.auction.domain.model.lotId.LotId
 import com.procurement.auction.domain.model.lotId.LotIdDeserializer
 import com.procurement.auction.domain.model.lotId.LotIdSerializer
+import com.procurement.auction.domain.model.ocid.Ocid
 import com.procurement.auction.domain.model.platformId.PlatformId
 import com.procurement.auction.domain.model.platformId.PlatformIdDeserializer
 import com.procurement.auction.domain.model.platformId.PlatformIdSerializer
@@ -105,16 +104,15 @@ data class StartedAuctionsView(
         }
     }
 
-    @JsonPropertyOrder("tender", "bids")
+    @JsonPropertyOrder("ocid", "tender", "bids")
     data class AuctionsData(
         @field:JsonProperty("tender") @param:JsonProperty("tender") val tender: Tender,
-        @field:JsonProperty("bids") @param:JsonProperty("bids") val bids: List<Bid>
-    ) {
+        @field:JsonProperty("bids") @param:JsonProperty("bids") val bids: List<Bid>,
+        @field:JsonProperty("ocid") @param:JsonProperty("ocid") val ocid: Ocid
+        ) {
         @JsonPropertyOrder("id", "title", "description", "tender")
         data class Tender(
-            @JsonSerialize(using = CPIDSerializer::class)
-            @JsonDeserialize(using = CPIDDeserializer::class)
-            @field:JsonProperty("id") @param:JsonProperty("id") val id: CPID,
+            @field:JsonProperty("id") @param:JsonProperty("id") val id: Cpid,
 
             @field:JsonProperty("title") @param:JsonProperty("title") val title: String,
 

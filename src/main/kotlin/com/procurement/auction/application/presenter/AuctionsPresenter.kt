@@ -92,6 +92,7 @@ class AuctionsPresenterImpl : AuctionsPresenter {
                 )
             },
             auctionsData = StartedAuctionsView.AuctionsData(
+                ocid = snapshot.ocid,
                 tender = StartedAuctionsView.AuctionsData.Tender(
                     id = snapshot.data.tender.id,
                     title = snapshot.data.tender.title,

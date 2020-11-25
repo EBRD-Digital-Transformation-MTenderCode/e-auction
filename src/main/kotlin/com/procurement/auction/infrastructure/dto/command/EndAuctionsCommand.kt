@@ -11,55 +11,38 @@ import com.procurement.auction.domain.model.bid.id.BidId
 import com.procurement.auction.domain.model.bid.id.BidIdDeserializer
 import com.procurement.auction.domain.model.bid.id.BidIdSerializer
 import com.procurement.auction.domain.model.command.id.CommandId
-import com.procurement.auction.domain.model.command.id.CommandIdDeserializer
-import com.procurement.auction.domain.model.command.id.CommandIdSerializer
 import com.procurement.auction.domain.model.command.name.CommandName
-import com.procurement.auction.domain.model.command.name.CommandNameDeserializer
-import com.procurement.auction.domain.model.command.name.CommandNameSerializer
 import com.procurement.auction.domain.model.country.Country
 import com.procurement.auction.domain.model.country.CountryDeserializer
 import com.procurement.auction.domain.model.country.CountrySerializer
-import com.procurement.auction.domain.model.cpid.CPID
-import com.procurement.auction.domain.model.cpid.CPIDDeserializer
-import com.procurement.auction.domain.model.cpid.CPIDSerializer
+import com.procurement.auction.domain.model.cpid.Cpid
 import com.procurement.auction.domain.model.date.JsonDateTimeDeserializer
 import com.procurement.auction.domain.model.date.JsonDateTimeSerializer
 import com.procurement.auction.domain.model.lotId.LotId
 import com.procurement.auction.domain.model.lotId.LotIdDeserializer
 import com.procurement.auction.domain.model.lotId.LotIdSerializer
+import com.procurement.auction.domain.model.ocid.Ocid
 import com.procurement.auction.domain.model.operationId.OperationId
 import com.procurement.auction.domain.model.operationId.OperationIdDeserializer
 import com.procurement.auction.domain.model.operationId.OperationIdSerializer
 import com.procurement.auction.domain.model.progressId.ProgressId
 import com.procurement.auction.domain.model.progressId.ProgressIdDeserializer
 import com.procurement.auction.domain.model.progressId.ProgressIdSerializer
-import com.procurement.auction.domain.model.version.ApiVersion
-import com.procurement.auction.domain.model.version.ApiVersionDeserializer
-import com.procurement.auction.domain.model.version.ApiVersionSerializer
+import com.procurement.auction.infrastructure.web.response.version.ApiVersion
 import java.time.LocalDateTime
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 data class EndAuctionsCommand(
-    @JsonDeserialize(using = ApiVersionDeserializer::class)
-    @JsonSerialize(using = ApiVersionSerializer::class)
     @field:JsonProperty("version") @param:JsonProperty("version") val version: ApiVersion,
-
-    @JsonDeserialize(using = CommandIdDeserializer::class)
-    @JsonSerialize(using = CommandIdSerializer::class)
     @field:JsonProperty("id") @param:JsonProperty("id") val id: CommandId,
-
-    @JsonDeserialize(using = CommandNameDeserializer::class)
-    @JsonSerialize(using = CommandNameSerializer::class)
     @field:JsonProperty("command") @param:JsonProperty("command") val name: CommandName,
-
     @field:JsonProperty("context") @param:JsonProperty("context") val context: Context,
     @field:JsonProperty("data") @param:JsonProperty("data") val data: Data
 ) {
 
     data class Context(
-        @JsonDeserialize(using = CPIDDeserializer::class)
-        @JsonSerialize(using = CPIDSerializer::class)
-        @field:JsonProperty("cpid") @param:JsonProperty("cpid") val cpid: CPID,
+        @field:JsonProperty("cpid") @param:JsonProperty("cpid") val cpid: Cpid,
+        @field:JsonProperty("ocid") @param:JsonProperty("ocid") val ocid: Ocid,
 
         @JsonDeserialize(using = OperationIdDeserializer::class)
         @JsonSerialize(using = OperationIdSerializer::class)
@@ -81,9 +64,7 @@ data class EndAuctionsCommand(
     ) {
 
         data class Tender(
-            @JsonDeserialize(using = CPIDDeserializer::class)
-            @JsonSerialize(using = CPIDSerializer::class)
-            @field:JsonProperty("id") @param:JsonProperty("id") val id: CPID,
+            @field:JsonProperty("id") @param:JsonProperty("id") val id: Cpid,
 
             @field:JsonProperty("auctionPeriod") @param:JsonProperty("auctionPeriod") val auctionPeriod: AuctionPeriod,
             @field:JsonProperty("electronicAuctions") @param:JsonProperty("electronicAuctions") val electronicAuctions: ElectronicAuctions

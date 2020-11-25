@@ -36,8 +36,9 @@
     ]
   },
   "auctionsData": {
+    "ocid": "ocds-b3wdp1-MD-1580458690892-EV-1580458791896",
     "tender": {
-      "id": "cpid-1",
+      "id": "ocds-b3wdp1-MD-1580458690892",
       "title": "Tender-title",
       "description": "Tender-description",
       "lots": [
