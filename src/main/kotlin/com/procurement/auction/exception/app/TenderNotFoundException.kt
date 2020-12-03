@@ -9,5 +9,5 @@ class TenderNotFoundException(cpid: Cpid, ocid: Ocid) :
     ApplicationException(
         loglevel = Logger.Level.ERROR,
         codeError = CodesOfErrors.TENDER_NOT_FOUND,
-        message = "Auctions by the tender (cpid '$cpid' and ocid '$ocid') not found."
+        message = "Auctions for the tender by cpid '$cpid' and ocid '$ocid' not found."
     )
