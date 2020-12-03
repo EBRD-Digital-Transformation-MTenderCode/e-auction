@@ -33,7 +33,7 @@ class CancelAuctionsServiceImpl(
         val cpid = command.context.cpid
         val ocid = command.context.ocid
         val entity = tenderRepository.loadEntity(cpid, ocid)
-            ?: throw TenderNotFoundException(cpid)
+            ?: throw TenderNotFoundException(cpid, ocid)
 
         return when (entity.status) {
             AuctionsStatus.SCHEDULED ->
