@@ -151,11 +151,12 @@ class EndAuctionsServiceImpl(
                               startedAuctionsByLotId: Map<LotId, StartedAuctionsSnapshot.Data.Auction>,
                               snapshot: StartedAuctionsSnapshot): EndedAuctionsSnapshot {
         val cpid = snapshot.cpid
+        val ocid = snapshot.ocid
         return EndedAuctionsSnapshot(
             rowVersion = snapshot.rowVersion.next(),
             operationId = command.context.operationId,
             cpid = cpid,
-            ocid = snapshot.ocid,
+            ocid = ocid,
             data = EndedAuctionsSnapshot.Data(
                 apiVersion = StartedAuctionsSnapshot.apiVersion,
                 tender = EndedAuctionsSnapshot.Data.Tender(
@@ -191,7 +192,7 @@ class EndAuctionsServiceImpl(
                         },
                         modalities = auction.modalities.map { modality ->
                             EndedAuctionsSnapshot.Data.Auction.Modality(
-                                url = urlGenerator.forModality(cpid = cpid, relatedLot = auction.lotId),
+                                url = urlGenerator.forModality(ocid = ocid, relatedLot = auction.lotId),
                                 eligibleMinimumDifference = modality.eligibleMinimumDifference.let { emd ->
                                     EndedAuctionsSnapshot.Data.Auction.Modality.EligibleMinimumDifference(
                                         amount = emd.amount,
@@ -212,7 +213,7 @@ class EndAuctionsServiceImpl(
                                         currency = value.currency
                                     )
                                 },
-                                url = urlGenerator.forBid(cpid = cpid,
+                                url = urlGenerator.forBid(ocid = ocid,
                                                           relatedLot = bid.relatedLot,
                                                           bidId = bid.id,
                                                           sign = bid.sign),

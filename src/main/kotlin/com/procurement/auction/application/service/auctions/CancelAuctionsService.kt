@@ -68,8 +68,9 @@ class CancelAuctionsServiceImpl(
                 val country = snapshot.data.tender.country
                 val bucketId = BucketId(startDate, country)
 
+                val cpid = command.context.cpid
                 val slotsIds = snapshot.data.slots.toSet()
-                bucketService.release(cpid = id, id = bucketId, slotsIds = slotsIds)
+                bucketService.release(cpid = cpid, id = bucketId, slotsIds = slotsIds)
                 log.info { "Released slots: '$slotsIds' in bucket with id: '$bucketId' on the tender with id: '$id'." }
             }
     }

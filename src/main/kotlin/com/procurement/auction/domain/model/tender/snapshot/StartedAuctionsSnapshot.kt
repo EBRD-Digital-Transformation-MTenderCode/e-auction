@@ -40,8 +40,9 @@ import com.procurement.auction.domain.model.sign.SignSerializer
 import com.procurement.auction.domain.model.slots.id.SlotId
 import com.procurement.auction.domain.model.slots.id.SlotsIdsDeserializer
 import com.procurement.auction.domain.model.slots.id.SlotsIdsSerializer
-import com.procurement.auction.infrastructure.web.response.version.ApiVersion
+import com.procurement.auction.domain.model.tender.TenderId
 import com.procurement.auction.domain.model.version.RowVersion
+import com.procurement.auction.infrastructure.web.response.version.ApiVersion
 import java.time.LocalDateTime
 
 class StartedAuctionsSnapshot(
@@ -69,7 +70,7 @@ class StartedAuctionsSnapshot(
 
         @JsonPropertyOrder("id", "country", "status", "value", "title", "description", "startDate", "endDate")
         class Tender(
-            @field:JsonProperty("id") @param:JsonProperty("id") val id: Cpid,
+            @field:JsonProperty("id") @param:JsonProperty("id") val id: TenderId,
 
             @JsonDeserialize(using = CountryDeserializer::class)
             @JsonSerialize(using = CountrySerializer::class)

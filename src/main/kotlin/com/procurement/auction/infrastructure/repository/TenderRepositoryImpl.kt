@@ -13,11 +13,11 @@ import com.procurement.auction.domain.model.operationId.OperationId
 import com.procurement.auction.domain.model.operationId.OperationIdDeserializer
 import com.procurement.auction.domain.model.operationId.OperationIdSerializer
 import com.procurement.auction.domain.model.tender.TenderEntity
+import com.procurement.auction.domain.model.tender.TenderId
 import com.procurement.auction.domain.model.tender.snapshot.CancelledAuctionsSnapshot
 import com.procurement.auction.domain.model.tender.snapshot.EndedAuctionsSnapshot
 import com.procurement.auction.domain.model.tender.snapshot.ScheduledAuctionsSnapshot
 import com.procurement.auction.domain.model.tender.snapshot.StartedAuctionsSnapshot
-import com.procurement.auction.infrastructure.web.response.version.ApiVersion
 import com.procurement.auction.domain.model.version.RowVersion
 import com.procurement.auction.domain.repository.TenderRepository
 import com.procurement.auction.domain.service.JsonSerializeService
@@ -25,6 +25,7 @@ import com.procurement.auction.exception.app.TenderIsAlreadyExistException
 import com.procurement.auction.exception.database.OptimisticLockException
 import com.procurement.auction.exception.database.SaveOperationException
 import com.procurement.auction.infrastructure.logger.Slf4jLogger
+import com.procurement.auction.infrastructure.web.response.version.ApiVersion
 import com.procurement.auction.infrastructure.web.response.version.jackson.ApiVersionSerializer
 import org.springframework.stereotype.Repository
 
@@ -285,8 +286,8 @@ class TenderRepositoryImpl(
         }
     }
 
-    private fun isNeedSave(cpid: Cpid, rowVersion: RowVersion) {
+    private fun isNeedSave(tenderId: TenderId, rowVersion: RowVersion) {
         if (!rowVersion.hasChanged)
-            throw IllegalStateException("Data of auctions of tender with id: '$cpid' was not saved, because the rowVersion was not changed.")
+            throw IllegalStateException("Data of auctions of tender with id: '$tenderId' was not saved, because the rowVersion was not changed.")
     }
 }
