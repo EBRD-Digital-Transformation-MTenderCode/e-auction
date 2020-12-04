@@ -14,7 +14,6 @@ import com.procurement.auction.domain.model.auction.id.AuctionIdSerializer
 import com.procurement.auction.domain.model.bid.id.BidId
 import com.procurement.auction.domain.model.bid.id.BidIdDeserializer
 import com.procurement.auction.domain.model.bid.id.BidIdSerializer
-import com.procurement.auction.domain.model.cpid.Cpid
 import com.procurement.auction.domain.model.currency.Currency
 import com.procurement.auction.domain.model.currency.CurrencyDeserializer
 import com.procurement.auction.domain.model.currency.CurrencySerializer
@@ -30,6 +29,7 @@ import com.procurement.auction.domain.model.platformId.PlatformIdSerializer
 import com.procurement.auction.domain.model.sign.Sign
 import com.procurement.auction.domain.model.sign.SignDeserializer
 import com.procurement.auction.domain.model.sign.SignSerializer
+import com.procurement.auction.domain.model.tender.TenderId
 import java.time.LocalDateTime
 
 @JsonPropertyOrder("isAuctionStarted", "auctionsLinks", "electronicAuctions", "auctionsData")
@@ -112,7 +112,7 @@ data class StartedAuctionsView(
         ) {
         @JsonPropertyOrder("id", "title", "description", "tender")
         data class Tender(
-            @field:JsonProperty("id") @param:JsonProperty("id") val id: Cpid,
+            @field:JsonProperty("id") @param:JsonProperty("id") val id: TenderId,
 
             @field:JsonProperty("title") @param:JsonProperty("title") val title: String,
 

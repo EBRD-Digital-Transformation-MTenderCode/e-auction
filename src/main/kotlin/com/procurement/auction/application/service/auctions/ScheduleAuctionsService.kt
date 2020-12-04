@@ -133,6 +133,7 @@ class ScheduleAuctionsServiceImpl(
         rowVersion: RowVersion
     ): ScheduledAuctionsSnapshot {
         val cpid = command.context.cpid
+        val ocid = command.context.ocid
         val country = command.context.country
         val operationId = command.context.operationId
 
@@ -144,7 +145,7 @@ class ScheduleAuctionsServiceImpl(
             data = ScheduledAuctionsSnapshot.Data(
                 apiVersion = ScheduledAuctionsSnapshot.apiVersion,
                 tender = ScheduledAuctionsSnapshot.Data.Tender(
-                    id = cpid,
+                    id = ocid.underlying,
                     country = country,
                     status = AuctionsStatus.SCHEDULED,
                     startDate = auctionsTimes.startDateTime
@@ -162,7 +163,7 @@ class ScheduleAuctionsServiceImpl(
                         ),
                         modalities = detail.electronicAuctionModalities.map { modality ->
                             ScheduledAuctionsSnapshot.Data.Auction.Modality(
-                                url = urlGenerator.forModality(cpid = command.context.cpid, relatedLot = lotId),
+                                url = urlGenerator.forModality(ocid = command.context.ocid, relatedLot = lotId),
                                 eligibleMinimumDifference = modality.eligibleMinimumDifference.let { emd ->
                                     ScheduledAuctionsSnapshot.Data.Auction.Modality.EligibleMinimumDifference(
                                         amount = emd.amount,

@@ -43,7 +43,7 @@ class StartAuctionsServiceImpl(
         val ocid = command.context.ocid
 
         val entity = tenderRepository.loadEntity(cpid, ocid)
-            ?: throw TenderNotFoundException(cpid)
+            ?: throw TenderNotFoundException(cpid, ocid)
 
         return when (entity.status) {
             AuctionsStatus.SCHEDULED -> processing(command, entity.toScheduledAuctionsSnapshot(deserializer))
@@ -144,7 +144,7 @@ class StartAuctionsServiceImpl(
                                 scheduledAuctions: Map<LotId, ScheduledAuctionsSnapshot.Data.Auction>,
                                 snapshot: ScheduledAuctionsSnapshot): StartedAuctionsSnapshot {
 
-        val cpid = snapshot.cpid
+        val ocid = snapshot.ocid
         val bidsByLotId: Map<LotId, List<StartedAuctionsSnapshot.Data.Auction.Bid>> =
             bidsByLotId(command, actualLots, scheduledAuctions)
 
@@ -152,7 +152,7 @@ class StartAuctionsServiceImpl(
             rowVersion = snapshot.rowVersion.next(),
             operationId = command.context.operationId,
             cpid = snapshot.cpid,
-            ocid = snapshot.ocid,
+            ocid = ocid,
             data = StartedAuctionsSnapshot.Data(
                 apiVersion = StartedAuctionsSnapshot.apiVersion,
                 tender = StartedAuctionsSnapshot.Data.Tender(
@@ -194,7 +194,7 @@ class StartAuctionsServiceImpl(
                                     },
                                     modalities = scheduledAuction.modalities.map { modality ->
                                         StartedAuctionsSnapshot.Data.Auction.Modality(
-                                            url = urlGenerator.forModality(cpid = cpid, relatedLot = lotId),
+                                            url = urlGenerator.forModality(ocid = ocid, relatedLot = lotId),
                                             eligibleMinimumDifference = modality.eligibleMinimumDifference.let { emd ->
                                                 StartedAuctionsSnapshot.Data.Auction.Modality.EligibleMinimumDifference(
                                                     amount = emd.amount,
@@ -217,7 +217,7 @@ class StartAuctionsServiceImpl(
     private fun bidsByLotId(command: StartAuctionsCommand,
                             actualLots: Set<LotId>,
                             scheduledAuctions: Map<LotId, ScheduledAuctionsSnapshot.Data.Auction>): Map<LotId, List<StartedAuctionsSnapshot.Data.Auction.Bid>> {
-        val cpid = command.context.cpid
+        val ocid = command.context.ocid
         return mutableMapOf<LotId, MutableList<StartedAuctionsSnapshot.Data.Auction.Bid>>()
             .apply {
                 for (bidData in command.data.bidsData) {
@@ -242,7 +242,7 @@ class StartAuctionsServiceImpl(
                                             currency = value.currency
                                         )
                                     },
-                                    url = urlGenerator.forBid(cpid = cpid,
+                                    url = urlGenerator.forBid(ocid = ocid,
                                                               relatedLot = relatedLot,
                                                               bidId = bidId,
                                                               sign = sign),
