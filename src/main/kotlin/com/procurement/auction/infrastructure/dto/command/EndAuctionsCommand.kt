@@ -28,6 +28,7 @@ import com.procurement.auction.domain.model.operationId.OperationIdSerializer
 import com.procurement.auction.domain.model.progressId.ProgressId
 import com.procurement.auction.domain.model.progressId.ProgressIdDeserializer
 import com.procurement.auction.domain.model.progressId.ProgressIdSerializer
+import com.procurement.auction.domain.model.tender.TenderId
 import com.procurement.auction.infrastructure.web.response.version.ApiVersion
 import java.time.LocalDateTime
 
@@ -64,7 +65,7 @@ data class EndAuctionsCommand(
     ) {
 
         data class Tender(
-            @field:JsonProperty("id") @param:JsonProperty("id") val id: Cpid,
+            @field:JsonProperty("id") @param:JsonProperty("id") val id: TenderId,
 
             @field:JsonProperty("auctionPeriod") @param:JsonProperty("auctionPeriod") val auctionPeriod: AuctionPeriod,
             @field:JsonProperty("electronicAuctions") @param:JsonProperty("electronicAuctions") val electronicAuctions: ElectronicAuctions
