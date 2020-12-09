@@ -2,15 +2,15 @@ package com.procurement.auction.domain.service
 
 import com.procurement.auction.configuration.properties.AuctionProperties
 import com.procurement.auction.domain.model.bid.id.BidId
-import com.procurement.auction.domain.model.cpid.Cpid
 import com.procurement.auction.domain.model.lotId.LotId
+import com.procurement.auction.domain.model.ocid.Ocid
 import com.procurement.auction.domain.model.sign.Sign
 import org.springframework.stereotype.Service
 import java.net.URL
 
 interface UrlGeneratorService {
-    fun forModality(cpid: Cpid, relatedLot: LotId): String
-    fun forBid(cpid: Cpid, relatedLot: LotId, bidId: BidId, sign: Sign): String
+    fun forModality(ocid: Ocid, relatedLot: LotId): String
+    fun forBid(ocid: Ocid, relatedLot: LotId, bidId: BidId, sign: Sign): String
 }
 
 @Service
@@ -20,11 +20,11 @@ class UrlGeneratorServiceImpl(
 
     private val urlAuction = genUrlAuctions()
 
-    override fun forModality(cpid: Cpid, relatedLot: LotId): String =
-        "$urlAuction/auctions/${cpid}/${relatedLot.value}"
+    override fun forModality(ocid: Ocid, relatedLot: LotId): String =
+        "$urlAuction/auctions/${ocid}/${relatedLot.value}"
 
-    override fun forBid(cpid: Cpid, relatedLot: LotId, bidId: BidId, sign: Sign): String =
-        "${forModality(cpid, relatedLot)}?bid_id=${bidId.value}&sign=${sign.value}"
+    override fun forBid(ocid: Ocid, relatedLot: LotId, bidId: BidId, sign: Sign): String =
+        "${forModality(ocid, relatedLot)}?bid_id=${bidId.value}&sign=${sign.value}"
 
     private fun genUrlAuctions(): String {
         val url = auctionProperties.url
