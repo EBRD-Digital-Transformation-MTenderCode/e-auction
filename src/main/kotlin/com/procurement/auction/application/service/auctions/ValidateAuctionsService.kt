@@ -166,12 +166,34 @@ class ValidateAuctionsServiceImpl(
 
     override fun validateAuctionsData(params: ValidateAuctionsDataParams): ValidationResult<Fail> {
         checkForAuctionDuplicates(params)  // VR.COM-18.1.1
-            .bind { checkForMissingLots(it) }  // VR.COM-18.1.2
+            .bind { checkValuePresent(it) } // VR.COM-18.1.6, VR.COM-18.1.7
+            .bind { checkForMissingLots(it) } // VR.COM-18.1.2
             .bind { checkEachLotIsLinkedToOneAuction(it) } // VR.COM-18.1.3
-            .bind { checkForUnmatchingCurrency(it) } // VR.COM-18.1.4
+            .bind { checkForUnmatchingCurrency(it) } // VR.COM-18.1.4,  VR.COM-18.1.5
             .doOnError { error -> return ValidationResult.error(error) }
 
         return ValidationResult.ok()
+    }
+
+    private fun checkValuePresent(params: ValidateAuctionsDataParams): Result<ValidateAuctionsDataParams, Fail> =
+        when(params.operationType) {
+            OperationType.CREATE_PCR -> checkTenderCurrencyPresent(params)
+            OperationType.CREATE_RFQ -> checkLotsValuePresent(params)
+        }
+
+    private fun checkTenderCurrencyPresent(params: ValidateAuctionsDataParams): Result<ValidateAuctionsDataParams, Fail> =
+        if (params.tender.value == null)
+            ValidationError.MissingTenderValue().asFailure()
+        else
+            params.asSuccess()
+
+    private fun checkLotsValuePresent(params: ValidateAuctionsDataParams): Result<ValidateAuctionsDataParams, Fail> {
+        val lotsWithoutValue = params.tender.lots.filter { it.value == null }
+
+        if (lotsWithoutValue.isNotEmpty())
+            return ValidationError.MissingLotValue(lotsWithoutValue.toSetBy { it.id }).asFailure()
+        else
+            return params.asSuccess()
     }
 
     private fun checkForAuctionDuplicates(params: ValidateAuctionsDataParams): Result<ValidateAuctionsDataParams, Fail> {
@@ -182,11 +204,13 @@ class ValidateAuctionsServiceImpl(
         return params.asSuccess()
     }
 
-    private fun checkForUnmatchingCurrency(params: ValidateAuctionsDataParams): Result<ValidateAuctionsDataParams, Fail> {
-        val isNeedToCheckUnmatchingCurrency = isNeedToCheckUnmatchingCurrency(params.operationType)
-        if (!isNeedToCheckUnmatchingCurrency)
-            return params.asSuccess()
+    private fun checkForUnmatchingCurrency(params: ValidateAuctionsDataParams): Result<ValidateAuctionsDataParams, Fail> =
+        when (params.operationType) {
+            OperationType.CREATE_PCR -> checkForUnmatchingCurrencyInTender(params)
+            OperationType.CREATE_RFQ -> checkForUnmatchingCurrencyInLots(params)
+        }
 
+    private fun checkForUnmatchingCurrencyInTender(params: ValidateAuctionsDataParams): Result<ValidateAuctionsDataParams, Fail> {
         val tenderCurrency = params.tender.value!!.currency
 
         val auctionWithModalitiesContainingInvalidCurrency = params.tender.electronicAuctions.details
@@ -196,7 +220,7 @@ class ValidateAuctionsServiceImpl(
             }
 
         if (auctionWithModalitiesContainingInvalidCurrency.isNotEmpty())
-            return ValidationError.AuctionModalityContainsInvalidCurrency(
+            return ValidationError.AuctionModalityMismatchWithTenderCurrency(
                 auctionIds = auctionWithModalitiesContainingInvalidCurrency.map { it.id },
                 tenderCurrency = tenderCurrency
             ).asFailure()
@@ -204,11 +228,23 @@ class ValidateAuctionsServiceImpl(
         return params.asSuccess()
     }
 
-    private fun isNeedToCheckUnmatchingCurrency(operationType: OperationType): Boolean =
-        when(operationType) {
-            OperationType.CREATE_PCR -> true
-            OperationType.CREATE_RFQ -> false
-        }
+    private fun checkForUnmatchingCurrencyInLots(params: ValidateAuctionsDataParams): Result<ValidateAuctionsDataParams, Fail> {
+        val lotCurrencies = params.tender.lots.map { it.value!!.currency }
+
+        val auctionWithModalitiesContainingInvalidCurrency = params.tender.electronicAuctions.details
+            .filter { auction ->
+                auction.electronicAuctionModalities
+                    .any { it.eligibleMinimumDifference.currency !in lotCurrencies }
+            }
+
+        if (auctionWithModalitiesContainingInvalidCurrency.isNotEmpty())
+            return ValidationError.AuctionModalityMismatchWithLotsCurrency(
+                auctionIds = auctionWithModalitiesContainingInvalidCurrency.map { it.id },
+                lotsCurrencies = lotCurrencies
+            ).asFailure()
+
+        return params.asSuccess()
+    }
 
     private fun checkForMissingLots(params: ValidateAuctionsDataParams): Result<ValidateAuctionsDataParams, Fail> {
         val relatedLots = params.tender.electronicAuctions.details.map { it.relatedLot }
