@@ -1,18 +1,42 @@
 package com.procurement.auction.application.params.auction.validate
 
+import com.procurement.auction.application.params.parseEnum
 import com.procurement.auction.domain.fail.error.DataErrors
 import com.procurement.auction.domain.functional.Result
 import com.procurement.auction.domain.functional.asSuccess
 import com.procurement.auction.domain.functional.validate
+import com.procurement.auction.domain.model.enums.OperationType
 import com.procurement.submission.application.params.rules.notEmptyRule
 
-data class ValidateAuctionsDataParams(
-    val tender: Tender
+class ValidateAuctionsDataParams private constructor(
+    val tender: Tender,
+    val operationType: OperationType
 ) {
+    companion object {
+        private val allowedOperationType = OperationType.allowedElements
+            .filter {
+                when (it) {
+                    OperationType.CREATE_PCR,
+                    OperationType.CREATE_RFQ -> true
+                }
+            }
+            .toSet()
+
+        fun tryCreate(tender: Tender, operationType: String): Result<ValidateAuctionsDataParams, DataErrors.Validation> {
+            val parsedOperationType = parseEnum(
+                value = operationType, allowedEnums = allowedOperationType,
+                attributeName = "operationType",
+                target = OperationType
+            ).orForwardFail { return  it }
+
+            return ValidateAuctionsDataParams(tender = tender, operationType = parsedOperationType).asSuccess()
+        }
+    }
+
     class Tender private constructor(
         val electronicAuctions: ElectronicAuctions,
         val lots: List<Lot>,
-        val value: Value
+        val value: Value?
     ) {
         companion object {
             private const val LOTS_ATTRIBUTE_NAME = "tender.lots"
@@ -20,7 +44,7 @@ data class ValidateAuctionsDataParams(
             fun tryCreate(
                 electronicAuctions: ElectronicAuctions,
                 lots: List<Lot>,
-                value: Value
+                value: Value?
             ): Result<Tender, DataErrors> {
                 lots.validate(notEmptyRule(LOTS_ATTRIBUTE_NAME))
                     .orForwardFail { fail -> return fail }
@@ -80,7 +104,8 @@ data class ValidateAuctionsDataParams(
         }
 
         data class Lot(
-            val id: String
+            val id: String,
+            val value: Value?
         )
 
         data class Value(

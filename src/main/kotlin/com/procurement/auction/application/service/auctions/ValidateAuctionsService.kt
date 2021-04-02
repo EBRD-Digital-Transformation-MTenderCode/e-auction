@@ -17,6 +17,7 @@ import com.procurement.auction.domain.functional.asFailure
 import com.procurement.auction.domain.functional.asSuccess
 import com.procurement.auction.domain.functional.bind
 import com.procurement.auction.domain.model.date.JsonTimeDeserializer
+import com.procurement.auction.domain.model.enums.OperationType
 import com.procurement.auction.domain.model.lotId.TemporalLotId
 import com.procurement.auction.exception.app.DuplicateLotException
 import com.procurement.auction.exception.app.InvalidElectronicAuctionsException
@@ -164,10 +165,10 @@ class ValidateAuctionsServiceImpl(
     }
 
     override fun validateAuctionsData(params: ValidateAuctionsDataParams): ValidationResult<Fail> {
-        checkForAuctionDuplicates(params)
-            .bind { checkForMissingLots(it) }
-            .bind { checkEachLotIsLinkedToOneAuction(it) }
-            .bind { checkForUnmatchingCurrency(it) }
+        checkForAuctionDuplicates(params)  // VR.COM-18.1.1
+            .bind { checkForMissingLots(it) }  // VR.COM-18.1.2
+            .bind { checkEachLotIsLinkedToOneAuction(it) } // VR.COM-18.1.3
+            .bind { checkForUnmatchingCurrency(it) } // VR.COM-18.1.4
             .doOnError { error -> return ValidationResult.error(error) }
 
         return ValidationResult.ok()
@@ -182,7 +183,11 @@ class ValidateAuctionsServiceImpl(
     }
 
     private fun checkForUnmatchingCurrency(params: ValidateAuctionsDataParams): Result<ValidateAuctionsDataParams, Fail> {
-        val tenderCurrency = params.tender.value.currency
+        val isNeedToCheckUnmatchingCurrency = isNeedToCheckUnmatchingCurrency(params.operationType)
+        if (!isNeedToCheckUnmatchingCurrency)
+            return params.asSuccess()
+
+        val tenderCurrency = params.tender.value!!.currency
 
         val auctionWithModalitiesContainingInvalidCurrency = params.tender.electronicAuctions.details
             .filter { auction ->
@@ -198,6 +203,12 @@ class ValidateAuctionsServiceImpl(
 
         return params.asSuccess()
     }
+
+    private fun isNeedToCheckUnmatchingCurrency(operationType: OperationType): Boolean =
+        when(operationType) {
+            OperationType.CREATE_PCR -> true
+            OperationType.CREATE_RFQ -> false
+        }
 
     private fun checkForMissingLots(params: ValidateAuctionsDataParams): Result<ValidateAuctionsDataParams, Fail> {
         val relatedLots = params.tender.electronicAuctions.details.map { it.relatedLot }

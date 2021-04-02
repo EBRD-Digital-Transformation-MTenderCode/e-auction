@@ -4,6 +4,7 @@ import com.procurement.auction.application.params.auction.validate.ValidateAucti
 import com.procurement.auction.configuration.properties.AuctionProperties
 import com.procurement.auction.configuration.properties.SchedulerProperties
 import com.procurement.auction.domain.functional.ValidationResult
+import com.procurement.auction.domain.model.enums.OperationType
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
@@ -165,10 +166,11 @@ internal class ValidateAuctionsServiceImplTest {
             lotIds: List<String>,
             valueCurrency: String,
             auctions: List<Auctions>
-        ) = ValidateAuctionsDataParams(
+        ) = ValidateAuctionsDataParams.tryCreate(
+            operationType = OperationType.CREATE_PCR.toString(),
             tender = ValidateAuctionsDataParams.Tender.tryCreate(
                 value = ValidateAuctionsDataParams.Tender.Value(currency = valueCurrency),
-                lots = lotIds.map { ValidateAuctionsDataParams.Tender.Lot(it) },
+                lots = lotIds.map { ValidateAuctionsDataParams.Tender.Lot(it, null) },
                 electronicAuctions = ValidateAuctionsDataParams.Tender.ElectronicAuctions.tryCreate(
                     auctions.map {
                         ValidateAuctionsDataParams.Tender.ElectronicAuctions.Detail.tryCreate(
@@ -185,6 +187,6 @@ internal class ValidateAuctionsServiceImplTest {
                     }
                 ).get
             ).get
-        )
+        ).get
     }
 }
