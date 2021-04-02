@@ -36,7 +36,7 @@ internal class ValidateAuctionsServiceImplTest {
                 Auctions(id = ELECTRONIC_AUCTIONS_ID_FIRST, relatedLot = LOT_ID_FIRST, currency = CURRENCY),
                 Auctions(id = ELECTRONIC_AUCTIONS_ID_SECOND, relatedLot = LOT_ID_SECOND, currency = CURRENCY)
             )
-            val validParams = getParams(
+            val validParams = getParamsForCreatePcr(
                 lotIds = listOf(LOT_ID_FIRST, LOT_ID_SECOND),
                 valueCurrency = CURRENCY,
                 auctions = auctionsWithDuplicateIds
@@ -53,7 +53,7 @@ internal class ValidateAuctionsServiceImplTest {
                 Auctions(id = unUniqueAuctionId, relatedLot = LOT_ID_FIRST, currency = CURRENCY),
                 Auctions(id = unUniqueAuctionId, relatedLot = LOT_ID_SECOND, currency = CURRENCY)
             )
-            val params = getParams(
+            val params = getParamsForCreatePcr(
                 lotIds = listOf(LOT_ID_FIRST, LOT_ID_SECOND),
                 valueCurrency = CURRENCY,
                 auctions = auctionsWithDuplicateIds
@@ -77,7 +77,7 @@ internal class ValidateAuctionsServiceImplTest {
                 Auctions(id = ELECTRONIC_AUCTIONS_ID_FIRST, relatedLot = lotIdReceived, currency = CURRENCY),
                 Auctions(id = ELECTRONIC_AUCTIONS_ID_SECOND, relatedLot = lotIdMissing, currency = CURRENCY)
             )
-            val params = getParams(
+            val params = getParamsForCreatePcr(
                 lotIds = listOf(lotIdReceived),
                 valueCurrency = CURRENCY,
                 auctions = auctionsWithDuplicateIds
@@ -99,7 +99,7 @@ internal class ValidateAuctionsServiceImplTest {
                 Auctions(id = ELECTRONIC_AUCTIONS_ID_FIRST, relatedLot = lotLinkedToTwoAuctions, currency = CURRENCY),
                 Auctions(id = ELECTRONIC_AUCTIONS_ID_SECOND, relatedLot = lotLinkedToTwoAuctions, currency = CURRENCY)
             )
-            val params = getParams(
+            val params = getParamsForCreatePcr(
                 lotIds = listOf(lotLinkedToTwoAuctions),
                 valueCurrency = CURRENCY,
                 auctions = auctionsWithDuplicateIds
@@ -122,7 +122,7 @@ internal class ValidateAuctionsServiceImplTest {
             val auctionsWithDuplicateIds = listOf(
                 Auctions(id = ELECTRONIC_AUCTIONS_ID_FIRST, relatedLot = linkedToAuctionLot, currency = CURRENCY)
             )
-            val params = getParams(
+            val params = getParamsForCreatePcr(
                 lotIds = listOf(linkedToAuctionLot, notLinkedToAuctionLot),
                 valueCurrency = CURRENCY,
                 auctions = auctionsWithDuplicateIds
@@ -145,7 +145,7 @@ internal class ValidateAuctionsServiceImplTest {
                 Auctions(id = ELECTRONIC_AUCTIONS_ID_FIRST, relatedLot = LOT_ID_FIRST, currency = CURRENCY),
                 Auctions(id = ELECTRONIC_AUCTIONS_ID_SECOND, relatedLot = LOT_ID_SECOND, currency = unMatchingCurrency)
             )
-            val params = getParams(
+            val params = getParamsForCreatePcr(
                 lotIds = listOf(LOT_ID_FIRST, LOT_ID_SECOND),
                 valueCurrency = CURRENCY,
                 auctions = auctionsWithDuplicateIds
@@ -162,7 +162,7 @@ internal class ValidateAuctionsServiceImplTest {
 
         inner class Auctions(val id: String, val relatedLot: String, val currency: String)
 
-        private fun getParams(
+        private fun getParamsForCreatePcr(
             lotIds: List<String>,
             valueCurrency: String,
             auctions: List<Auctions>
