@@ -3,20 +3,29 @@ package com.procurement.auction.application.params.auction.validate
 import com.procurement.auction.domain.extension.mapResult
 import com.procurement.auction.domain.fail.error.DataErrors
 import com.procurement.auction.domain.functional.Result
-import com.procurement.auction.domain.functional.asSuccess
 import com.procurement.auction.infrastructure.service.handler.auction.validate.ValidateAuctionsDataRequest
 
-fun ValidateAuctionsDataRequest.convert(): Result<ValidateAuctionsDataParams, DataErrors> =
-    ValidateAuctionsDataParams(
-        ValidateAuctionsDataParams.Tender.tryCreate(
-            electronicAuctions = tender.electronicAuctions.convert().orForwardFail { fail -> return fail },
-            lots = convertLots(),
-            value = ValidateAuctionsDataParams.Tender.Value(tender.value.currency)
-        ).orForwardFail { fail -> return fail }
-    ).asSuccess()
+fun ValidateAuctionsDataRequest.convert(): Result<ValidateAuctionsDataParams, DataErrors> {
+    val convertedTender = tender.convert().orForwardFail { return it }
+    return ValidateAuctionsDataParams.tryCreate(convertedTender, operationType)
+}
 
-private fun ValidateAuctionsDataRequest.convertLots() =
-    tender.lots.map { ValidateAuctionsDataParams.Tender.Lot(it.id) }
+fun ValidateAuctionsDataRequest.Tender.convert(): Result<ValidateAuctionsDataParams.Tender, DataErrors> {
+    val convertedLots = lots.map { it.convertLot() }
+    val convertedValue = value?.let { ValidateAuctionsDataParams.Tender.Value(it.currency) }
+
+    return ValidateAuctionsDataParams.Tender.tryCreate(
+        electronicAuctions = electronicAuctions.convert().orForwardFail { fail -> return fail },
+        lots = convertedLots,
+        value = convertedValue
+    )
+}
+
+private fun ValidateAuctionsDataRequest.Tender.Lot.convertLot() =
+    ValidateAuctionsDataParams.Tender.Lot(
+        id = id,
+        value = value?.let { ValidateAuctionsDataParams.Tender.Value(it.currency) }
+    )
 
 private fun ValidateAuctionsDataRequest.Tender.ElectronicAuctions.convert() =
     ValidateAuctionsDataParams.Tender.ElectronicAuctions.tryCreate(

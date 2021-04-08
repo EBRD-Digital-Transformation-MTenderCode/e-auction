@@ -24,8 +24,23 @@ sealed class ValidationError(
         description = "Lot '$lotId' must be linked to one and only one electronic auction"
     )
 
-    class AuctionModalityContainsInvalidCurrency(auctionIds: List<String>, tenderCurrency: String): ValidationError(
+    class AuctionModalityMismatchWithTenderCurrency(auctionIds: List<String>, tenderCurrency: String): ValidationError(
         numberError = "18.1.4",
         description = "Electronic auctions '${auctionIds.joinToString()}' contain modality(s) with currency that does not match tender currency '$tenderCurrency'"
+    )
+
+    class AuctionModalityMismatchWithLotsCurrency(auctionIds: List<String>, lotsCurrencies: List<String>): ValidationError(
+        numberError = "18.1.5",
+        description = "Electronic auctions '${auctionIds.joinToString()}' contain modality(s) with currency that does not match lots currencies '$lotsCurrencies'"
+    )
+
+    class MissingTenderValue(): ValidationError(
+        numberError = "18.1.6",
+        description = "Missing tender's value in request."
+    )
+
+    class MissingLotValue(lotsId: Collection<String>): ValidationError(
+        numberError = "18.1.7",
+        description = "Missing value in lots $lotsId."
     )
 }
