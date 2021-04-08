@@ -18,11 +18,11 @@
     },
     "lots": [
       {
-        "id": "string"
+        "id": "string",
+        "value": {
+          "currency": "string"
+        }
       }
-    ],
-    "value": {
-      "currency": "string"
-    }
+    ]
   }
 }

@@ -10,4 +10,9 @@ class ValidateAuctionsDataRequestTest : AbstractDTOTestBase<ValidateAuctionsData
     fun fully() {
         testBindingAndMapping("json/command/auction/validate/validate_auctions_data.json")
     }
+
+    @Test
+    fun required1() {
+        testBindingAndMapping("json/command/auction/validate/validate_auctions_data_required_1.json")
+    }
 }

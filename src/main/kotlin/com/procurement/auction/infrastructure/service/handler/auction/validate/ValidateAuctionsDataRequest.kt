@@ -4,12 +4,15 @@ import com.fasterxml.jackson.annotation.JsonInclude
 import com.fasterxml.jackson.annotation.JsonProperty
 
 data class ValidateAuctionsDataRequest (
-    @param:JsonProperty("tender") @field:JsonProperty("tender") val tender: Tender
+    @param:JsonProperty("tender") @field:JsonProperty("tender") val tender: Tender,
+    @field:JsonProperty("operationType") @param:JsonProperty("operationType") val operationType: String
 ) {
     data class Tender(
         @param:JsonProperty("electronicAuctions") @field:JsonProperty("electronicAuctions") val electronicAuctions: ElectronicAuctions,
         @param:JsonProperty("lots") @field:JsonProperty("lots") val lots: List<Lot>,
-        @param:JsonProperty("value") @field:JsonProperty("value") val value: Value
+
+        @JsonInclude(JsonInclude.Include.NON_NULL)
+        @param:JsonProperty("value") @field:JsonProperty("value") val value: Value?
     ) {
         data class ElectronicAuctions(
             @param:JsonProperty("details") @field:JsonProperty("details") val details: List<Detail>
@@ -30,11 +33,13 @@ data class ValidateAuctionsDataRequest (
         }
 
         data class Lot(
-            @param:JsonProperty("id") @field:JsonProperty("id") val id: String
+            @param:JsonProperty("id") @field:JsonProperty("id") val id: String,
+
+            @JsonInclude(JsonInclude.Include.NON_NULL)
+            @param:JsonProperty("value") @field:JsonProperty("value") val value: Value?
         )
 
         data class Value(
-            @JsonInclude(JsonInclude.Include.NON_NULL)
             @param:JsonProperty("currency") @field:JsonProperty("currency") val currency: String
         )
     }
