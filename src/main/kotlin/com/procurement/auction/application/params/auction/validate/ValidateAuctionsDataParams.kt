@@ -1,12 +1,15 @@
 package com.procurement.auction.application.params.auction.validate
 
+import com.procurement.auction.application.params.parseAmount
 import com.procurement.auction.application.params.parseEnum
 import com.procurement.auction.domain.fail.error.DataErrors
 import com.procurement.auction.domain.functional.Result
 import com.procurement.auction.domain.functional.asSuccess
 import com.procurement.auction.domain.functional.validate
+import com.procurement.auction.domain.model.amount.Amount
 import com.procurement.auction.domain.model.enums.OperationType
 import com.procurement.submission.application.params.rules.notEmptyRule
+import java.math.BigDecimal
 
 class ValidateAuctionsDataParams private constructor(
     val tender: Tender,
@@ -96,9 +99,26 @@ class ValidateAuctionsDataParams private constructor(
                 data class ElectronicAuctionModality(
                     val eligibleMinimumDifference: EligibleMinimumDifference
                 ) {
-                    data class EligibleMinimumDifference(
-                        val currency: String
-                    )
+                    class EligibleMinimumDifference private constructor(
+                        val currency: String,
+                        val amount: Amount?
+                    ) {
+                        companion object {
+                            fun tryCreate(
+                                currency: String,
+                                amount: BigDecimal?
+                            ): Result<EligibleMinimumDifference, DataErrors> {
+                                val amount = amount?.let {
+                                    parseAmount(
+                                        value = amount,
+                                        attributeName = "tender.electronicAuctions.details.electronicAuctionModalities.eligibleMinimumDifference.amount"
+                                    ).orForwardFail { return it }
+
+                                }
+                                return EligibleMinimumDifference(currency, amount).asSuccess()
+                            }
+                        }
+                    }
                 }
             }
         }
