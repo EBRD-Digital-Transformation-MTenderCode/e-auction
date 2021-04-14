@@ -43,4 +43,9 @@ sealed class ValidationError(
         numberError = "18.1.7",
         description = "Missing value in lots $lotsId."
     )
+
+    class MissingAmountValue(auctionId: String): ValidationError(
+        numberError = "18.1.8",
+        description = "Missing amount in auction '$auctionId'."
+    )
 }

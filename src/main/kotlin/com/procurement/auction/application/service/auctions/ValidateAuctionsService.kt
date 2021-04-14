@@ -166,7 +166,7 @@ class ValidateAuctionsServiceImpl(
 
     override fun validateAuctionsData(params: ValidateAuctionsDataParams): ValidationResult<Fail> {
         checkForAuctionDuplicates(params)  // VR.COM-18.1.1
-            .bind { checkValuePresent(it) } // VR.COM-18.1.6, VR.COM-18.1.7
+            .bind { checkValuePresent(it) } // VR.COM-18.1.6, VR.COM-18.1.7, VR.COM-18.1.8
             .bind { checkForMissingLots(it) } // VR.COM-18.1.2
             .bind { checkEachLotIsLinkedToOneAuction(it) } // VR.COM-18.1.3
             .bind { checkForUnmatchingCurrency(it) } // VR.COM-18.1.4,  VR.COM-18.1.5
@@ -178,7 +178,10 @@ class ValidateAuctionsServiceImpl(
     private fun checkValuePresent(params: ValidateAuctionsDataParams): Result<ValidateAuctionsDataParams, Fail> =
         when(params.operationType) {
             OperationType.CREATE_PCR -> checkTenderCurrencyPresent(params)
-            OperationType.CREATE_RFQ -> checkLotsValuePresent(params)
+            OperationType.CREATE_RFQ -> {
+                checkLotsValuePresent(params)
+                checkAmountPresent(params)
+            }
         }
 
     private fun checkTenderCurrencyPresent(params: ValidateAuctionsDataParams): Result<ValidateAuctionsDataParams, Fail> =
@@ -195,6 +198,19 @@ class ValidateAuctionsServiceImpl(
         else
             return params.asSuccess()
     }
+
+    private fun checkAmountPresent(params: ValidateAuctionsDataParams): Result<ValidateAuctionsDataParams, Fail> {
+        params.tender.electronicAuctions.details
+            .forEach { auction ->
+                if (auction.isMissingAmount())
+                    return ValidationError.MissingAmountValue(auction.id).asFailure()
+            }
+
+        return params.asSuccess()
+    }
+
+    private fun ValidateAuctionsDataParams.Tender.ElectronicAuctions.Detail.isMissingAmount() =
+        electronicAuctionModalities.any { it.eligibleMinimumDifference.amount == null }
 
     private fun checkForAuctionDuplicates(params: ValidateAuctionsDataParams): Result<ValidateAuctionsDataParams, Fail> {
         val duplicateAuction = params.tender.electronicAuctions.details.getDuplicate { it.id }
