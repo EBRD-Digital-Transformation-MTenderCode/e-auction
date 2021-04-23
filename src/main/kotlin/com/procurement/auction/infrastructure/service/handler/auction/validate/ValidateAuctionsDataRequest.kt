@@ -2,6 +2,7 @@ package com.procurement.auction.infrastructure.service.handler.auction.validate
 
 import com.fasterxml.jackson.annotation.JsonInclude
 import com.fasterxml.jackson.annotation.JsonProperty
+import java.math.BigDecimal
 
 data class ValidateAuctionsDataRequest (
     @param:JsonProperty("tender") @field:JsonProperty("tender") val tender: Tender,
@@ -26,7 +27,10 @@ data class ValidateAuctionsDataRequest (
                     @param:JsonProperty("eligibleMinimumDifference") @field:JsonProperty("eligibleMinimumDifference") val eligibleMinimumDifference: EligibleMinimumDifference
                 ) {
                     data class EligibleMinimumDifference(
-                        @param:JsonProperty("currency") @field:JsonProperty("currency") val currency: String
+                        @param:JsonProperty("currency") @field:JsonProperty("currency") val currency: String,
+
+                        @JsonInclude(JsonInclude.Include.NON_NULL)
+                        @param:JsonProperty("amount") @field:JsonProperty("amount") val amount: BigDecimal?
                     )
                 }
             }

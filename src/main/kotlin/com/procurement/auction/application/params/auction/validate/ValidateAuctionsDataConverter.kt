@@ -38,9 +38,9 @@ private fun ValidateAuctionsDataRequest.Tender.ElectronicAuctions.Detail.convert
         relatedLot = relatedLot,
         electronicAuctionModalities = electronicAuctionModalities.map {
             ValidateAuctionsDataParams.Tender.ElectronicAuctions.Detail.ElectronicAuctionModality(
-                ValidateAuctionsDataParams.Tender.ElectronicAuctions.Detail.ElectronicAuctionModality.EligibleMinimumDifference(
-                    it.eligibleMinimumDifference.currency
-                )
+                ValidateAuctionsDataParams.Tender.ElectronicAuctions.Detail.ElectronicAuctionModality.EligibleMinimumDifference.tryCreate(
+                    it.eligibleMinimumDifference.currency, it.eligibleMinimumDifference.amount
+                ).orForwardFail { return it }
             )
         }
     )

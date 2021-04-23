@@ -4,13 +4,16 @@ import com.procurement.auction.domain.extension.tryParseLocalDateTime
 import com.procurement.auction.domain.fail.error.DataErrors
 import com.procurement.auction.domain.fail.error.DataTimeError
 import com.procurement.auction.domain.functional.Result
+import com.procurement.auction.domain.functional.asFailure
 import com.procurement.auction.domain.functional.asSuccess
 import com.procurement.auction.domain.model.Owner
+import com.procurement.auction.domain.model.amount.Amount
 import com.procurement.auction.domain.model.cpid.Cpid
 import com.procurement.auction.domain.model.enums.EnumElementProvider
 import com.procurement.auction.domain.model.enums.EnumElementProvider.Companion.keysAsStrings
 import com.procurement.auction.domain.model.ocid.Ocid
 import com.procurement.auction.domain.model.tryOwner
+import java.math.BigDecimal
 import java.time.LocalDateTime
 
 fun parseCpid(value: String): Result<Cpid, DataErrors.Validation.DataMismatchToPattern> =
@@ -78,3 +81,17 @@ fun parseOwner(value: String): Result<Owner, DataErrors.Validation.DataFormatMis
             )
         }
         .asSuccess()
+
+fun parseAmount(
+    value: BigDecimal, attributeName: String
+): Result<Amount, DataErrors.Validation.DataMismatchToPattern> {
+    return try {
+        Amount(value).asSuccess()
+    } catch (ex: IllegalArgumentException) {
+        DataErrors.Validation.DataMismatchToPattern(
+            name = attributeName,
+            pattern = ex.message!!,
+            actualValue = value.toString()
+        ).asFailure()
+    }
+}
